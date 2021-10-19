@@ -11,11 +11,39 @@ namespace OnlineCasinoProjectConsole
     class UserAuthentication
     {
         bool loginBool;
-        static bool duplicatebool;
+        bool duplicatebool;
         static List<Gambler> gamblerList = new List<Gambler>();
-        public string checkDuplicateID(string idNumber)
+
+        public bool checkUsername(string username)
         {
-            do
+            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
+            {
+                duplicatebool = false;
+            }
+            else
+            {
+                gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json"));
+                duplicatebool = false;
+                foreach (Gambler gambleruser in gamblerList)
+                {
+                    if (Equals(gambleruser.username, username))
+                    {
+                        Console.WriteLine("Duplicate username.");
+                        duplicatebool = true;
+                        break;
+                    }
+                }
+            }
+            return duplicatebool;
+        }
+
+        public bool checkID(string idNumber)
+        {
+            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
+            {
+                duplicatebool = false;
+            }
+            else
             {
                 duplicatebool = false;
                 foreach (Gambler gambleruser in gamblerList)
@@ -24,55 +52,40 @@ namespace OnlineCasinoProjectConsole
                     {
                         Console.WriteLine("Duplicate idNumber.");
                         duplicatebool = true;
+                        break;
                     }
                 }
-            } while (duplicatebool == true);
-            return idNumber;
+            }
+            return duplicatebool;
         }
-        public string checkDuplicateUsername()
+
+        public bool checkPhoneNumber(string phoneNumber)
         {
-            string username;
-            do
+            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
             {
                 duplicatebool = false;
-                Console.WriteLine("Please input username.");
-                username = Console.ReadLine();
-                foreach (Gambler gambleruser in gamblerList)
-                {
-                    if (Equals(gambleruser.username, username))
-                    {
-                        Console.WriteLine("Duplicate username.");
-                        duplicatebool = true;
-                    }
-                }
-            } while (duplicatebool == true);
-            return username;
-        }
-        public string checkDuplicatePhoneNumber()
-        {
-            string phoneNumber;
-            do
+            }
+            else
             {
                 duplicatebool = false;
-                Console.WriteLine("Please input phone number.");
-                phoneNumber = Console.ReadLine();
                 foreach (Gambler gambleruser in gamblerList)
                 {
                     if (Equals(gambleruser.phoneNumber, phoneNumber))
                     {
                         Console.WriteLine("Duplicate Phone Number.");
                         duplicatebool = true;
+                        break;
                     }
                 }
-            } while (duplicatebool == true);
-            return phoneNumber;
+            }
+            return duplicatebool;
         }
 
-        public void signup(string username, string password, string idNumber, string phoneNumber)
+        public void signup(string username, string idNumber, string phoneNumber, string password)
         {
             if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
             {
-                Gambler gambler = new Gambler(username, password, idNumber, phoneNumber);
+                Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
                 gamblerList.Add(gambler);
                 string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
                 File.WriteAllText("Gambler.json", gamblerListStr);
@@ -80,7 +93,7 @@ namespace OnlineCasinoProjectConsole
             else
             {
                 gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json"));
-                Gambler gambler = new Gambler(username, password, idNumber, phoneNumber);
+                Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
                 gamblerList.Add(gambler);
                 string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
                 File.WriteAllText("Gambler.json", gamblerListStr);
@@ -91,20 +104,20 @@ namespace OnlineCasinoProjectConsole
         {
             if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
             {
-                Console.WriteLine("No data found.");
+                Console.WriteLine("Invalid username or password.");
                 loginBool = false;
             }
             else
             {
                 gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json"));
-                foreach(Gambler gambler in gamblerList)
+                foreach (Gambler gambler in gamblerList)
                 {
-                    if(Equals(gambler.username, username))
+                    if (Equals(gambler.username, username))
                     {
-                        if(Equals(gambler.password, password))
+                        if (Equals(gambler.password, password))
                         {
                             loginBool = true;
-                                break;
+                            break;
                         }
                     }
                     else
@@ -113,7 +126,18 @@ namespace OnlineCasinoProjectConsole
                     }
                 }
             }
+            if (loginBool == false)
+            {
+                Console.WriteLine("Invalid username or password.");
+            }
             return loginBool;
         }
+
+
+        //linQ
+        //var user = gamblerList.First(x => x.username == username);
+        //if(user != null)
+        //    {
+        //    }
     }
 }
