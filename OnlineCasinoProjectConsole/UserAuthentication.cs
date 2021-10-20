@@ -12,7 +12,7 @@ namespace OnlineCasinoProjectConsole
     {
         bool loginBool;
         bool duplicatebool;
-        static List<Gambler> gamblerList = new List<Gambler>();
+        List<Gambler> gamblerList = new List<Gambler>();
 
         public bool checkUsername(string username)
         {

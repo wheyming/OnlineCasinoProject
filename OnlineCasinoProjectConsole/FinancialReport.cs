@@ -40,7 +40,7 @@ namespace OnlineCasinoProjectConsole
                     Console.WriteLine($"{ DateTime.ParseExact(fileName.Substring(fileName.IndexOf(".json") - 8, 8), "yyyyMMdd", CultureInfo.CurrentCulture).ToString("dd MMM yyyy")} earnings: ${dayTotal}");
                     monthTotal += dayTotal;
                 }
-                Console.WriteLine($"Total earnings for {yearmonth.ToString("MMM")} {yearmonth.ToString("yyyy")} is ${monthTotal}.");
+                Console.WriteLine($"\nTotal earnings for {yearmonth.ToString("MMM")} {yearmonth.ToString("yyyy")} is ${monthTotal}.\n");
             }
             catch (IOException)
             {
@@ -52,12 +52,14 @@ namespace OnlineCasinoProjectConsole
         {
             try
             {
+                int monthCount = 12;
                 double yearTotal = 0;
                 for (int i = 1; i < 13; i++)
                 {
                     double monthTotal = 0;
                     if (!Directory.Exists("FinancialReport\\" + year.ToString("yy") + i.ToString("00")))
                     {
+                        monthCount -= monthCount;
                         continue;
                     }
                     string[] fileArr = Directory.GetFiles("FinancialReport\\" + year.ToString("yy") + i.ToString("00"));
@@ -74,7 +76,14 @@ namespace OnlineCasinoProjectConsole
                     Console.WriteLine($"{ (DateTime.ParseExact(monthFolder.Substring(monthFolder.IndexOf("FinancialReport\\") + 16, 4), "yyMM", CultureInfo.CurrentCulture)).ToString("MMM yyyy")} earnings: ${monthTotal}");
                     yearTotal += monthTotal;
                 }
-                Console.WriteLine($"Total earnings for the year of {year.ToString("yyyy")} is ${yearTotal}.");
+                if (monthCount != 0)
+                {
+                    Console.WriteLine($"\nTotal earnings for the year of {year.ToString("yyyy")} is ${yearTotal}.\n");
+                }
+                else
+                {
+                    Console.WriteLine("Files for the particular year does not exists.");
+                }
             }
             catch (IOException)
             {
@@ -94,7 +103,7 @@ namespace OnlineCasinoProjectConsole
                     dayTotal -= FR.payout;
                     dayTotal += FR.betAmount;
                 }
-                Console.WriteLine($"Total earnings for {date.ToString("dd MMM yyyy")} is ${dayTotal}");
+                Console.WriteLine($"\nTotal earnings for {date.ToString("dd MMM yyyy")} is ${dayTotal}\n");
             }
             catch (IOException)
             {
