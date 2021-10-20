@@ -21,7 +21,8 @@ namespace OnlineCasinoProjectConsole
                 string input1_2;
                 string input1_3;
                 string input1_4;
-                UserAuthentication UA = new UserAuthentication();
+                FileHandling FH = new FileHandling();
+                UserAuthentication UA = new UserAuthentication(FH);
                 try
                 {
                     Console.WriteLine("Welcome, would you like to\n1) Signup\n2) Login?\n3) End Program?");
@@ -78,7 +79,7 @@ namespace OnlineCasinoProjectConsole
                                                         {
                                                             Console.WriteLine("How much money would you like to bet?");
                                                             int input2_4 = Convert.ToInt32(Console.ReadLine());
-                                                            Gambling gambling = new Gambling();
+                                                            Gambling gambling = new Gambling(FH);
                                                             gambling.playSlot(input2_4, input2_1);
                                                             break;
                                                         }
@@ -127,8 +128,8 @@ namespace OnlineCasinoProjectConsole
                                     string input3_1 = Console.ReadLine();
                                     Console.WriteLine("O Password: ");
                                     string input3_2 = Console.ReadLine();
-                                    Owner owner = new Owner();
-                                    FinancialReport FA = new FinancialReport();
+                                    Owner owner = new Owner(FH);
+                                    FinancialReport FR = new FinancialReport(FH);
                                     if (owner.ownerLogin(input3_1, input3_2) == true)
                                     {
                                         bool ownerLogin = true;
@@ -161,15 +162,15 @@ namespace OnlineCasinoProjectConsole
                                                             string input3_5 = Console.ReadLine();
                                                             if (DateTime.TryParse(input3_5, out DateTime input3_5a))
                                                             {
-                                                                FA.generateFinancialReportDay(input3_5a);
+                                                                FR.generateFinancialReportDay(input3_5a);
                                                             }
                                                             else if (DateTime.TryParseExact(input3_5, "ddMMyyyy", CultureInfo.CurrentCulture, 0, out input3_5a))
                                                             {
-                                                                FA.generateFinancialReportDay(input3_5a);
+                                                                FR.generateFinancialReportDay(input3_5a);
                                                             }
                                                             else if (DateTime.TryParseExact(input3_5, "ddMMyy", CultureInfo.CurrentCulture, 0, out input3_5a))
                                                             {
-                                                                FA.generateFinancialReportDay(input3_5a);
+                                                                FR.generateFinancialReportDay(input3_5a);
                                                             }
                                                             else
                                                             {
@@ -183,23 +184,23 @@ namespace OnlineCasinoProjectConsole
                                                             string input3_6 = Console.ReadLine();
                                                             if (DateTime.TryParseExact(input3_6, "MMyyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_6a))
                                                             {
-                                                                FA.generateFinancialReportMonth(input3_6a);
+                                                                FR.generateFinancialReportMonth(input3_6a);
                                                             }
                                                             else if (DateTime.TryParseExact(input3_6, "MMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
                                                             {
-                                                                FA.generateFinancialReportMonth(input3_6a);
+                                                                FR.generateFinancialReportMonth(input3_6a);
                                                             }
                                                             else if (DateTime.TryParseExact(input3_6, "MMMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
                                                             {
-                                                                FA.generateFinancialReportMonth(input3_6a);
+                                                                FR.generateFinancialReportMonth(input3_6a);
                                                             }
                                                             else if (DateTime.TryParseExact(input3_6, "yyMM", CultureInfo.CurrentCulture, 0, out input3_6a))
                                                             {
-                                                                FA.generateFinancialReportMonth(input3_6a);
+                                                                FR.generateFinancialReportMonth(input3_6a);
                                                             }
                                                             else if (DateTime.TryParseExact(input3_6, "MMyy", CultureInfo.CurrentCulture, 0, out input3_6a))
                                                             {
-                                                                FA.generateFinancialReportMonth(input3_6a);
+                                                                FR.generateFinancialReportMonth(input3_6a);
                                                             }
                                                             else
                                                             {
@@ -213,11 +214,11 @@ namespace OnlineCasinoProjectConsole
                                                             string input3_7 = Console.ReadLine();
                                                             if (DateTime.TryParseExact(input3_7, "yyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_7a))
                                                             {
-                                                                FA.generateFinancialReportYear(input3_7a);
+                                                                FR.generateFinancialReportYear(input3_7a);
                                                             }
                                                             else if (DateTime.TryParseExact(input3_7, "yy", CultureInfo.CurrentCulture, 0, out input3_7a))
                                                             {
-                                                                FA.generateFinancialReportYear(input3_7a);
+                                                                FR.generateFinancialReportYear(input3_7a);
                                                             }
                                                             else
                                                             {

@@ -18,8 +18,16 @@ namespace OnlineCasinoProjectConsole
             this.betAmount = betAmount;
             this.payout = payout;
         }
-        public FinancialReport()
+
+        private IFileHandling _fileHandling;
+
+        public FinancialReport(IFileHandling fileHandling)
         {
+            _fileHandling = fileHandling;
+        }
+
+        public FinancialReport() // Required to prevent Json Exception in Gambling.storeWinningsInfo()
+        {           
         }
 
         public void generateFinancialReportMonth(DateTime yearmonth)
@@ -27,11 +35,11 @@ namespace OnlineCasinoProjectConsole
             try
             {
                 double monthTotal = 0;
-                string[] fileArr = Directory.GetFiles("FinancialReport\\" + yearmonth.ToString("yyMM"));
+                string[] fileArr = _fileHandling.directoryGetFiles("FinancialReport\\" + yearmonth.ToString("yyMM"));
                 foreach (string fileName in fileArr)
                 {
                     double dayTotal = 0;
-                    List<FinancialReport> dayCompile = JsonConvert.DeserializeObject<List<FinancialReport>>(File.ReadAllText(fileName));
+                    List<FinancialReport> dayCompile = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText(fileName));
                     foreach (FinancialReport FR in dayCompile)
                     {
                         dayTotal -= FR.payout;
@@ -57,16 +65,16 @@ namespace OnlineCasinoProjectConsole
                 for (int i = 1; i < 13; i++)
                 {
                     double monthTotal = 0;
-                    if (!Directory.Exists("FinancialReport\\" + year.ToString("yy") + i.ToString("00")))
+                    if (!_fileHandling.directoryExists("FinancialReport\\" + year.ToString("yy") + i.ToString("00")))
                     {
-                        monthCount -= monthCount;
+                        monthCount -= 1;
                         continue;
                     }
-                    string[] fileArr = Directory.GetFiles("FinancialReport\\" + year.ToString("yy") + i.ToString("00"));
+                    string[] fileArr = _fileHandling.directoryGetFiles("FinancialReport\\" + year.ToString("yy") + i.ToString("00"));
                     string monthFolder = "FinancialReport\\" + year.ToString("yy") + i.ToString("00");
                     foreach (string fileName in fileArr)
                     {
-                        List<FinancialReport> dayCompile = JsonConvert.DeserializeObject<List<FinancialReport>>(File.ReadAllText(fileName));
+                        List<FinancialReport> dayCompile = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText(fileName));
                         foreach (FinancialReport FR in dayCompile)
                         {
                             monthTotal -= FR.payout;
@@ -82,7 +90,7 @@ namespace OnlineCasinoProjectConsole
                 }
                 else
                 {
-                    Console.WriteLine("Files for the particular year does not exists.");
+                    Console.WriteLine("Files for the particular year does not exist.");
                 }
             }
             catch (IOException)
@@ -97,7 +105,7 @@ namespace OnlineCasinoProjectConsole
             try
             {
                 double dayTotal = 0;
-                List<FinancialReport> dayCompile = JsonConvert.DeserializeObject<List<FinancialReport>>(File.ReadAllText(fileName));
+                List<FinancialReport> dayCompile = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText(fileName));
                 foreach (FinancialReport FR in dayCompile)
                 {
                     dayTotal -= FR.payout;

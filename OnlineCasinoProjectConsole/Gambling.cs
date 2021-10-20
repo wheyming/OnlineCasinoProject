@@ -15,7 +15,18 @@ namespace OnlineCasinoProjectConsole
         char secondNum;
         char thirdNum;
         double winnings;
+
+        [JsonProperty]
         List<FinancialReport> amountList = new List<FinancialReport>();
+
+        private IFileHandling _fileHandling;
+
+        public Gambling(IFileHandling fileHandling)
+        {
+            _fileHandling = fileHandling;
+        }
+
+
 
         // int values are in ASCII so that when converted to char will be 0 to 9.
         public void playSlot(double betAmount, string username)
@@ -72,22 +83,21 @@ namespace OnlineCasinoProjectConsole
         }
 
         public void storeWinningsInfo(double payout, double betAmount, string username)
-
         {
             DateTime storeWinningsTime = DateTime.Now;
-            if (!Directory.Exists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM")))
+            if (!_fileHandling.directoryExists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM")))
             {
-                Directory.CreateDirectory("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM"));
+                _fileHandling.createDirectory("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM"));
             }
-            if (!Directory.Exists("FinancialReport\\" + storeWinningsTime.ToString("yyMM")))
+            if (!_fileHandling.directoryExists("FinancialReport\\" + storeWinningsTime.ToString("yyMM")))
             {
-                Directory.CreateDirectory("FinancialReport\\" + storeWinningsTime.ToString("yyMM"));
+               _fileHandling.createDirectory("FinancialReport\\" + storeWinningsTime.ToString("yyMM"));
             }
 
 
-            if (File.Exists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
+            if (_fileHandling.fileExists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
             {
-                amountList = JsonConvert.DeserializeObject<List<FinancialReport>>(File.ReadAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
+                amountList = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
             }
             else
             {
@@ -96,11 +106,11 @@ namespace OnlineCasinoProjectConsole
             FinancialReport financialReport = new FinancialReport(betAmount, payout);
             amountList.Add(financialReport);
             string jsonAmountList = JsonConvert.SerializeObject(amountList);
-            File.WriteAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
+            _fileHandling.writeAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
 
-            if (File.Exists("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
+            if (_fileHandling.fileExists("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
             {
-                amountList = JsonConvert.DeserializeObject<List<FinancialReport>>(File.ReadAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
+                amountList = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
             }
             else
             {
@@ -108,7 +118,7 @@ namespace OnlineCasinoProjectConsole
             }
             amountList.Add(financialReport);
             jsonAmountList = JsonConvert.SerializeObject(amountList);
-            File.WriteAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
+            _fileHandling.writeAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
         }
     }
 }

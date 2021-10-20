@@ -8,108 +8,146 @@ using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    class UserAuthentication
+    public class UserAuthentication
     {
         bool loginBool;
         bool duplicatebool;
         List<Gambler> gamblerList = new List<Gambler>();
 
+        private IFileHandling _fileHandling;
+
+        public UserAuthentication(IFileHandling fileHandling)
+        {
+            _fileHandling = fileHandling;
+        }
+
         public bool checkUsername(string username)
         {
-            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
+            try
             {
-                duplicatebool = false;
-            }
-            else
-            {
-                gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json"));
-                duplicatebool = false;
-                foreach (Gambler gambleruser in gamblerList)
+                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
                 {
-                    if (Equals(gambleruser.username, username))
+                    duplicatebool = false;
+                }
+                else
+                {
+                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
+                    duplicatebool = false;
+                    foreach (Gambler gambleruser in gamblerList)
                     {
-                        Console.WriteLine("Duplicate username.");
-                        duplicatebool = true;
-                        break;
+                        if (Equals(gambleruser.username, username))
+                        {
+                            Console.WriteLine("Duplicate username.");
+                            duplicatebool = true;
+                            break;
+                        }
                     }
                 }
+                return duplicatebool;
             }
-            return duplicatebool;
+            catch(IOException)
+            {
+                Console.WriteLine("Unable to find file.");
+                duplicatebool = true;
+                return duplicatebool;
+            }
         }
 
         public bool checkID(string idNumber)
         {
-            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
+            try
             {
-                duplicatebool = false;
-            }
-            else
-            {
-                duplicatebool = false;
-                foreach (Gambler gambleruser in gamblerList)
+                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
                 {
-                    if (Equals(gambleruser.idNumber, idNumber))
+                    duplicatebool = false;
+                }
+                else
+                {
+                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
+                    duplicatebool = false;
+                    foreach (Gambler gambleruser in gamblerList)
                     {
-                        Console.WriteLine("Duplicate idNumber.");
-                        duplicatebool = true;
-                        break;
+                        if (Equals(gambleruser.idNumber, idNumber))
+                        {
+                            Console.WriteLine("Duplicate idNumber.");
+                            duplicatebool = true;
+                            break;
+                        }
                     }
                 }
+                return duplicatebool;
             }
-            return duplicatebool;
+            catch (IOException)
+            {
+                Console.WriteLine("Unable to find file.");
+                duplicatebool = true;
+                return duplicatebool;
+            }
         }
 
         public bool checkPhoneNumber(string phoneNumber)
         {
-            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
+            try
             {
-                duplicatebool = false;
-            }
-            else
-            {
-                duplicatebool = false;
-                foreach (Gambler gambleruser in gamblerList)
+                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
                 {
-                    if (Equals(gambleruser.phoneNumber, phoneNumber))
+                    duplicatebool = false;
+                }
+                else
+                {
+                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
+                    duplicatebool = false;
+                    foreach (Gambler gambleruser in gamblerList)
                     {
-                        Console.WriteLine("Duplicate Phone Number.");
-                        duplicatebool = true;
-                        break;
+                        if (Equals(gambleruser.phoneNumber, phoneNumber))
+                        {
+                            Console.WriteLine("Duplicate Phone Number.");
+                            duplicatebool = true;
+                            break;
+                        }
                     }
                 }
+                return duplicatebool;
             }
-            return duplicatebool;
+            catch (IOException)
+            {
+                Console.WriteLine("Unable to find file.");
+                duplicatebool = true;
+                return duplicatebool;
+            }
         }
 
-        public void signup(string username, string idNumber, string phoneNumber, string password)
+        public string signup(string username, string idNumber, string phoneNumber, string password)
         {
-            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
+            if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
             {
                 Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
                 gamblerList.Add(gambler);
                 string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                File.WriteAllText("Gambler.json", gamblerListStr);
+                _fileHandling.writeAllText("Gambler.json", gamblerListStr);
+                return gamblerListStr;
             }
             else
             {
-                gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json"));
+                gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
                 Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
                 gamblerList.Add(gambler);
                 string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                File.WriteAllText("Gambler.json", gamblerListStr);
+                _fileHandling.writeAllText("Gambler.json", gamblerListStr);
+                return gamblerListStr;
             }
         }
 
         public bool login(string username, string password)
         {
-            if (JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json")) == null)
+            if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
             {
                 Console.WriteLine("Invalid username or password.");
                 loginBool = false;
             }
             else
             {
-                gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(File.ReadAllText("Gambler.json"));
+                gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
                 foreach (Gambler gambler in gamblerList)
                 {
                     if (Equals(gambler.username, username))
