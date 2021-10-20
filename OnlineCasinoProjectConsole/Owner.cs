@@ -53,15 +53,17 @@ namespace OnlineCasinoProjectConsole
             return loginBool;
         }
 
-        public void setPrizeModule(string givePrize)
+        public void setPrizeModule(int givePrize)
         {
-            if (givePrize.ToUpper() == "YES")
+            if (givePrize == 1)
             {
                 prizeModuleBool = true;
+                Console.WriteLine("Prize giving module has been activated.");
             }
-            if (givePrize.ToUpper() == "NO")
+            if (givePrize == 2)
             {
                 prizeModuleBool = false;
+                Console.WriteLine("Prize giving module has been deactivated.");
             }
             else
             {
