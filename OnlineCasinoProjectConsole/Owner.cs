@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    class Owner
+    public class Owner
     {
         [JsonProperty]
         string username { get; set; }
@@ -74,21 +74,24 @@ namespace OnlineCasinoProjectConsole
         /// 2: Do not allow jackpot.
         /// </summary>
         /// <param name="givePrize"></param>
-        public void setPrizeModule(int givePrize)
+        public bool setPrizeModule(int givePrize)
         {
             if (givePrize == 1)
             {
                 prizeModuleBool = true;
                 Console.WriteLine("Prize giving module has been activated.");
+                return prizeModuleBool;
             }
-            if (givePrize == 2)
+            else if (givePrize == 2)
             {
                 prizeModuleBool = false;
                 Console.WriteLine("Prize giving module has been deactivated.");
+                return prizeModuleBool;
             }
             else
             {
                 Console.WriteLine("Invalid input");
+                return prizeModuleBool;
             }
         }
 

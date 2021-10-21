@@ -98,7 +98,7 @@ namespace OnlineCasinoTesting
         [Theory]
         [InlineData("1", "2")]
         [InlineData("3", "4")]
-        public void loginTestFalse (string username, string password)
+        public void loginTestFalse(string username, string password)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
             var res = UA.login(username, password);
@@ -110,15 +110,34 @@ namespace OnlineCasinoTesting
         [InlineData("5", "5", "5", "5")]
         public void signUpTest(string username, string idNumber, string phoneNumber, string password)
         {
-            string gamblerListStr = "[{ \"username\":\"1\",\"idNumber\":\"1\",\"phoneNumber\":\"1\",\"password\":\"1\"}," +
-                "{ \"username\":\"2\",\"idNumber\":\"2\",\"phoneNumber\":\"2\",\"password\":\"2\"}," +
-                "{ \"username\":\"3\",\"idNumber\":\"3\",\"phoneNumber\":\"3\",\"password\":\"3\"}," +
-                "{ \"username\":\"4\",\"idNumber\":\"4\",\"phoneNumber\":\"4\",\"password\":\"4\"}," +
-                "{ \"username\":\"5\",\"idNumber\":\"5\",\"phoneNumber\":\"5\",\"password\":\"5\"}]";
+            string gamblerListStr = "[{\"username\":\"1\",\"idNumber\":\"1\",\"phoneNumber\":\"1\",\"password\":\"1\"}," +
+                "{\"username\":\"2\",\"idNumber\":\"2\",\"phoneNumber\":\"2\",\"password\":\"2\"}," +
+                "{\"username\":\"3\",\"idNumber\":\"3\",\"phoneNumber\":\"3\",\"password\":\"3\"}," +
+                "{\"username\":\"4\",\"idNumber\":\"4\",\"phoneNumber\":\"4\",\"password\":\"4\"}," +
+                "{\"username\":\"5\",\"idNumber\":\"5\",\"phoneNumber\":\"5\",\"password\":\"5\"}]";
+            _mockFileHandling.SetupAllProperties();
+            _mockFileHandling.Setup(t => t.writeAllText("Gambler.json", gamblerListStr)).Verifiable();
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            _mockFileHandling.Setup(t => t.writeAllText("Gambler.json", gamblerListStr));
             var res = UA.signup(username, idNumber, phoneNumber, password);
+            //_mockFileHandling.Verify(t => t.writeAllText("Gambler.json", gamblerListStr), Times.AtLeastOnce);
             Assert.Equal(res, gamblerListStr);
+            _mockFileHandling.Verify();
+        }
+
+        [Theory]
+        [InlineData("5", "5", "5", "5")]
+        public void signUpTestNull(string username, string idNumber, string phoneNumber, string password)
+        {
+            string gamblerJsonFileNull = "";
+            _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Returns(gamblerJsonFileNull);
+            string gamblerListStr = "[{\"username\":\"5\",\"idNumber\":\"5\",\"phoneNumber\":\"5\",\"password\":\"5\"}]";
+            _mockFileHandling.SetupAllProperties();
+            _mockFileHandling.Setup(t => t.writeAllText("Gambler.json", gamblerListStr)).Verifiable();
+            UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
+            var res = UA.signup(username, idNumber, phoneNumber, password);
+            //_mockFileHandling.Verify(t => t.writeAllText("Gambler.json", gamblerListStr), Times.AtLeastOnce);
+            Assert.Equal(res, gamblerListStr);
+            _mockFileHandling.Verify();
         }
 
 

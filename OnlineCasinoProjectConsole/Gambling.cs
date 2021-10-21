@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    class Gambling
+    public class Gambling
     {
         char firstNum;
         char secondNum;
@@ -20,29 +20,28 @@ namespace OnlineCasinoProjectConsole
         List<FinancialReport> amountList = new List<FinancialReport>();
 
         private IFileHandling _fileHandling;
+        private ICustomRandom _customRandom;
 
-        public Gambling(IFileHandling fileHandling)
+        public Gambling(IFileHandling fileHandling, ICustomRandom customRandom)
         {
             _fileHandling = fileHandling;
+            _customRandom = customRandom;
         }
 
-
-
         // int values are in ASCII so that when converted to char will be 0 to 9.
-        public void playSlot(double betAmount, string username)
-        {
+        public string playSlot(double betAmount, string username)
+        {            
             int[] slotnumbers = new int[] { 48, 49, 50, 51, 52, 53, 54, 56, 57 };
-            Random rand = new Random();
-            firstNum = Convert.ToChar(rand.Next(48, 57));
-            secondNum = Convert.ToChar(rand.Next(48, 57));
+            firstNum = Convert.ToChar(_customRandom.randomInt1(48, 57));
+            secondNum = Convert.ToChar(_customRandom.randomInt2(48, 57));
 
             if (Owner.prizeModuleBool == false && firstNum == '7' && secondNum == '7')
             {
-                thirdNum = Convert.ToChar(slotnumbers[rand.Next(slotnumbers.Length)]);
+                thirdNum = Convert.ToChar(slotnumbers[_customRandom.randomIntMax(slotnumbers.Length)]);
             }
             else
             {
-                thirdNum = Convert.ToChar(rand.Next(48, 57));
+                thirdNum = Convert.ToChar(_customRandom.randomInt3(48, 57));
             }
             Console.Write(firstNum);
             Thread.Sleep(500);
@@ -55,6 +54,7 @@ namespace OnlineCasinoProjectConsole
             Console.Write(thirdNum);
             string numberCombined = Convert.ToString(firstNum) + Convert.ToString(secondNum) + Convert.ToString(thirdNum);
             storeWinningsInfo(calculateWinningsSlot(numberCombined, betAmount), betAmount, username);
+            return numberCombined;
         }
 
         private double calculateWinningsSlot(string number, double betAmount)

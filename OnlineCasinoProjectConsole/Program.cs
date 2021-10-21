@@ -79,7 +79,8 @@ namespace OnlineCasinoProjectConsole
                                                         {
                                                             Console.WriteLine("How much money would you like to bet?");
                                                             int input2_4 = Convert.ToInt32(Console.ReadLine());
-                                                            Gambling gambling = new Gambling(FH);
+                                                            CustomRandom CR = new CustomRandom();
+                                                            Gambling gambling = new Gambling(FH, CR);
                                                             gambling.playSlot(input2_4, input2_1);
                                                             break;
                                                         }
@@ -130,6 +131,7 @@ namespace OnlineCasinoProjectConsole
                                     string input3_2 = Console.ReadLine();
                                     Owner owner = new Owner(FH);
                                     FinancialReport FR = new FinancialReport(FH);
+                                    DateConverter DC = new DateConverter();
                                     if (owner.ownerLogin(input3_1, input3_2) == true)
                                     {
                                         bool ownerLogin = true;
@@ -160,70 +162,99 @@ namespace OnlineCasinoProjectConsole
                                                         {
                                                             Console.WriteLine("Which day would you like to view the financial report for?");
                                                             string input3_5 = Console.ReadLine();
-                                                            if (DateTime.TryParse(input3_5, out DateTime input3_5a))
+                                                            if (DC.inputDayConvert(input3_5) != DateTime.MinValue)
                                                             {
-                                                                FR.generateFinancialReportDay(input3_5a);
-                                                            }
-                                                            else if (DateTime.TryParseExact(input3_5, "ddMMyyyy", CultureInfo.CurrentCulture, 0, out input3_5a))
-                                                            {
-                                                                FR.generateFinancialReportDay(input3_5a);
-                                                            }
-                                                            else if (DateTime.TryParseExact(input3_5, "ddMMyy", CultureInfo.CurrentCulture, 0, out input3_5a))
-                                                            {
-                                                                FR.generateFinancialReportDay(input3_5a);
+                                                               Console.WriteLine(input3_5);
+                                                               FR.generateFinancialReportDay(DC.inputDayConvert(input3_5)); 
                                                             }
                                                             else
                                                             {
-                                                                Console.WriteLine("Invalid Date format.");
+                                                                Console.WriteLine("Incorrect date format.");
                                                             }
+                                                            //if (DateTime.TryParse(input3_5, out DateTime input3_5a))
+                                                            //{
+                                                            //    FR.generateFinancialReportDay(input3_5a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_5, "ddMMyyyy", CultureInfo.CurrentCulture, 0, out input3_5a))
+                                                            //{
+                                                            //    FR.generateFinancialReportDay(input3_5a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_5, "ddMMyy", CultureInfo.CurrentCulture, 0, out input3_5a))
+                                                            //{
+                                                            //    FR.generateFinancialReportDay(input3_5a);
+                                                            //}
+                                                            //else
+                                                            //{
+                                                            //    Console.WriteLine("Invalid Date format.");
+                                                            //}
                                                             break;
                                                         }
                                                     case 3:
                                                         {
                                                             Console.WriteLine("Which month of the year would you like to view the financial report for?");
                                                             string input3_6 = Console.ReadLine();
-                                                            if (DateTime.TryParseExact(input3_6, "MMyyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_6a))
+                                                            if (DC.inputMonthConvert(input3_6) != DateTime.MinValue)
                                                             {
-                                                                FR.generateFinancialReportMonth(input3_6a);
-                                                            }
-                                                            else if (DateTime.TryParseExact(input3_6, "MMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            {
-                                                                FR.generateFinancialReportMonth(input3_6a);
-                                                            }
-                                                            else if (DateTime.TryParseExact(input3_6, "MMMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            {
-                                                                FR.generateFinancialReportMonth(input3_6a);
-                                                            }
-                                                            else if (DateTime.TryParseExact(input3_6, "yyMM", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            {
-                                                                FR.generateFinancialReportMonth(input3_6a);
-                                                            }
-                                                            else if (DateTime.TryParseExact(input3_6, "MMyy", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            {
-                                                                FR.generateFinancialReportMonth(input3_6a);
+                                                                FR.generateFinancialReportMonth(DC.inputMonthConvert(input3_6));
                                                             }
                                                             else
                                                             {
-                                                                Console.WriteLine("Invalid MonthYear format.");
+                                                                Console.WriteLine("Incorrect date format.");
                                                             }
+                                                            //if (DateTime.TryParseExact(input3_6, "MMyyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_6a))
+                                                            //{
+                                                            //    FR.generateFinancialReportMonth(input3_6a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_6, "MMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
+                                                            //{
+                                                            //    FR.generateFinancialReportMonth(input3_6a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_6, "MMM yy", CultureInfo.CurrentCulture, 0, out input3_6a))
+                                                            //{
+                                                            //    FR.generateFinancialReportMonth(input3_6a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_6, "MMMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
+                                                            //{
+                                                            //    FR.generateFinancialReportMonth(input3_6a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_6, "yyMM", CultureInfo.CurrentCulture, 0, out input3_6a))
+                                                            //{
+                                                            //    FR.generateFinancialReportMonth(input3_6a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_6, "MMyy", CultureInfo.CurrentCulture, 0, out input3_6a))
+                                                            //{
+                                                            //    FR.generateFinancialReportMonth(input3_6a);
+                                                            //}
+                                                            //else
+                                                            //{
+                                                            //    Console.WriteLine("Invalid MonthYear format.");
+                                                            //}
                                                             break;
                                                         }
                                                     case 4:
                                                         {
                                                             Console.WriteLine("Which year would you like to view the financial report for?");
                                                             string input3_7 = Console.ReadLine();
-                                                            if (DateTime.TryParseExact(input3_7, "yyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_7a))
+                                                            if (DC.inputYearConvert(input3_7) != DateTime.MinValue)
                                                             {
-                                                                FR.generateFinancialReportYear(input3_7a);
-                                                            }
-                                                            else if (DateTime.TryParseExact(input3_7, "yy", CultureInfo.CurrentCulture, 0, out input3_7a))
-                                                            {
-                                                                FR.generateFinancialReportYear(input3_7a);
+                                                                FR.generateFinancialReportYear(DC.inputYearConvert(input3_7));
                                                             }
                                                             else
                                                             {
-                                                                Console.WriteLine("Invalid Year format.");
+                                                                Console.WriteLine("Incorrect date format.");
                                                             }
+                                                            //if (DateTime.TryParseExact(input3_7, "yyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_7a))
+                                                            //{
+                                                            //    FR.generateFinancialReportYear(input3_7a);
+                                                            //}
+                                                            //else if (DateTime.TryParseExact(input3_7, "yy", CultureInfo.CurrentCulture, 0, out input3_7a))
+                                                            //{
+                                                            //    FR.generateFinancialReportYear(input3_7a);
+                                                            //}
+                                                            //else
+                                                            //{
+                                                            //    Console.WriteLine("Invalid Year format.");
+                                                            //}
                                                             break;
                                                         }
                                                     case 5:

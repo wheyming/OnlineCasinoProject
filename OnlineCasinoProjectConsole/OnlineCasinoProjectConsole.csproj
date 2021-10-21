@@ -59,14 +59,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateConverter.cs" />
     <Compile Include="FileHandling.cs" />
     <Compile Include="FinancialReport.cs" />
     <Compile Include="Gambler.cs" />
     <Compile Include="Gambling.cs" />
     <Compile Include="IFileHandling.cs" />
+    <Compile Include="ICustomRandom.cs" />
     <Compile Include="Owner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CustomRandom.cs" />
     <Compile Include="UserAuthentication.cs" />
   </ItemGroup>
   <ItemGroup>

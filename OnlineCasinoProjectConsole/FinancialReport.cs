@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    class FinancialReport
+    public class FinancialReport
     {
         public double betAmount { get; set; }
+
         public double payout { get; set; }
+
         public FinancialReport(double betAmount, double payout)
         {
             this.betAmount = betAmount;
@@ -27,14 +29,14 @@ namespace OnlineCasinoProjectConsole
         }
 
         public FinancialReport() // Required to prevent Json Exception in Gambling.storeWinningsInfo()
-        {           
+        {
         }
 
-        public void generateFinancialReportMonth(DateTime yearmonth)
+        public double generateFinancialReportMonth(DateTime yearmonth)
         {
+            double monthTotal = 0;
             try
             {
-                double monthTotal = 0;
                 string[] fileArr = _fileHandling.directoryGetFiles("FinancialReport\\" + yearmonth.ToString("yyMM"));
                 foreach (string fileName in fileArr)
                 {
@@ -54,14 +56,16 @@ namespace OnlineCasinoProjectConsole
             {
                 Console.WriteLine("File/Files for the particular month cannot be found.");
             }
+            return monthTotal;
         }
 
-        public void generateFinancialReportYear(DateTime year)
+        public double generateFinancialReportYear(DateTime year)
         {
+            double yearTotal = 0;
             try
             {
                 int monthCount = 12;
-                double yearTotal = 0;
+
                 for (int i = 1; i < 13; i++)
                 {
                     double monthTotal = 0;
@@ -97,14 +101,16 @@ namespace OnlineCasinoProjectConsole
             {
                 Console.WriteLine("File/Files for the particular year cannot be found.");
             }
+            return yearTotal;
         }
 
-        public void generateFinancialReportDay(DateTime date)
+        public double generateFinancialReportDay(DateTime date)
         {
             string fileName = "FinancialReport\\" + date.ToString("yyMM") + "\\" + date.ToString("yyyyMMdd") + ".json";
+            double dayTotal = 0;
             try
             {
-                double dayTotal = 0;
+
                 List<FinancialReport> dayCompile = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText(fileName));
                 foreach (FinancialReport FR in dayCompile)
                 {
@@ -117,6 +123,7 @@ namespace OnlineCasinoProjectConsole
             {
                 Console.WriteLine("File for this date cannot be found.");
             }
+            return dayTotal;
         }
     }
 }
