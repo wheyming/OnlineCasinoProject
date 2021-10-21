@@ -29,13 +29,13 @@ namespace OnlineCasinoProjectConsole
         }
 
         // int values are in ASCII so that when converted to char will be 0 to 9.
-        public string playSlot(double betAmount, string username)
+        public string playSlot(double betAmount, string username, bool prizeModuleBool)
         {            
             int[] slotnumbers = new int[] { 48, 49, 50, 51, 52, 53, 54, 56, 57 };
             firstNum = Convert.ToChar(_customRandom.randomInt1(48, 57));
             secondNum = Convert.ToChar(_customRandom.randomInt2(48, 57));
 
-            if (Owner.prizeModuleBool == false && firstNum == '7' && secondNum == '7')
+            if (prizeModuleBool == false && firstNum == '7' && secondNum == '7')
             {
                 thirdNum = Convert.ToChar(slotnumbers[_customRandom.randomIntMax(slotnumbers.Length)]);
             }
@@ -59,7 +59,7 @@ namespace OnlineCasinoProjectConsole
 
         private double calculateWinningsSlot(string number, double betAmount)
         {
-            if ((number[0] == 7) && (number[1] == 7) && (number[2] == 7))
+            if ((number[0] == '7') && (number[1] == '7') && (number[2] == '7'))
             {
                 winnings = betAmount * 7;
                 Console.WriteLine($"\nJACKPOT!! Congratulations. Your winnings is: {winnings}");

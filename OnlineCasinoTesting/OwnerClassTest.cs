@@ -32,7 +32,16 @@ namespace OnlineCasinoTesting
 
         [Theory]
         [InlineData("3", "2")]
-        public void ownerLoginTestFalse(string username, string password)
+        public void ownerLoginTestFalse1(string username, string password)
+        {
+            Owner ownerTest = new Owner(_mockFileHandling.Object);
+            var res = ownerTest.ownerLogin(username, password);
+            Assert.False(res);
+        }
+
+        [Theory]
+        [InlineData("1", "2")]
+        public void ownerLoginTestFalse2(string username, string password)
         {
             Owner ownerTest = new Owner(_mockFileHandling.Object);
             var res = ownerTest.ownerLogin(username, password);
@@ -41,7 +50,7 @@ namespace OnlineCasinoTesting
 
         [Theory]
         [InlineData("2", "2")]
-        public void ownerLoginFalse(string username, string password)
+        public void ownerLoginFalseNull(string username, string password)
         {
             string ownerJsonFile = "";
             _mockFileHandling.Setup(t => t.readAllText("Owner.json")).Returns(ownerJsonFile);

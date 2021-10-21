@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    class CustomRandom : ICustomRandom
+    public class CustomRandom : ICustomRandom
     {
         public int randomInt1(int minimum, int maximum)
         {

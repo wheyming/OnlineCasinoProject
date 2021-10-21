@@ -81,7 +81,7 @@ namespace OnlineCasinoProjectConsole
                                                             int input2_4 = Convert.ToInt32(Console.ReadLine());
                                                             CustomRandom CR = new CustomRandom();
                                                             Gambling gambling = new Gambling(FH, CR);
-                                                            gambling.playSlot(input2_4, input2_1);
+                                                            gambling.playSlot(input2_4, input2_1, Owner.prizeModuleBool);
                                                             break;
                                                         }
                                                     case 2:
@@ -171,22 +171,6 @@ namespace OnlineCasinoProjectConsole
                                                             {
                                                                 Console.WriteLine("Incorrect date format.");
                                                             }
-                                                            //if (DateTime.TryParse(input3_5, out DateTime input3_5a))
-                                                            //{
-                                                            //    FR.generateFinancialReportDay(input3_5a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_5, "ddMMyyyy", CultureInfo.CurrentCulture, 0, out input3_5a))
-                                                            //{
-                                                            //    FR.generateFinancialReportDay(input3_5a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_5, "ddMMyy", CultureInfo.CurrentCulture, 0, out input3_5a))
-                                                            //{
-                                                            //    FR.generateFinancialReportDay(input3_5a);
-                                                            //}
-                                                            //else
-                                                            //{
-                                                            //    Console.WriteLine("Invalid Date format.");
-                                                            //}
                                                             break;
                                                         }
                                                     case 3:
@@ -201,34 +185,6 @@ namespace OnlineCasinoProjectConsole
                                                             {
                                                                 Console.WriteLine("Incorrect date format.");
                                                             }
-                                                            //if (DateTime.TryParseExact(input3_6, "MMyyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_6a))
-                                                            //{
-                                                            //    FR.generateFinancialReportMonth(input3_6a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_6, "MMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            //{
-                                                            //    FR.generateFinancialReportMonth(input3_6a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_6, "MMM yy", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            //{
-                                                            //    FR.generateFinancialReportMonth(input3_6a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_6, "MMMM yyyy", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            //{
-                                                            //    FR.generateFinancialReportMonth(input3_6a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_6, "yyMM", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            //{
-                                                            //    FR.generateFinancialReportMonth(input3_6a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_6, "MMyy", CultureInfo.CurrentCulture, 0, out input3_6a))
-                                                            //{
-                                                            //    FR.generateFinancialReportMonth(input3_6a);
-                                                            //}
-                                                            //else
-                                                            //{
-                                                            //    Console.WriteLine("Invalid MonthYear format.");
-                                                            //}
                                                             break;
                                                         }
                                                     case 4:
@@ -243,18 +199,6 @@ namespace OnlineCasinoProjectConsole
                                                             {
                                                                 Console.WriteLine("Incorrect date format.");
                                                             }
-                                                            //if (DateTime.TryParseExact(input3_7, "yyyy", CultureInfo.CurrentCulture, 0, out DateTime input3_7a))
-                                                            //{
-                                                            //    FR.generateFinancialReportYear(input3_7a);
-                                                            //}
-                                                            //else if (DateTime.TryParseExact(input3_7, "yy", CultureInfo.CurrentCulture, 0, out input3_7a))
-                                                            //{
-                                                            //    FR.generateFinancialReportYear(input3_7a);
-                                                            //}
-                                                            //else
-                                                            //{
-                                                            //    Console.WriteLine("Invalid Year format.");
-                                                            //}
                                                             break;
                                                         }
                                                     case 5:
