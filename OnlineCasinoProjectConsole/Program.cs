@@ -164,7 +164,6 @@ namespace OnlineCasinoProjectConsole
                                                             string input3_5 = Console.ReadLine();
                                                             if (DC.inputDayConvert(input3_5) != DateTime.MinValue)
                                                             {
-                                                               Console.WriteLine(input3_5);
                                                                FR.generateFinancialReportDay(DC.inputDayConvert(input3_5)); 
                                                             }
                                                             else

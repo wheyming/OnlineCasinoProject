@@ -182,7 +182,6 @@ namespace OnlineCasinoTesting
         [InlineData("1")]
         public void checkUserNameTestException(string username)
         {
-            string gamblerJsonFileNull = "";
             IOException IO = new IOException();
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(IO);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
@@ -194,7 +193,6 @@ namespace OnlineCasinoTesting
         [InlineData("1")]
         public void checkIDTestException(string ID)
         {
-            string gamblerJsonFileNull = "";
             IOException IO = new IOException();
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(IO);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
@@ -206,7 +204,6 @@ namespace OnlineCasinoTesting
         [InlineData("1")]
         public void checkphoneNumberTestException(string phoneNumber)
         {
-            string gamblerJsonFileNull = "";
             IOException IO = new IOException();
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(IO);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
