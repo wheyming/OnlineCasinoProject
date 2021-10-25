@@ -17,14 +17,18 @@ namespace OnlineCasinoTesting
             string gamblerJsonFile = "[{ \"username\":\"1\",\"idNumber\":\"1\",\"phoneNumber\":\"1\",\"password\":\"1\"}," +
                 "{ \"username\":\"2\",\"idNumber\":\"2\",\"phoneNumber\":\"2\",\"password\":\"2\"}," +
                 "{ \"username\":\"3\",\"idNumber\":\"3\",\"phoneNumber\":\"3\",\"password\":\"3\"}," +
-                "{ \"username\":\"4\",\"idNumber\":\"4\",\"phoneNumber\":\"4\",\"password\":\"4\"}]";
+                "{ \"username\":\"4\",\"idNumber\":\"4\",\"phoneNumber\":\"4\",\"password\":\"4\"}," +
+                "{ \"username\":\"Test123\",\"idNumber\":\"S1234567S\",\"phoneNumber\":\"99999990\",\"password\":\"Test123!\"}]";
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Returns(gamblerJsonFile);
         }
 
 
         [Theory]
-        [InlineData("1")]
-        [InlineData("2")]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("ABC")]
+        [InlineData("ABC    CD")]
+        [InlineData("Test123")]
         public void checkUserNameTestTrue(string username)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
@@ -33,9 +37,8 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        [InlineData("ABC")]
+        [InlineData("Test12")]
+        [InlineData("Test3455")]
         public void checkUserNameTestFalse(string username)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
@@ -44,8 +47,11 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("ABC")]
         [InlineData("1")]
-        [InlineData("2")]
+        [InlineData("S1234567S")]
         public void checkIDTestTrue(string ID)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
@@ -54,9 +60,8 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        [InlineData("ABC")]
+        [InlineData("S1234566E")]
+        [InlineData("T9123993A")]
         public void checkIDTestFalse(string ID)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
@@ -65,8 +70,12 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("ABC")]
         [InlineData("1")]
-        [InlineData("2")]
+        [InlineData("912354A")]
+        [InlineData("99999990")]
         public void checkPhoneNumberTestTrue(string phoneNumber)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
@@ -75,14 +84,37 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        [InlineData("ABC")]
+        [InlineData("99999991")]
+        [InlineData("99999992")]
         public void checkPhoneNumberTestFalse(string phoneNumber)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
             var res = UA.checkPhoneNumber(phoneNumber);
             Assert.False(res);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("AbC")]
+        [InlineData("1")]
+        [InlineData("912354A")]
+        [InlineData("AvC@@##@")]
+        public void checkPasswordTestFalse(string password)
+        {
+            UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
+            var res = UA.checkPassword(password);
+            Assert.True(res);
+        }
+
+        [Theory]
+        [InlineData("ABC123!")]
+        [InlineData("12314AAA!")]
+        public void checkPasswordTestTrue(string password)
+        {
+            UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
+            var res = UA.checkPassword(password);
+            Assert.True(res);
         }
 
         [Theory]
@@ -114,6 +146,7 @@ namespace OnlineCasinoTesting
                 "{\"username\":\"2\",\"idNumber\":\"2\",\"phoneNumber\":\"2\",\"password\":\"2\"}," +
                 "{\"username\":\"3\",\"idNumber\":\"3\",\"phoneNumber\":\"3\",\"password\":\"3\"}," +
                 "{\"username\":\"4\",\"idNumber\":\"4\",\"phoneNumber\":\"4\",\"password\":\"4\"}," +
+                "{\"username\":\"Test123\",\"idNumber\":\"S1234567S\",\"phoneNumber\":\"99999990\",\"password\":\"Test123!\"}," +
                 "{\"username\":\"5\",\"idNumber\":\"5\",\"phoneNumber\":\"5\",\"password\":\"5\"}]";
             _mockFileHandling.SetupAllProperties();
             _mockFileHandling.Setup(t => t.writeAllText("Gambler.json", gamblerListStr)).Verifiable();
@@ -143,8 +176,8 @@ namespace OnlineCasinoTesting
 
 
         [Theory]
-        [InlineData("1")]
-        [InlineData("2")]
+        [InlineData("Test123")]
+        [InlineData("Happy123")]
         public void checkUserNameTestNullFalse(string username)
         {
             string gamblerJsonFileNull = "";
@@ -155,8 +188,8 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
-        [InlineData("1")]
-        [InlineData("2")]
+        [InlineData("S1234566E")]
+        [InlineData("T9123993A")]
         public void checkIDTestNullFalse(string ID)
         {
             string gamblerJsonFileNull = "";
@@ -167,8 +200,8 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
-        [InlineData("1")]
-        [InlineData("2")]
+        [InlineData("99999991")]
+        [InlineData("99999992")]
         public void checkPhoneNumberTestNullFalse(string phoneNumber)
         {
             string gamblerJsonFileNull = "";
@@ -177,6 +210,7 @@ namespace OnlineCasinoTesting
             var res = UA.checkPhoneNumber(phoneNumber);
             Assert.False(res);
         }
+
 
         [Theory]
         [InlineData("1")]
@@ -209,6 +243,17 @@ namespace OnlineCasinoTesting
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
             var res = UA.checkPhoneNumber(phoneNumber);
             Assert.True(res);
+        }
+
+        [Theory]
+        [InlineData("1", "2")]
+        [InlineData("3", "4")]
+        public void loginTestException(string username, string password)
+        {
+            _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(new IOException());
+            UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
+            var res = UA.login(username, password);
+            Assert.False(res);
         }
 
         [Theory]

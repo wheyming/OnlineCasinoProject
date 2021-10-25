@@ -46,9 +46,11 @@ namespace OnlineCasinoProjectConsole
                                     Console.WriteLine("Please input phone number.");
                                     input1_3 = Console.ReadLine();
                                 } while (UA.checkPhoneNumber(input1_3) == true);
-
-                                Console.WriteLine("Please input password.");
-                                input1_4 = Console.ReadLine();
+                                do
+                                {
+                                    Console.WriteLine("Please input password.");
+                                    input1_4 = Console.ReadLine();
+                                } while (UA.checkPassword(input1_4) == true);
                                 UA.signup(input1_1, input1_2, input1_3, input1_4);
                                 Console.WriteLine("New account has been registered.");
                                 break;
