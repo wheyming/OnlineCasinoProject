@@ -2,81 +2,66 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    public class UserAuthentication
+    /// <summary>
+    /// 
+    /// </summary>
+    public class UserAuthentication : IUserAuthentication
     {
-        bool loginBool;
         bool duplicatebool;
-        List<Gambler> gamblerList = new List<Gambler>();
 
         private IFileHandling _fileHandling;
-
         public UserAuthentication(IFileHandling fileHandling)
         {
             _fileHandling = fileHandling;
         }
 
+        public User CurrentUser { get; private set; }
         /// <summary>
         /// Criteria to check:
         /// Between 6 - 24
         /// No spaces
         /// </summary>
         /// <param name="username"></param>
-        /// <returns> bool: To check if we input is valid. </returns>
-        public bool checkUsername(string username)
+        /// <returns> UserNameResultType: Returns CheckUserName Return Type. </returns>
+        public UserNameResultType checkUsername(string username)
         {
+            UserNameResultType type = UserNameResultType.None;
             try
             {
                 duplicatebool = false;
                 if (username.Length < 6 || username.Length > 24)
                 {
-                    Console.WriteLine("Please create a username between 6 to 24 characters.");
-                    duplicatebool = true;
+                    type = UserNameResultType.UserNameLengthtIncorrect;
                 }
                 foreach (char character in username)
                 {
                     if (char.IsWhiteSpace(character))
                     {
-                        Console.WriteLine("Please create a username without space.");
-                        duplicatebool = true;
+                        type = UserNameResultType.UserNameContainsSpace;
                         break;
                     }
                 }
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json")))
                 {
-                }
-                else
-                {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambleruser in gamblerList)
+                    if (Equals(gambleruser.username, username))
                     {
-                        if (Equals(gambleruser.username, username))
-                        {
-                            Console.WriteLine("Duplicate username.");
-                            duplicatebool = true;
-                            break;
-                        }
+                        type = UserNameResultType.DuplicateUser;
+                        break;
                     }
                 }
-                return duplicatebool;
             }
             catch (IOException)
             {
-                Console.WriteLine("Unable to find file.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = UserNameResultType.UserNameDataAccessError;
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
-                Console.WriteLine("Null input.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = UserNameResultType.UnhandledUserError;
             }
+            return type;
         }
 
         /// <summary>
@@ -96,13 +81,13 @@ namespace OnlineCasinoProjectConsole
                     duplicatebool = true;
                     Console.WriteLine("Invalid ID Number");
                 }
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json")) == null)
                 {
                 }
                 else
                 {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambleruser in gamblerList)
+                    gamblerList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json"));
+                    foreach (User gambleruser in gamblerList)
                     {
                         if (Equals(gambleruser.idNumber, idNumber))
                         {
@@ -155,13 +140,12 @@ namespace OnlineCasinoProjectConsole
                         break;
                     }
                 }
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json")) == null)
                 {
                 }
                 else
                 {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambleruser in gamblerList)
+                    foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json")))
                     {
                         if (Equals(gambleruser.phoneNumber, phoneNumber))
                         {
@@ -277,14 +261,21 @@ namespace OnlineCasinoProjectConsole
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public string signup(string username, string idNumber, string phoneNumber, string password)
         {
             try
             {
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json")) == null)
                 {
-                    Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
+                    User gambler = new User(username, idNumber, phoneNumber, password);
                     gamblerList.Add(gambler);
                     string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
                     _fileHandling.writeAllText("Gambler.json", gamblerListStr);
@@ -292,8 +283,8 @@ namespace OnlineCasinoProjectConsole
                 }
                 else
                 {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
+                    gamblerList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json"));
+                    User gambler = new User(username, idNumber, phoneNumber, password);
                     gamblerList.Add(gambler);
                     string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
                     _fileHandling.writeAllText("Gambler.json", gamblerListStr);
@@ -307,26 +298,30 @@ namespace OnlineCasinoProjectConsole
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public bool login(string username, string password)
         {
             try
             {
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json")) == null)
                 {
                     Console.WriteLine("Invalid username or password.");
                     loginBool = false;
                 }
                 else
                 {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambler in gamblerList)
+                    foreach (User gambler in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("Gambler.json")))
                     {
                         if (Equals(gambler.username, username))
                         {
                             if (Equals(gambler.password, password))
                             {
-                                loginBool = true;
+                                CurrentUser = gambler;
                                 break;
                             }
                         }
@@ -349,12 +344,6 @@ namespace OnlineCasinoProjectConsole
                 return loginBool;
             }
         }
-
-
-        //linQ
-        //var user = gamblerList.First(x => x.username == username);
-        //if(user != null)
-        //    {
-        //    }
+    
     }
 }

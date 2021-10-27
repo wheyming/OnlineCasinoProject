@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
@@ -21,11 +17,13 @@ namespace OnlineCasinoProjectConsole
 
         private IFileHandling _fileHandling;
         private ICustomRandom _customRandom;
+        private ICasinoConfiguration _config;
 
-        public Gambling(IFileHandling fileHandling, ICustomRandom customRandom)
+        public Gambling(IFileHandling fileHandling, ICustomRandom customRandom, ICasinoConfiguration config)
         {
             _fileHandling = fileHandling;
             _customRandom = customRandom;
+            _config = config;
         }
 
         // int values are in ASCII so that when converted to char will be 0 to 9.

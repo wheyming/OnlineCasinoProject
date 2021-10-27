@@ -15,6 +15,7 @@ namespace OnlineCasinoProjectConsole
         static void Main(string[] args)
         {
             bool startupBool = true;
+            ICasinoConfiguration config = new CasinoConfiguration();
             do
             {
                 Console.WriteLine(DateTime.Now.ToString());
@@ -32,11 +33,35 @@ namespace OnlineCasinoProjectConsole
                     {
                         case 1:
                             {
-                                do
+                                bool insideMenu=true;
+                                while(insideMenu)
                                 {
                                     Console.WriteLine("Please input username.");
                                     input1_1 = Console.ReadLine();
-                                } while (UA.checkUsername(input1_1) == true);
+                                    UserNameResultType result= UA.checkUsername(input1_1);
+                                    switch(result)
+                                    {
+                                        case UserNameResultType.None:
+                                            insideMenu = false;
+                                            break;
+                                        case UserNameResultType.DuplicateUser:
+                                            Console.WriteLine("Duplicate username.");
+                                            break;
+                                        case UserNameResultType.UnhandledUserError:
+                                            Console.WriteLine("Unexpected Error.");
+                                            break;
+                                        case UserNameResultType.UserNameContainsSpace:
+                                            Console.WriteLine("Please create a username without space.");
+                                            break;
+                                        case UserNameResultType.UserNameDataAccessError:
+                                            Console.WriteLine("Unable to find file.");
+                                            break;
+                                        case UserNameResultType.UserNameLengthtIncorrect:
+                                            Console.WriteLine("Please create a username between 6 to 24 characters.");
+                                            break;
+                                    }
+                                }
+                                insideMenu = true;
                                 do
                                 {
                                     Console.WriteLine("Please input id number.");
@@ -83,7 +108,7 @@ namespace OnlineCasinoProjectConsole
                                                             Console.WriteLine("How much money would you like to bet?");
                                                             int input2_4 = Convert.ToInt32(Console.ReadLine());
                                                             CustomRandom CR = new CustomRandom();
-                                                            Gambling gambling = new Gambling(FH, CR);
+                                                            Gambling gambling = new Gambling(FH, CR, config);
                                                             gambling.playSlot(input2_4, input2_1, Owner.prizeModuleBool);
                                                             break;
                                                         }
@@ -179,7 +204,7 @@ namespace OnlineCasinoProjectConsole
                                                         {
                                                             Console.WriteLine("Which month of the year would you like to view the financial report for?");
                                                             string input3_6 = Console.ReadLine();
-                                                            if (DC.inputMonthConvert(input3_6) != DateTime.MinValue)
+                                                            if (DateConverter.inputMonthConvert(input3_6) != DateTime.MinValue)
                                                             {
                                                                 FR.generateFinancialReportMonth(DC.inputMonthConvert(input3_6));
                                                             }

@@ -1,14 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    public class Gambler
+    public class User
     {
 
         [JsonProperty]
@@ -19,15 +13,18 @@ namespace OnlineCasinoProjectConsole
         public string phoneNumber { get; private set; }
         [JsonProperty]
         public string password { get; private set; }
+        [JsonProperty]
+        public bool IsOwner { get; private set; }
 
-        public Gambler(string username, string idNumber, string phoneNumber, string password)
+        public User(string username, string idNumber, string phoneNumber, string password)
         {
             this.username = username;
             this.idNumber = idNumber;
             this.phoneNumber = phoneNumber;
             this.password = password;
+            IsOwner = false;
         }
-        public Gambler()
+        public User()
         {
         }
     }

@@ -16,7 +16,7 @@ namespace OnlineCasinoProjectConsole
         string password { get; set; }
 
         bool loginBool;
-        internal static bool prizeModuleBool { get; private set; }
+        //internal static bool prizeModuleBool { get; private set; }
         
         List<Owner> ownerList = new List<Owner>();
 
