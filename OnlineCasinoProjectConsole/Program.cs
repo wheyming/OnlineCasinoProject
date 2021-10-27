@@ -11,6 +11,7 @@ namespace OnlineCasinoProjectConsole
 {
     class Program
     {
+        // Test branch
         static void Main(string[] args)
         {
             bool startupBool = true;
@@ -70,7 +71,7 @@ namespace OnlineCasinoProjectConsole
                                         {
                                             Console.WriteLine($"Welcome {input2_1}");
                                             Console.WriteLine("Would you like to" +
-                                                "\n1.) Play slots?" +
+                                                "\n1.) Play Slots?" +
                                                 "\n2.) Logout?");
                                             try
                                             {
