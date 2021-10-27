@@ -30,7 +30,7 @@ namespace OnlineCasinoProjectConsole
 
         // int values are in ASCII so that when converted to char will be 0 to 9.
         public string playSlot(double betAmount, string username, bool prizeModuleBool)
-        {            
+        {
             int[] slotnumbers = new int[] { 48, 49, 50, 51, 52, 53, 54, 56, 57 };
             firstNum = Convert.ToChar(_customRandom.randomInt1(48, 57));
             secondNum = Convert.ToChar(_customRandom.randomInt2(48, 57));

@@ -280,22 +280,30 @@ namespace OnlineCasinoProjectConsole
 
         public string signup(string username, string idNumber, string phoneNumber, string password)
         {
-            if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+            try
             {
-                Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
-                gamblerList.Add(gambler);
-                string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                _fileHandling.writeAllText("Gambler.json", gamblerListStr);
-                return gamblerListStr;
+                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                {
+                    Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
+                    gamblerList.Add(gambler);
+                    string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
+                    _fileHandling.writeAllText("Gambler.json", gamblerListStr);
+                    return gamblerListStr;
+                }
+                else
+                {
+                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
+                    Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
+                    gamblerList.Add(gambler);
+                    string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
+                    _fileHandling.writeAllText("Gambler.json", gamblerListStr);
+                    return gamblerListStr;
+                }
             }
-            else
+            catch (IOException)
             {
-                gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
-                gamblerList.Add(gambler);
-                string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                _fileHandling.writeAllText("Gambler.json", gamblerListStr);
-                return gamblerListStr;
+                Console.WriteLine("File does not exist, contact administrator.");
+                return "";
             }
         }
 
@@ -336,7 +344,7 @@ namespace OnlineCasinoProjectConsole
             }
             catch (IOException)
             {
-                Console.WriteLine("File unavailable.");
+                Console.WriteLine("File does not exist, contact administrator.");
                 loginBool = false;
                 return loginBool;
             }
