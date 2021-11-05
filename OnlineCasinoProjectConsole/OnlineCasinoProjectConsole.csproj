@@ -54,6 +54,7 @@
     <Compile Include="PasswordResultType.cs" />
     <Compile Include="PhoneNumberResultType.cs" />
     <Compile Include="Report.cs" />
+    <Compile Include="SlotsResultType.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Gambling.cs" />
     <Compile Include="ICasinoConfiguration.cs" />

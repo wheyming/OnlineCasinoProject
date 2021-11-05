@@ -5,7 +5,7 @@
     /// </summary>
     public interface ICasinoConfiguration
     {
-        bool IsPrizeEnabled { get;}
+        bool IsPrizeEnabled { get; }
 
         /// <summary>
         /// 

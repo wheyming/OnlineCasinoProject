@@ -1,8 +1,7 @@
-using System;
-using Xunit;
 using Moq;
 using OnlineCasinoProjectConsole;
 using System.IO;
+using Xunit;
 
 namespace OnlineCasinoTesting
 {

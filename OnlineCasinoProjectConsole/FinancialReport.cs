@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
@@ -22,6 +19,10 @@ namespace OnlineCasinoProjectConsole
 
         private void GetLatestFinancialReports()
         {
+            if (!Directory.Exists("FinancialReport"))
+            {
+                Directory.CreateDirectory("FinancialReport");
+            }
             foreach (string dirPath in Directory.GetDirectories("FinancialReport"))
             {
                 foreach (string filePath in Directory.GetFiles(dirPath))
@@ -59,6 +60,9 @@ namespace OnlineCasinoProjectConsole
             catch (IOException)
             {
             }
+            catch (Exception)
+            {
+            }
             return monthlyFinancialReport;
         }
 
@@ -85,7 +89,7 @@ namespace OnlineCasinoProjectConsole
             double dailyFinancialReport = new double();
             try
             {
-                List<Report> filteredReports = _reportList.Where(x => x.Date == date).ToList();
+                List<Report> filteredReports = _reportList.Where(x => x.Date.ToShortDateString() == date.ToShortDateString()).ToList();
                 foreach (Report report in filteredReports)
                 {
                     dailyFinancialReport += (report.BetAmount - report.Payout);

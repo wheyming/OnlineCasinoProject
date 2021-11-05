@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace OnlineCasinoProjectConsole
 {
-    public class Gambling: IGambling
+    public class Gambling : IGambling
     {
 
         [JsonProperty]
@@ -25,59 +24,51 @@ namespace OnlineCasinoProjectConsole
         }
 
         // int values are in ASCII so that when converted to char will be 0 to 9.
-        public string PlaySlot(double betAmount, string username)
+        public (int[], double, SlotsResultType) PlaySlot(double betAmount, string username)
         {
-            int[] slotnumbers = new int[] { 48, 49, 50, 51, 52, 53, 54, 56, 57 };
-            char firstNum = Convert.ToChar(_customRandom.randomInt1(48, 57));
-            char secondNum = Convert.ToChar(_customRandom.randomInt2(48, 57));
-            char thirdNum;
+            int[] slotnumbers = new int[] { 0, 1, 2, 3, 4, 5, 6, 8, 9 };
+            int[] rolledNumber = new int[3];
+            rolledNumber[0] = _customRandom.randomInt1(0, 9);
+            rolledNumber[1] = _customRandom.randomInt2(0, 9);
 
-            if (_config.IsPrizeEnabled == false && firstNum == '7' && secondNum == '7')
+            if (_config.IsPrizeEnabled == false && rolledNumber[0] == 7 && rolledNumber[1] == 7)
             {
-                thirdNum = Convert.ToChar(slotnumbers[_customRandom.randomIntMax(slotnumbers.Length)]);
+                rolledNumber[2] = slotnumbers[_customRandom.randomIntMax(slotnumbers.Length)];
             }
             else
             {
-                thirdNum = Convert.ToChar(_customRandom.randomInt3(48, 57));
+                rolledNumber[2] = _customRandom.randomInt3(0, 9);
             }
-            Console.Write(firstNum);
-            Thread.Sleep(500);
-            Console.Write('.');
-            Thread.Sleep(500);
-            Console.Write(secondNum);
-            Thread.Sleep(500);
-            Console.Write('.');
-            Thread.Sleep(500);
-            Console.Write(thirdNum);
-            string numberCombined = Convert.ToString(firstNum) + Convert.ToString(secondNum) + Convert.ToString(thirdNum);
-            StoreWinningsInfo(CalculateWinningsSlot(numberCombined, betAmount), betAmount, username);
-            return numberCombined;
+            (double, SlotsResultType) winningsAndResultType = CalculateWinningsSlot(rolledNumber, betAmount);
+            StoreWinningsInfo(winningsAndResultType.Item1, betAmount, username);
+            return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2);
         }
 
-        private double CalculateWinningsSlot(string number, double betAmount)
+        private (double, SlotsResultType) CalculateWinningsSlot(int[] number, double betAmount)
         {
             double winnings;
+            SlotsResultType resultType;
             if ((number[0] == '7') && (number[1] == '7') && (number[2] == '7'))
             {
                 winnings = betAmount * 7;
-                Console.WriteLine($"\nJACKPOT!! Congratulations. Your winnings is: {winnings}");
+                resultType = SlotsResultType.JackPot;
             }
             else if ((number[0] == number[1]) && (number[1] == number[2]))
             {
                 winnings = betAmount * 3;
-                Console.WriteLine($"\nTRIPLE!! Congratulations. Your winnings is: {winnings}");
+                resultType = SlotsResultType.Triple;
             }
             else if ((number[0] == number[1]) || (number[1] == number[2]))
             {
                 winnings = betAmount * 2;
-                Console.WriteLine($"\nDOUBLE!! Congratulations. Your winnings is: {winnings}");
+                resultType = SlotsResultType.Double;
             }
             else
             {
                 winnings = 0;
-                Console.WriteLine($"\nUnfortunately, you did not win anything. Thank you for playing.");
+                resultType = SlotsResultType.None;
             }
-            return winnings;
+            return (winnings, resultType);
         }
 
         public void StoreWinningsInfo(double payout, double betAmount, string username)

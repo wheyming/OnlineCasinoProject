@@ -1,11 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace OnlineCasinoProjectConsole
 {
@@ -15,17 +11,17 @@ namespace OnlineCasinoProjectConsole
         {
             bool startupBool = true;
             ICasinoConfiguration config = new CasinoConfiguration();
+            IFileHandling FH = new FileHandling();
+            IUserAuthentication UA = new UserAuthentication(FH);
+            IFinancialReport FR = new FinancialReport(FH);
+            ICustomRandom CR = new CustomRandom();
+            IGambling gambling = new Gambling(FH, CR, config, FR); string input1_1;
+            string input1_2;
+            string input1_3;
+            string input1_4;
+            FR.ReportListInitialize();
             do
             {
-
-                string input1_1;
-                string input1_2;
-                string input1_3;
-                string input1_4;
-                FileHandling FH = new FileHandling();
-                UserAuthentication UA = new UserAuthentication(FH);
-                FinancialReport FR = new FinancialReport(FH);
-                FR.ReportListInitialize();
                 try
                 {
                     Console.WriteLine(DateTime.Now.ToString());
@@ -194,7 +190,6 @@ namespace OnlineCasinoProjectConsole
                                         {
                                             if (UA.CurrentUser.IsOwner)
                                             {
-                                                CasinoConfiguration CC = new CasinoConfiguration();
                                                 Console.WriteLine("\nWelcome Owner.");
                                                 Console.WriteLine("Would you like to" +
                                                     "\n1.) Set prize module?" +
@@ -213,7 +208,7 @@ namespace OnlineCasinoProjectConsole
                                                                     "\n1.) Activate prize giving module?" +
                                                                     "\n2.) Deactivate prize giving module?");
                                                                 bool input3_4 = Convert.ToBoolean(Console.ReadLine());
-                                                                CC.SetPrizeModuleStatus(input3_4);
+                                                                config.SetPrizeModuleStatus(input3_4);
                                                                 break;
                                                             }
                                                         case 2:
@@ -223,7 +218,7 @@ namespace OnlineCasinoProjectConsole
                                                                 DateTime tempDateDay = DateConverter.InputDayConvert(input3_5);
                                                                 if (tempDateDay != DateTime.MinValue)
                                                                 {
-                                                                    Console.WriteLine($"Earnings for {tempDateDay:dd MMMMM yyyy}: ${FR.GenerateFinancialReportDay(tempDateDay)}");
+                                                                    Console.WriteLine($"\nEarnings for {tempDateDay:dd MMMMM yyyy}: ${FR.GenerateFinancialReportDay(tempDateDay)}");
                                                                 }
                                                                 else
                                                                 {
@@ -239,6 +234,7 @@ namespace OnlineCasinoProjectConsole
                                                                 if (tempDateMonth != DateTime.MinValue)
                                                                 {
                                                                     List<double> monthValueList = FR.GenerateFinancialReportMonth(tempDateMonth);
+                                                                    Console.WriteLine("\n");
                                                                     for (int i = 1; i < 32; i++)
                                                                     {
                                                                         if (!(monthValueList[i] == 0.0))
@@ -262,6 +258,7 @@ namespace OnlineCasinoProjectConsole
                                                                 if (tempDateYear != DateTime.MinValue)
                                                                 {
                                                                     List<double> yearValueList = FR.GenerateFinancialReportYear(tempDateYear);
+                                                                    Console.WriteLine("\n");
                                                                     for (int i = 1; i < 13; i++)
                                                                     {
                                                                         if (!(yearValueList[i] == 0.0))
@@ -315,13 +312,46 @@ namespace OnlineCasinoProjectConsole
                                                             {
                                                                 Console.WriteLine("How much money would you like to bet?");
                                                                 int input2_4 = Convert.ToInt32(Console.ReadLine());
-                                                                CustomRandom CR = new CustomRandom();
-                                                                Gambling gambling = new Gambling(FH, CR, config, FR);
-                                                                gambling.PlaySlot(input2_4, input2_1);
+
+                                                                (int[], double, SlotsResultType) playSlotTuple = gambling.PlaySlot(input2_4, input2_1);
+                                                                Console.Write(playSlotTuple.Item1[0]);
+                                                                Thread.Sleep(500);
+                                                                Console.Write('.');
+                                                                Thread.Sleep(500);
+                                                                Console.Write(playSlotTuple.Item1[1]);
+                                                                Thread.Sleep(500);
+                                                                Console.Write('.');
+                                                                Thread.Sleep(500);
+                                                                Console.Write(playSlotTuple.Item1[2]);
+                                                                switch (playSlotTuple.Item3)
+                                                                {
+                                                                    case SlotsResultType.None:
+                                                                        {
+                                                                            Console.WriteLine($"\nUnfortunately, you did not win anything. Thank you for playing.");
+                                                                            break;
+                                                                        }
+                                                                    case SlotsResultType.Double:
+                                                                        {
+                                                                            Console.WriteLine($"\nDOUBLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}");
+                                                                            break;
+                                                                        }
+                                                                    case SlotsResultType.Triple:
+                                                                        {
+                                                                            Console.WriteLine($"\nTRIPLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}");
+                                                                            break;
+                                                                        }
+                                                                    case SlotsResultType.JackPot:
+                                                                        {
+                                                                            Console.WriteLine($"\nJACKPOT!! Congratulations. Your winnings are: {playSlotTuple.Item2}");
+                                                                            break;
+                                                                        }
+                                                                }
                                                                 break;
                                                             }
                                                         case 2:
                                                             {
+
+                                                                UA.Logout();
                                                                 loginBool = false;
                                                                 Console.WriteLine("Good bye.");
                                                                 break;
@@ -343,6 +373,10 @@ namespace OnlineCasinoProjectConsole
                                                 }
                                             }
                                         } while (loginBool == true);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Incorrect username or password.");
                                     }
                                     break;
                                 }

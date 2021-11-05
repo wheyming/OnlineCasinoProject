@@ -1,10 +1,5 @@
 ﻿using Moq;
 using OnlineCasinoProjectConsole;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace OnlineCasinoTesting
@@ -22,7 +17,7 @@ namespace OnlineCasinoTesting
         }
 
         [Theory]
-        [InlineData("1","1")]
+        [InlineData("1", "1")]
         public void ownerLoginTestTrue(string username, string password)
         {
             Owner ownerTest = new Owner(_mockFileHandling.Object);
