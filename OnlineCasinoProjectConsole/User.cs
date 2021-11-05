@@ -6,22 +6,22 @@ namespace OnlineCasinoProjectConsole
     {
 
         [JsonProperty]
-        public string username { get; private set; }
+        public string UserName { get; private set; }
         [JsonProperty]
-        public string idNumber { get; private set; }
+        public string IDNumber { get; private set; }
         [JsonProperty]
-        public string phoneNumber { get; private set; }
+        public string PhoneNumber { get; private set; }
         [JsonProperty]
-        public string password { get; private set; }
+        public string Password { get; private set; }
         [JsonProperty]
         public bool IsOwner { get; private set; }
 
         public User(string username, string idNumber, string phoneNumber, string password)
         {
-            this.username = username;
-            this.idNumber = idNumber;
-            this.phoneNumber = phoneNumber;
-            this.password = password;
+            UserName = username;
+            IDNumber = idNumber;
+            PhoneNumber = phoneNumber;
+            Password = password;
             IsOwner = false;
         }
         public User()

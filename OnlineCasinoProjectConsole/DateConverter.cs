@@ -5,7 +5,7 @@ namespace OnlineCasinoProjectConsole
 {
     public static class DateConverter
     {
-        public static DateTime inputDayConvert(string input3_5)
+        public static DateTime InputDayConvert(string input3_5)
         {
             if (DateTime.TryParse(input3_5, out DateTime input3_5a))
             {
@@ -25,7 +25,7 @@ namespace OnlineCasinoProjectConsole
             }
         }
 
-        public static DateTime inputMonthConvert(string input3_6)
+        public static DateTime InputMonthConvert(string input3_6)
         {
             if (DateTime.TryParse(input3_6, out DateTime input3_6a))
             {
@@ -49,7 +49,7 @@ namespace OnlineCasinoProjectConsole
             }
         }
 
-        public static DateTime inputYearConvert(string input3_7)
+        public static DateTime InputYearConvert(string input3_7)
         {
             if (DateTime.TryParse(input3_7, out DateTime input3_7a))
             {

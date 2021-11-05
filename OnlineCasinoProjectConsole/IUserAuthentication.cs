@@ -3,11 +3,12 @@
     public interface IUserAuthentication
     {
         User CurrentUser { get; }
-        UserNameResultType checkUsername(string username);
-        bool checkID(string idNumber);
-        bool checkPhoneNumber(string phoneNumber);
-        bool checkPassword(string password);
-        string signup(string username, string idNumber, string phoneNumber, string password);
-        bool login(string username, string password);
+        UserNameResultType CheckUserName(string username);
+        IdResultType CheckId(string idNumber);
+        PhoneNumberResultType CheckPhoneNumber(string phoneNumber);
+        PasswordResultType CheckPassword(string password);
+        bool SignUp(string username, string idNumber, string phoneNumber, string password);
+        bool Login(string username, string password);
+        void Logout();
     }
 }

@@ -3,7 +3,7 @@
     public enum UserNameResultType
     {
         DuplicateUser,
-        UserNameLengthtIncorrect,
+        UserNameLengthIncorrect,
         UserNameContainsSpace,
         UserNameDataAccessError,
         UnhandledUserError,

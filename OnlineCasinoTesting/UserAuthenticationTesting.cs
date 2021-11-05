@@ -32,7 +32,7 @@ namespace OnlineCasinoTesting
         public void checkUserNameTestTrue(string username)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkUsername(username);
+            var res = UA.CheckUserName(username);
             Assert.True(res);
         }
 
@@ -42,7 +42,7 @@ namespace OnlineCasinoTesting
         public void checkUserNameTestFalse(string username)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkUsername(username);
+            var res = UA.CheckUserName(username);
             Assert.False(res);
         }
 
@@ -55,7 +55,7 @@ namespace OnlineCasinoTesting
         public void checkIDTestTrue(string ID)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkID(ID);
+            var res = UA.CheckId(ID);
             Assert.True(res);
         }
 
@@ -65,7 +65,7 @@ namespace OnlineCasinoTesting
         public void checkIDTestFalse(string ID)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkID(ID);
+            var res = UA.CheckId(ID);
             Assert.False(res);
         }
 
@@ -79,7 +79,7 @@ namespace OnlineCasinoTesting
         public void checkPhoneNumberTestTrue(string phoneNumber)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkPhoneNumber(phoneNumber);
+            var res = UA.CheckPhoneNumber(phoneNumber);
             Assert.True(res);
         }
 
@@ -89,7 +89,7 @@ namespace OnlineCasinoTesting
         public void checkPhoneNumberTestFalse(string phoneNumber)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkPhoneNumber(phoneNumber);
+            var res = UA.CheckPhoneNumber(phoneNumber);
             Assert.False(res);
         }
 
@@ -103,7 +103,7 @@ namespace OnlineCasinoTesting
         public void checkPasswordTestFalse(string password)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkPassword(password);
+            var res = UA.CheckPassword(password);
             Assert.True(res);
         }
 
@@ -113,7 +113,7 @@ namespace OnlineCasinoTesting
         public void checkPasswordTestTrue(string password)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkPassword(password);
+            var res = UA.CheckPassword(password);
             Assert.True(res);
         }
 
@@ -123,7 +123,7 @@ namespace OnlineCasinoTesting
         public void loginTestTrue(string username, string password)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.login(username, password);
+            var res = UA.Login(username, password);
             Assert.True(res);
         }
 
@@ -133,7 +133,7 @@ namespace OnlineCasinoTesting
         public void loginTestFalse(string username, string password)
         {
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.login(username, password);
+            var res = UA.Login(username, password);
             Assert.False(res);
         }
 
@@ -151,7 +151,7 @@ namespace OnlineCasinoTesting
             _mockFileHandling.SetupAllProperties();
             _mockFileHandling.Setup(t => t.writeAllText("Gambler.json", gamblerListStr)).Verifiable();
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.signup(username, idNumber, phoneNumber, password);
+            var res = UA.SignUp(username, idNumber, phoneNumber, password);
             //_mockFileHandling.Verify(t => t.writeAllText("Gambler.json", gamblerListStr), Times.AtLeastOnce);
             Assert.Equal(gamblerListStr, res);
             _mockFileHandling.Verify();
@@ -167,7 +167,7 @@ namespace OnlineCasinoTesting
             _mockFileHandling.SetupAllProperties();
             _mockFileHandling.Setup(t => t.writeAllText("Gambler.json", gamblerListStr)).Verifiable();
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.signup(username, idNumber, phoneNumber, password);
+            var res = UA.SignUp(username, idNumber, phoneNumber, password);
             //_mockFileHandling.Verify(t => t.writeAllText("Gambler.json", gamblerListStr), Times.AtLeastOnce);
             Assert.Equal(gamblerListStr, res);
             _mockFileHandling.Verify();
@@ -183,7 +183,7 @@ namespace OnlineCasinoTesting
             string gamblerJsonFileNull = "";
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Returns(gamblerJsonFileNull);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkUsername(username);
+            var res = UA.CheckUserName(username);
             Assert.False(res);
         }
 
@@ -195,7 +195,7 @@ namespace OnlineCasinoTesting
             string gamblerJsonFileNull = "";
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Returns(gamblerJsonFileNull);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkID(ID);
+            var res = UA.CheckId(ID);
             Assert.False(res);
         }
 
@@ -207,7 +207,7 @@ namespace OnlineCasinoTesting
             string gamblerJsonFileNull = "";
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Returns(gamblerJsonFileNull);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkPhoneNumber(phoneNumber);
+            var res = UA.CheckPhoneNumber(phoneNumber);
             Assert.False(res);
         }
 
@@ -219,7 +219,7 @@ namespace OnlineCasinoTesting
             IOException IO = new IOException();
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(IO);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkUsername(username);
+            var res = UA.CheckUserName(username);
             Assert.True(res);
         }
 
@@ -230,7 +230,7 @@ namespace OnlineCasinoTesting
             IOException IO = new IOException();
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(IO);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkID(ID);
+            var res = UA.CheckId(ID);
             Assert.True(res);
         }
 
@@ -241,7 +241,7 @@ namespace OnlineCasinoTesting
             IOException IO = new IOException();
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(IO);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.checkPhoneNumber(phoneNumber);
+            var res = UA.CheckPhoneNumber(phoneNumber);
             Assert.True(res);
         }
 
@@ -252,7 +252,7 @@ namespace OnlineCasinoTesting
         {
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(new IOException());
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.login(username, password);
+            var res = UA.Login(username, password);
             Assert.False(res);
         }
 
@@ -264,7 +264,7 @@ namespace OnlineCasinoTesting
             string gamblerJsonFileNull = "";
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Returns(gamblerJsonFileNull);
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.login(username, password);
+            var res = UA.Login(username, password);
             Assert.False(res);
         }
 
@@ -275,7 +275,7 @@ namespace OnlineCasinoTesting
             _mockFileHandling.SetupAllProperties();
             _mockFileHandling.Setup(t => t.readAllText("Gambler.json")).Throws(new IOException());
             UserAuthentication UA = new UserAuthentication(_mockFileHandling.Object);
-            var res = UA.signup(username, idNumber, phoneNumber, password);
+            var res = UA.SignUp(username, idNumber, phoneNumber, password);
             Assert.Equal("", res);
             _mockFileHandling.Verify();
         }
