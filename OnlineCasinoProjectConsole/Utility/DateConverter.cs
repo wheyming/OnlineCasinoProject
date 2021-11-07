@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace OnlineCasinoProjectConsole
+namespace OnlineCasinoProjectConsole.Utility
 {
     public static class DateConverter
     {

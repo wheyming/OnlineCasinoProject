@@ -1,12 +1,14 @@
-﻿namespace OnlineCasinoProjectConsole
+﻿namespace CasinoWebAPI.Interfaces
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface ICasinoConfiguration
+    internal interface IConfigurationManager
     {
+        /// <summary>
+        /// 
+        /// </summary>
         bool IsPrizeEnabled { get; }
-
         /// <summary>
         /// 
         /// </summary>

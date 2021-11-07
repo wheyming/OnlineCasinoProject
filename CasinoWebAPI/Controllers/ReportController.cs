@@ -1,22 +1,31 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CasinoWebAPI.Interfaces;
+using CasinoWebAPI.Models;
+using CasinoWebAPI.Utility;
+using Newtonsoft.Json;
 
-namespace OnlineCasinoProjectConsole
+namespace CasinoWebAPI.Controllers
 {
-    public class FinancialReport : IFinancialReport
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class ReportController : IReportManager
     {
-
         private List<Report> _reportList;
-        private IFileHandling _fileHandling;
-
+        private readonly IFileManager _fileHandling;
+        /// <summary>
+        /// 
+        /// </summary>
         public void ReportListInitialize()
         {
             GetLatestFinancialReports();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         private void GetLatestFinancialReports()
         {
             if (!Directory.Exists("FinancialReport"))
@@ -27,30 +36,38 @@ namespace OnlineCasinoProjectConsole
             {
                 foreach (string filePath in Directory.GetFiles(dirPath))
                 {
-                    List<Report> fileReports = JsonConvert.DeserializeObject<List<Report>>(_fileHandling.readAllText(filePath));
-                    _reportList = _reportList.Concat(fileReports).ToList();
+                    List<Report> fileReports = JsonConvert.DeserializeObject<List<Report>>(_fileHandling.ReadAllText(filePath));
+                    if (fileReports != null) _reportList = _reportList.Concat(fileReports).ToList();
                 }
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="report"></param>
         public void UpdateReportList(Report report)
         {
             _reportList.Add(report);
         }
-
-
-        public FinancialReport(IFileHandling fileHandling)
+        /// <summary>
+        /// 
+        /// </summary>
+        public ReportController()
         {
-            _fileHandling = fileHandling;
+            _fileHandling = new FileManager();
             _reportList = new List<Report>();
         }
-
-        public List<double> GenerateFinancialReportMonth(DateTime monthyear)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="monthYear"></param>
+        /// <returns></returns>
+        public List<double> GenerateFinancialReportMonth(DateTime monthYear)
         {
             List<double> monthlyFinancialReport = new List<double>(new double[32]);
             try
             {
-                List<Report> filteredReports = _reportList.Where(x => x.Date.Year == monthyear.Year && x.Date.Month == monthyear.Month).ToList();
+                List<Report> filteredReports = _reportList.Where(x => x.Date.Year == monthYear.Year && x.Date.Month == monthYear.Month).ToList();
                 foreach (Report report in filteredReports)
                 {
                     monthlyFinancialReport[report.Date.Day] += report.BetAmount - report.Payout;
@@ -60,12 +77,13 @@ namespace OnlineCasinoProjectConsole
             catch (IOException)
             {
             }
-            catch (Exception)
-            {
-            }
             return monthlyFinancialReport;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
         public List<double> GenerateFinancialReportYear(DateTime year)
         {
             List<double> yearlyFinancialReport = new List<double>(new double[13]);
@@ -83,7 +101,11 @@ namespace OnlineCasinoProjectConsole
             }
             return yearlyFinancialReport;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public double GenerateFinancialReportDay(DateTime date)
         {
             double dailyFinancialReport = new double();

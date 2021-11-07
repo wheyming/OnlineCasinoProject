@@ -1,32 +1,38 @@
-﻿using System;
+﻿using OnlineCasinoProjectConsole.Utility;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using CasinoWebAPI.Common;
+using CasinoWebAPI.Controllers;
+using CasinoWebAPI.Interfaces;
 
 namespace OnlineCasinoProjectConsole
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        public static void Main(string[] args)
         {
             bool startupBool = true;
-            ICasinoConfiguration config = new CasinoConfiguration();
-            IFileHandling FH = new FileHandling();
-            IUserAuthentication UA = new UserAuthentication(FH);
-            IFinancialReport FR = new FinancialReport(FH);
-            ICustomRandom CR = new CustomRandom();
-            IGambling gambling = new Gambling(FH, CR, config, FR); string input1_1;
-            string input1_2;
-            string input1_3;
-            string input1_4;
-            FR.ReportListInitialize();
+            IConfigurationManager config = new ConfigurationController();
+            IAuthenticationManager ua = new AuthenticationController();
+            IReportManager fr = new ReportController();
+            IGamblingManager gambling = new GamblingController(config, fr);
+            fr.ReportListInitialize();
             do
             {
                 try
                 {
-                    Console.WriteLine(DateTime.Now.ToString());
+                    Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));
                     Console.WriteLine("Welcome, would you like to\n" +
-                        "1) Signup\n" +
+                        "1) Sign up\n" +
                         "2) Login?\n" +
                         "3) End Program?");
                     int input = Convert.ToInt32(Console.ReadLine());
@@ -35,11 +41,12 @@ namespace OnlineCasinoProjectConsole
                         case 1:
                             {
                                 bool insideMenu = true;
+                                string input11;
                                 do
                                 {
                                     Console.WriteLine("Please input username.");
-                                    input1_1 = Console.ReadLine();
-                                    UserNameResultType result = UA.CheckUserName(input1_1);
+                                    input11 = Console.ReadLine();
+                                    UserNameResultType result = ua.CheckUserName(input11);
                                     switch (result)
                                     {
                                         case UserNameResultType.None:
@@ -63,11 +70,12 @@ namespace OnlineCasinoProjectConsole
                                     }
                                 } while (insideMenu);
                                 insideMenu = true;
+                                string input12;
                                 do
                                 {
                                     Console.WriteLine("Please input id number.");
-                                    input1_2 = Console.ReadLine();
-                                    IdResultType result = UA.CheckId(input1_2);
+                                    input12 = Console.ReadLine();
+                                    IdResultType result = ua.CheckId(input12);
                                     switch (result)
                                     {
                                         case IdResultType.None:
@@ -98,11 +106,12 @@ namespace OnlineCasinoProjectConsole
                                     }
                                 } while (insideMenu);
                                 insideMenu = true;
+                                string input13;
                                 do
                                 {
                                     Console.WriteLine("Please input phone number.");
-                                    input1_3 = Console.ReadLine();
-                                    PhoneNumberResultType result = UA.CheckPhoneNumber(input1_3);
+                                    input13 = Console.ReadLine();
+                                    PhoneNumberResultType result = ua.CheckPhoneNumber(input13);
                                     switch (result)
                                     {
                                         case PhoneNumberResultType.None:
@@ -133,11 +142,12 @@ namespace OnlineCasinoProjectConsole
                                     }
                                 } while (insideMenu);
                                 insideMenu = true;
+                                string input14;
                                 do
                                 {
                                     Console.WriteLine("Please input password.");
-                                    input1_4 = Console.ReadLine();
-                                    PasswordResultType result = UA.CheckPassword(input1_4);
+                                    input14 = Console.ReadLine();
+                                    PasswordResultType result = ua.CheckPassword(input14);
                                     if (Equals(result & PasswordResultType.PasswordNoUpperCaseLetter, PasswordResultType.PasswordNoUpperCaseLetter))
                                     {
                                         Console.WriteLine("Please choose a password with at least one uppercase letter.");
@@ -171,7 +181,7 @@ namespace OnlineCasinoProjectConsole
                                         insideMenu = false;
                                     }
                                 } while (insideMenu);
-                                UA.SignUp(input1_1, input1_2, input1_3, input1_4);
+                                ua.SignUp(input11, input12, input13, input14);
                                 Console.WriteLine("New account has been registered.");
                                 break;
                             }
@@ -180,15 +190,15 @@ namespace OnlineCasinoProjectConsole
                                 try
                                 {
                                     Console.WriteLine("Username: ");
-                                    string input2_1 = Console.ReadLine();
+                                    string input21 = Console.ReadLine();
                                     Console.WriteLine("Password: ");
-                                    string input2_2 = Console.ReadLine();
-                                    if (UA.Login(input2_1, input2_2) == true)
+                                    string input22 = Console.ReadLine();
+                                    if (ua.Login(input21, input22))
                                     {
                                         bool loginBool = true;
                                         do
                                         {
-                                            if (UA.CurrentUser.IsOwner)
+                                            if (ua.CurrentUser.IsOwner)
                                             {
                                                 Console.WriteLine("\nWelcome Owner.");
                                                 Console.WriteLine("Would you like to" +
@@ -199,26 +209,26 @@ namespace OnlineCasinoProjectConsole
                                                     "\n5.) Log out.");
                                                 try
                                                 {
-                                                    int input3_3 = Convert.ToInt32(Console.ReadLine());
-                                                    switch (input3_3)
+                                                    int input33 = Convert.ToInt32(Console.ReadLine());
+                                                    switch (input33)
                                                     {
                                                         case 1:
                                                             {
                                                                 Console.WriteLine("Would you like to" +
                                                                     "\n1.) Activate prize giving module?" +
                                                                     "\n2.) Deactivate prize giving module?");
-                                                                bool input3_4 = Convert.ToBoolean(Console.ReadLine());
-                                                                config.SetPrizeModuleStatus(input3_4);
+                                                                bool input34 = Convert.ToBoolean(Console.ReadLine());
+                                                                config.SetPrizeModuleStatus(input34);
                                                                 break;
                                                             }
                                                         case 2:
                                                             {
                                                                 Console.WriteLine("Which day would you like to view the financial report for?");
-                                                                string input3_5 = Console.ReadLine();
-                                                                DateTime tempDateDay = DateConverter.InputDayConvert(input3_5);
+                                                                string input35 = Console.ReadLine();
+                                                                DateTime tempDateDay = DateConverter.InputDayConvert(input35);
                                                                 if (tempDateDay != DateTime.MinValue)
                                                                 {
-                                                                    Console.WriteLine($"\nEarnings for {tempDateDay:dd MMMMM yyyy}: ${FR.GenerateFinancialReportDay(tempDateDay)}");
+                                                                    Console.WriteLine($"\nEarnings for {tempDateDay:dd MMMMM yyyy}: ${fr.GenerateFinancialReportDay(tempDateDay)}");
                                                                 }
                                                                 else
                                                                 {
@@ -229,11 +239,11 @@ namespace OnlineCasinoProjectConsole
                                                         case 3:
                                                             {
                                                                 Console.WriteLine("Which month of the year would you like to view the financial report for?");
-                                                                string input3_6 = Console.ReadLine();
-                                                                DateTime tempDateMonth = DateConverter.InputMonthConvert(input3_6);
+                                                                string input36 = Console.ReadLine();
+                                                                DateTime tempDateMonth = DateConverter.InputMonthConvert(input36);
                                                                 if (tempDateMonth != DateTime.MinValue)
                                                                 {
-                                                                    List<double> monthValueList = FR.GenerateFinancialReportMonth(tempDateMonth);
+                                                                    List<double> monthValueList = fr.GenerateFinancialReportMonth(tempDateMonth);
                                                                     Console.WriteLine("\n");
                                                                     for (int i = 1; i < 32; i++)
                                                                     {
@@ -253,15 +263,15 @@ namespace OnlineCasinoProjectConsole
                                                         case 4:
                                                             {
                                                                 Console.WriteLine("Which year would you like to view the financial report for?");
-                                                                string input3_7 = Console.ReadLine();
-                                                                DateTime tempDateYear = DateConverter.InputYearConvert(input3_7);
+                                                                string input37 = Console.ReadLine();
+                                                                DateTime tempDateYear = DateConverter.InputYearConvert(input37);
                                                                 if (tempDateYear != DateTime.MinValue)
                                                                 {
-                                                                    List<double> yearValueList = FR.GenerateFinancialReportYear(tempDateYear);
+                                                                    List<double> yearValueList = fr.GenerateFinancialReportYear(tempDateYear);
                                                                     Console.WriteLine("\n");
                                                                     for (int i = 1; i < 13; i++)
                                                                     {
-                                                                        if (!(yearValueList[i] == 0.0))
+                                                                        if (yearValueList[i] != 0.0)
                                                                         {
                                                                             Console.WriteLine($"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)} {tempDateYear:yyyy}: ${yearValueList[i]}");
                                                                         }
@@ -276,7 +286,7 @@ namespace OnlineCasinoProjectConsole
                                                             }
                                                         case 5:
                                                             {
-                                                                UA.Logout();
+                                                                ua.Logout();
                                                                 loginBool = false;
                                                                 break;
                                                             }
@@ -299,21 +309,21 @@ namespace OnlineCasinoProjectConsole
                                             }
                                             else
                                             {
-                                                Console.WriteLine($"Welcome {input2_1}");
+                                                Console.WriteLine($"Welcome {input21}");
                                                 Console.WriteLine("Would you like to" +
                                                     "\n1.) Play Slots?" +
                                                     "\n2.) Logout?");
                                                 try
                                                 {
-                                                    int input2_3 = Convert.ToInt32(Console.ReadLine());
-                                                    switch (input2_3)
+                                                    int input23 = Convert.ToInt32(Console.ReadLine());
+                                                    switch (input23)
                                                     {
                                                         case 1:
                                                             {
                                                                 Console.WriteLine("How much money would you like to bet?");
-                                                                int input2_4 = Convert.ToInt32(Console.ReadLine());
+                                                                int input24 = Convert.ToInt32(Console.ReadLine());
 
-                                                                (int[], double, SlotsResultType) playSlotTuple = gambling.PlaySlot(input2_4, input2_1);
+                                                                (int[], double, SlotsResultType) playSlotTuple = gambling.PlaySlot(input24, input21);
                                                                 Console.Write(playSlotTuple.Item1[0]);
                                                                 Thread.Sleep(500);
                                                                 Console.Write('.');
@@ -351,7 +361,7 @@ namespace OnlineCasinoProjectConsole
                                                         case 2:
                                                             {
 
-                                                                UA.Logout();
+                                                                ua.Logout();
                                                                 loginBool = false;
                                                                 Console.WriteLine("Good bye.");
                                                                 break;
@@ -372,7 +382,7 @@ namespace OnlineCasinoProjectConsole
                                                     Console.WriteLine("Invalid input.\n");
                                                 }
                                             }
-                                        } while (loginBool == true);
+                                        } while (loginBool);
                                     }
                                     else
                                     {
@@ -397,8 +407,7 @@ namespace OnlineCasinoProjectConsole
                 {
                     Console.WriteLine("Invalid input.");
                 }
-            } while (startupBool == true);
+            } while (startupBool);
         }
-
     }
 }

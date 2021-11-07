@@ -1,23 +1,31 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using CasinoWebAPI.Common;
+using CasinoWebAPI.Interfaces;
+using CasinoWebAPI.Models;
+using CasinoWebAPI.Utility;
+using Newtonsoft.Json;
 
-namespace OnlineCasinoProjectConsole
+namespace CasinoWebAPI.Controllers
 {
     /// <summary>
     /// 
     /// </summary>
-    public class UserAuthentication : IUserAuthentication
+    internal class AuthenticationController : IAuthenticationManager
     {
-        private IFileHandling _fileHandling;
-        public UserAuthentication(IFileHandling fileHandling)
+        private readonly IFileManager _fileHandling;
+        /// <summary>
+        /// 
+        /// </summary>
+        internal AuthenticationController()
         {
-            _fileHandling = fileHandling;
+            _fileHandling = new FileManager();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public User CurrentUser { get; private set; }
-
         /// <summary>
         /// Criteria to check:
         /// Between 6 - 24
@@ -42,12 +50,17 @@ namespace OnlineCasinoProjectConsole
                         break;
                     }
                 }
-                foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
+
+                List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
+                if (userList != null)
                 {
-                    if (Equals(gambleruser.UserName, username))
+                    foreach (User gambler in userList)
                     {
-                        type = UserNameResultType.DuplicateUser;
-                        break;
+                        if (Equals(gambler.UserName, username))
+                        {
+                            type = UserNameResultType.DuplicateUser;
+                            break;
+                        }
                     }
                 }
             }
@@ -61,7 +74,6 @@ namespace OnlineCasinoProjectConsole
             }
             return type;
         }
-
         /// <summary>
         /// 'S' or 'T' for first alphabet
         /// Length is within 9
@@ -78,12 +90,17 @@ namespace OnlineCasinoProjectConsole
                 {
                     type = IdResultType.IdIncorrect;
                 }
-                foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
+
+                List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
+                if (userList != null)
                 {
-                    if (Equals(gambleruser.IDNumber, idNumber))
+                    foreach (User gambler in userList)
                     {
-                        type = IdResultType.DuplicateId;
-                        break;
+                        if (Equals(gambler.IDNumber, idNumber))
+                        {
+                            type = IdResultType.DuplicateId;
+                            break;
+                        }
                     }
                 }
             }
@@ -97,7 +114,6 @@ namespace OnlineCasinoProjectConsole
             }
             return type;
         }
-
         /// <summary>
         /// 8 Numbers
         /// </summary>
@@ -116,7 +132,6 @@ namespace OnlineCasinoProjectConsole
                 {
                     if (char.IsDigit(character))
                     {
-                        continue;
                     }
                     else
                     {
@@ -124,12 +139,17 @@ namespace OnlineCasinoProjectConsole
                         break;
                     }
                 }
-                foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
+
+                List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
+                if (userList != null)
                 {
-                    if (Equals(gambleruser.PhoneNumber, phoneNumber))
+                    foreach (User gambler in userList)
                     {
-                        type = PhoneNumberResultType.DuplicatePhoneNumber;
-                        break;
+                        if (Equals(gambler.PhoneNumber, phoneNumber))
+                        {
+                            type = PhoneNumberResultType.DuplicatePhoneNumber;
+                            break;
+                        }
                     }
                 }
             }
@@ -144,7 +164,6 @@ namespace OnlineCasinoProjectConsole
             }
             return type;
         }
-
         /// <summary>
         /// At least 1 upper, lower, number and special character
         /// No 3 consecutive same
@@ -156,7 +175,7 @@ namespace OnlineCasinoProjectConsole
             PasswordResultType type = PasswordResultType.None;
             try
             {
-                char[] specialchar = new char[] { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=', '_', '-', '{', '}', '[', ']', ':', ';', '"', '\'', '?', '<', '>', ',', '.' };
+                char[] specialChars = new char[] { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=', '_', '-', '{', '}', '[', ']', ':', ';', '"', '\'', '?', '<', '>', ',', '.' };
 
                 if (password.Length < 6 || password.Length > 24)
                 {
@@ -165,23 +184,19 @@ namespace OnlineCasinoProjectConsole
                 int j = 0;
                 int k = 0;
                 int l = 0;
-                for (int i = 0; i < password.Length; i++)
+                foreach (var t in password)
                 {
-                    if (Char.IsUpper(password[i]))
+                    if (Char.IsUpper(t))
                     {
                         j++;
                     }
-                    if (Char.IsLower(password[i]))
+                    if (Char.IsLower(t))
                     {
                         k++;
                     }
-                    if (Char.IsDigit(password[i]))
+                    if (Char.IsDigit(t))
                     {
                         l++;
-                    }
-                    else
-                    {
-                        continue;
                     }
                 }
                 if (j == 0)
@@ -202,16 +217,16 @@ namespace OnlineCasinoProjectConsole
                 bool q = true;
                 foreach (char c in password)
                 {
-                    for (int i = 0; i < specialchar.Length; i++)
+                    foreach (var t in specialChars)
                     {
-                        if (c == specialchar[i])
+                        if (c == t)
                         {
                             q = false;
                             break;
                         }
                     }
                 }
-                if (q == true)
+                if (q)
                 {
                     type |= PasswordResultType.PasswordThreeRepeatedCharacters;
                 }
@@ -229,7 +244,6 @@ namespace OnlineCasinoProjectConsole
             }
             return type;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -243,20 +257,20 @@ namespace OnlineCasinoProjectConsole
             try
             {
                 List<User> gamblerList = new List<User>();
-                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")) == null)
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json")) == null)
                 {
                     User gambler = new User(username, idNumber, phoneNumber, password);
                     gamblerList.Add(gambler);
                     string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                    _fileHandling.writeAllText("User.json", gamblerListStr);
+                    _fileHandling.WriteAllText("User.json", gamblerListStr);
                 }
                 else
                 {
-                    gamblerList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json"));
+                    gamblerList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
                     User gambler = new User(username, idNumber, phoneNumber, password);
-                    gamblerList.Add(gambler);
+                    gamblerList?.Add(gambler);
                     string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                    _fileHandling.writeAllText("User.json", gamblerListStr);
+                    _fileHandling.WriteAllText("User.json", gamblerListStr);
                 }
                 return true;
             }
@@ -265,7 +279,6 @@ namespace OnlineCasinoProjectConsole
                 return false;
             }
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -276,23 +289,29 @@ namespace OnlineCasinoProjectConsole
         {
             try
             {
-                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")) == null)
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json")) == null)
                 {
                     return false;
                 }
                 else
                 {
-                    foreach (User user in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
+                    List<User> userList =
+                        JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
+                    if (userList != null)
                     {
-                        if (Equals(user.UserName, username))
+                        foreach (User user in userList)
                         {
-                            if (Equals(user.Password, password))
+                            if (Equals(user.UserName, username))
                             {
-                                CurrentUser = user;
-                                return true;
+                                if (Equals(user.Password, password))
+                                {
+                                    CurrentUser = user;
+                                    return true;
+                                }
                             }
                         }
                     }
+
                     return false;
                 }
             }
@@ -301,11 +320,12 @@ namespace OnlineCasinoProjectConsole
                 return false;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Logout()
         {
             CurrentUser = null;
         }
-
     }
 }

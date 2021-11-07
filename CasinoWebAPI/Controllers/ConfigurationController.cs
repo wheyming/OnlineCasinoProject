@@ -1,9 +1,16 @@
-﻿namespace OnlineCasinoProjectConsole
-{
-    public class CasinoConfiguration : ICasinoConfiguration
-    {
-        public bool IsPrizeEnabled { get; private set; }
+﻿using CasinoWebAPI.Interfaces;
 
+namespace CasinoWebAPI.Controllers
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class ConfigurationController : IConfigurationManager
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsPrizeEnabled { get; private set; }
         /// <summary>
         /// 
         /// </summary>
