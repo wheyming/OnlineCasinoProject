@@ -1,4 +1,5 @@
 ﻿using CasinoWebAPI.Common;
+using System.Collections.Generic;
 
 namespace CasinoWebAPI.Interfaces
 {
@@ -13,6 +14,6 @@ namespace CasinoWebAPI.Interfaces
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        (int[], double, SlotsResultType) PlaySlot(double betAmount, string username);
+        (IList<int>, double, SlotsResultType) PlaySlot(double betAmount, string username);
     }
 }

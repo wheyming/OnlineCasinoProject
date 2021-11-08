@@ -1,4 +1,6 @@
-﻿namespace CasinoWebAPI.Interfaces
+﻿using System.Collections.Generic;
+
+namespace CasinoWebAPI.Interfaces
 {
     /// <summary>
     /// 
@@ -8,15 +10,13 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="maximum"></param>
         /// <returns></returns>
-        int GetRandomNumber(int maximum);
+        IList<int> RollRandomNumberPrizeActivated();
+
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="minimum"></param>
-        /// <param name="maximum"></param>
         /// <returns></returns>
-        int GetRandomNumber(int minimum, int maximum);
+        IList<int> RollRandomNumberPrizeNotActivated();
     }
 }

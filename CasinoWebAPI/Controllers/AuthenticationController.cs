@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using CasinoWebAPI.Common;
+﻿using CasinoWebAPI.Common;
 using CasinoWebAPI.Interfaces;
 using CasinoWebAPI.Models;
 using CasinoWebAPI.Utility;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace CasinoWebAPI.Controllers
 {

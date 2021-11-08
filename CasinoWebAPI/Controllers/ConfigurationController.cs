@@ -1,4 +1,5 @@
 ﻿using CasinoWebAPI.Interfaces;
+using System;
 
 namespace CasinoWebAPI.Controllers
 {
@@ -15,9 +16,20 @@ namespace CasinoWebAPI.Controllers
         /// 
         /// </summary>
         /// <param name="status"></param>
-        public void SetPrizeModuleStatus(bool status)
+        public void SetPrizeModuleStatus(int inputPrizeSetting)
         {
-            IsPrizeEnabled = status;
+            if (inputPrizeSetting == 1)
+            {
+                IsPrizeEnabled = true;
+            }
+            else if (inputPrizeSetting == 2)
+            {
+                IsPrizeEnabled = false;
+            }
+            else
+            {
+                throw new FormatException();
+            }
         }
     }
 }

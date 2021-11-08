@@ -13,6 +13,6 @@
         /// 
         /// </summary>
         /// <param name="status"></param>
-        void SetPrizeModuleStatus(bool status);
+        void SetPrizeModuleStatus(int inputPrizeSetting);
     }
 }

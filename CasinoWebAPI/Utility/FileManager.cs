@@ -1,5 +1,5 @@
-﻿using System.IO;
-using CasinoWebAPI.Interfaces;
+﻿using CasinoWebAPI.Interfaces;
+using System.IO;
 
 namespace CasinoWebAPI.Utility
 {

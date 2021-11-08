@@ -1,10 +1,10 @@
 ﻿using CasinoWebAPI.Common;
 using CasinoWebAPI.Interfaces;
 using CasinoWebAPI.Models;
+using CasinoWebAPI.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using CasinoWebAPI.Utility;
 
 namespace CasinoWebAPI.Controllers
 {
@@ -37,20 +37,16 @@ namespace CasinoWebAPI.Controllers
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        public (int[], double, SlotsResultType) PlaySlot(double betAmount, string username)
+        public (IList<int>, double, SlotsResultType) PlaySlot(double betAmount, string username)
         {
-            int[] slotNumbers = new int[] { 0, 1, 2, 3, 4, 5, 6, 8, 9 };
-            int[] rolledNumber = new int[3];
-            rolledNumber[0] = _customRandom.GetRandomNumber(0, 9);
-            rolledNumber[1] = _customRandom.GetRandomNumber(0, 9);
-
-            if (_config.IsPrizeEnabled == false && rolledNumber[0] == 7 && rolledNumber[1] == 7)
+            IList<int> rolledNumber = new List<int>();
+            if (_config.IsPrizeEnabled == false)
             {
-                rolledNumber[2] = slotNumbers[_customRandom.GetRandomNumber(slotNumbers.Length)];
+                rolledNumber = _customRandom.RollRandomNumberPrizeNotActivated();
             }
             else
             {
-                rolledNumber[2] = _customRandom.GetRandomNumber(0, 9);
+                rolledNumber = _customRandom.RollRandomNumberPrizeActivated();
             }
             (double, SlotsResultType) winningsAndResultType = CalculateWinningsSlot(rolledNumber, betAmount);
             StoreWinningsInfo(winningsAndResultType.Item1, betAmount, username);
@@ -62,7 +58,7 @@ namespace CasinoWebAPI.Controllers
         /// <param name="number"></param>
         /// <param name="betAmount"></param>
         /// <returns></returns>
-        private (double, SlotsResultType) CalculateWinningsSlot(int[] number, double betAmount)
+        private (double, SlotsResultType) CalculateWinningsSlot(IList<int> number, double betAmount)
         {
             double winnings;
             SlotsResultType resultType;
