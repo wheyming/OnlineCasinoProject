@@ -16,6 +16,7 @@ namespace CasinoWebAPI.Controllers
     {
         private List<Report> _reportList;
         private readonly IFileManager _fileHandling;
+
         /// <summary>
         /// 
         /// </summary>
@@ -23,6 +24,7 @@ namespace CasinoWebAPI.Controllers
         {
             GetLatestFinancialReports();
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -41,6 +43,7 @@ namespace CasinoWebAPI.Controllers
                 }
             }
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -49,6 +52,7 @@ namespace CasinoWebAPI.Controllers
         {
             _reportList.Add(report);
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -79,6 +83,7 @@ namespace CasinoWebAPI.Controllers
             }
             return monthlyFinancialReport;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -101,6 +106,7 @@ namespace CasinoWebAPI.Controllers
             }
             return yearlyFinancialReport;
         }
+
         /// <summary>
         /// 
         /// </summary>

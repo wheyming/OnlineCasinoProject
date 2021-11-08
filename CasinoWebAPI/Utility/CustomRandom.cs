@@ -18,10 +18,12 @@ namespace CasinoWebAPI.Utility
         /// <returns></returns>
         public IList<int> RollRandomNumberPrizeActivated()
         {
-            IList<int> numbers = new List<int>();
-            numbers.Add(randomGenerator.Next(9));
-            numbers.Add(randomGenerator.Next(9));
-            numbers.Add(randomGenerator.Next(9));
+            IList<int> numbers = new List<int>
+            {
+                randomGenerator.Next(9),
+                randomGenerator.Next(9),
+                randomGenerator.Next(9)
+            };
             return numbers;
         }
 
@@ -32,10 +34,12 @@ namespace CasinoWebAPI.Utility
         public IList<int> RollRandomNumberPrizeNotActivated()
         {
             int[] slotNumbers = new int[] { 0, 1, 2, 3, 4, 5, 6, 8, 9 };
-            IList<int> numbers = new List<int>();
-            numbers.Add(randomGenerator.Next(9));
-            numbers.Add(randomGenerator.Next(9));
-            numbers.Add(slotNumbers[randomGenerator.Next(slotNumbers.Length)]);
+            IList<int> numbers = new List<int>
+            {
+                randomGenerator.Next(9),
+                randomGenerator.Next(9),
+                slotNumbers[randomGenerator.Next(slotNumbers.Length)]
+            };
             return numbers;
         }
     }

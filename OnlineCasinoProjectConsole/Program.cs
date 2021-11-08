@@ -21,7 +21,7 @@ namespace OnlineCasinoProjectConsole
         public static void Main(string[] args)
         {
             bool startupBool = true;
-            CasinoViewModel mv = new CasinoViewModel();
+            ICasinoViewModel _mv = new CasinoViewModel();
             do
             {
                 try
@@ -40,9 +40,9 @@ namespace OnlineCasinoProjectConsole
                                 string input11;
                                 do
                                 {
-                                    Console.WriteLine("Please input username.");
+                                    Console.WriteLine("\nPlease input username.");
                                     input11 = Console.ReadLine();
-                                    string output = mv.CheckUserName(input11);
+                                    string output = _mv.CheckUserName(input11);
                                     if (!string.IsNullOrWhiteSpace(output))
                                         Console.WriteLine(output);
                                     else
@@ -52,9 +52,9 @@ namespace OnlineCasinoProjectConsole
                                 string input12;
                                 do
                                 {
-                                    Console.WriteLine("Please input id number.");
+                                    Console.WriteLine("\nPlease input id number.");
                                     input12 = Console.ReadLine();
-                                    string output = mv.CheckIDNumber(input12);
+                                    string output = _mv.CheckIDNumber(input12);
                                     if (!string.IsNullOrWhiteSpace(output))
                                         Console.WriteLine(output);
                                     else
@@ -64,9 +64,9 @@ namespace OnlineCasinoProjectConsole
                                 string input13;
                                 do
                                 {
-                                    Console.WriteLine("Please input phone number.");
+                                    Console.WriteLine("\nPlease input phone number.");
                                     input13 = Console.ReadLine();
-                                    string output = mv.CheckPhoneNumber(input13);
+                                    string output = _mv.CheckPhoneNumber(input13);
                                     if (!string.IsNullOrWhiteSpace(output))
                                         Console.WriteLine(output);
                                     else
@@ -76,16 +76,16 @@ namespace OnlineCasinoProjectConsole
                                 string input14;
                                 do
                                 {
-                                    Console.WriteLine("Please input password.");
+                                    Console.WriteLine("\nPlease input password.");
                                     input14 = Console.ReadLine();
-                                    IList<string> outputList = mv.CheckPassword(input14);
+                                    IList<string> outputList = _mv.CheckPassword(input14);
                                     if (!(outputList.Count == 0))
                                         foreach (string output in outputList)
                                             Console.WriteLine(output);
                                     else
                                         insideMenu = false;
                                 } while (insideMenu);
-                                string signUpOutput = mv.SignUp(input11, input12, input13, input14);
+                                string signUpOutput = _mv.SignUp(input11, input12, input13, input14);
                                 Console.WriteLine(signUpOutput);
                                 break;
                             }
@@ -97,7 +97,7 @@ namespace OnlineCasinoProjectConsole
                                     string input21 = Console.ReadLine();
                                     Console.WriteLine("Password: ");
                                     string input22 = Console.ReadLine();
-                                    (string, bool) checkLoginOutput = mv.CheckLogin(input21, input22);
+                                    (string, bool) checkLoginOutput = _mv.CheckLogin(input21, input22);
                                     if (!string.IsNullOrWhiteSpace(checkLoginOutput.Item1))
                                     {
                                         bool loginBool = true;
@@ -117,7 +117,7 @@ namespace OnlineCasinoProjectConsole
                                                                     "\n1.) Activate prize giving module?" +
                                                                     "\n2.) Deactivate prize giving module?");
                                                                 int input34 = Convert.ToInt32(Console.ReadLine());
-                                                                mv.SetPrizeModuleStatus(input34);
+                                                                _mv.SetPrizeModuleStatus(input34);
                                                                 break;
                                                             }
                                                         case 2:
@@ -125,7 +125,7 @@ namespace OnlineCasinoProjectConsole
                                                                 Console.WriteLine("Which day would you like to view the financial report for?");
                                                                 string input35 = Console.ReadLine();
                                                                 DateTime tempDateDay = DateConverter.InputDayConvert(input35);
-                                                                string dayOutput = mv.SeeDayFinancialReport(tempDateDay);
+                                                                string dayOutput = _mv.SeeDayFinancialReport(tempDateDay);
                                                                 Console.WriteLine(dayOutput);
                                                                 break;
                                                             }
@@ -134,7 +134,7 @@ namespace OnlineCasinoProjectConsole
                                                                 Console.WriteLine("Which month of the year would you like to view the financial report for?");
                                                                 string input36 = Console.ReadLine();
                                                                 DateTime tempDateMonth = DateConverter.InputMonthConvert(input36);
-                                                                IList<string> monthOutput = mv.SeeMonthFinancialReport(tempDateMonth);
+                                                                IList<string> monthOutput = _mv.SeeMonthFinancialReport(tempDateMonth);
                                                                 foreach(string report in monthOutput)
                                                                 {
                                                                     Console.WriteLine(report);
@@ -146,7 +146,7 @@ namespace OnlineCasinoProjectConsole
                                                                 Console.WriteLine("Which year would you like to view the financial report for?");
                                                                 string input37 = Console.ReadLine();
                                                                 DateTime tempDateYear = DateConverter.InputYearConvert(input37);
-                                                                IList<string> yearOutput = mv.SeeYearFinancialReport(tempDateYear);
+                                                                IList<string> yearOutput = _mv.SeeYearFinancialReport(tempDateYear);
                                                                 foreach(string report in yearOutput)
                                                                 {
                                                                     Console.WriteLine(report);
@@ -155,7 +155,7 @@ namespace OnlineCasinoProjectConsole
                                                             }
                                                         case 5:
                                                             {
-                                                                mv.LogOut();
+                                                                _mv.LogOut();
                                                                 loginBool = false;
                                                                 break;
                                                             }
@@ -188,7 +188,7 @@ namespace OnlineCasinoProjectConsole
                                                                 Console.WriteLine("How much money would you like to bet?");
                                                                 int input24 = Convert.ToInt32(Console.ReadLine());
 
-                                                                (IList<int>, string) playSlotTuple = mv.playSlot(input24, input21);
+                                                                (IList<int>, string) playSlotTuple = _mv.playSlot(input24, input21);
                                                                 Console.Write(playSlotTuple.Item1[0]);
                                                                 Thread.Sleep(500);
                                                                 Console.Write('.');
@@ -204,7 +204,7 @@ namespace OnlineCasinoProjectConsole
                                                         case 2:
                                                             {
 
-                                                                mv.LogOut();
+                                                                _mv.LogOut();
                                                                 loginBool = false;
                                                                 Console.WriteLine("Good bye.");
                                                                 break;

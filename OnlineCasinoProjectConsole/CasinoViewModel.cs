@@ -7,27 +7,32 @@ using System.Globalization;
 
 namespace OnlineCasinoProjectConsole
 {
-    internal class CasinoViewModel
+    internal class CasinoViewModel : ICasinoViewModel
     {
-        private IConfigurationManager config;
-        private IAuthenticationManager ua;
-        private IReportManager fr;
-        private IGamblingManager gambling;
+        private readonly IConfigurationManager _config;
+        private readonly IAuthenticationManager _ua;
+        private readonly IReportManager _fr;
+        private readonly IGamblingManager _gambling;
 
 
         internal CasinoViewModel()
         {
-            config = new ConfigurationController();
-            ua = new AuthenticationController();
-            fr = new ReportController();
-            gambling = new GamblingController(config, fr);
-            fr.ReportListInitialize();
+            _config = new ConfigurationController();
+            _ua = new AuthenticationController();
+            _fr = new ReportController();
+            _gambling = new GamblingController(_config, _fr);
+            _fr.ReportListInitialize();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public string CheckUserName(string userName)
         {
             string output = string.Empty;
-            UserNameResultType result = ua.CheckUserName(userName);
+            UserNameResultType result = _ua.CheckUserName(userName);
             switch (result)
             {
                 case UserNameResultType.None:
@@ -51,10 +56,15 @@ namespace OnlineCasinoProjectConsole
             return output;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="idNumber"></param>
+        /// <returns></returns>
         public string CheckIDNumber(string idNumber)
         {
             string output = string.Empty;
-            IdResultType result = ua.CheckId(idNumber);
+            IdResultType result = _ua.CheckId(idNumber);
             switch (result)
             {
                 case IdResultType.None:
@@ -75,10 +85,15 @@ namespace OnlineCasinoProjectConsole
             return output;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns></returns>
         public string CheckPhoneNumber(string phoneNumber)
         {
             string output = string.Empty;
-            PhoneNumberResultType result = ua.CheckPhoneNumber(phoneNumber);
+            PhoneNumberResultType result = _ua.CheckPhoneNumber(phoneNumber);
             switch (result)
             {
                 case PhoneNumberResultType.None:
@@ -109,10 +124,15 @@ namespace OnlineCasinoProjectConsole
             return output;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="passWord"></param>
+        /// <returns></returns>
         public IList<string> CheckPassword(string passWord)
         {
             IList<string> outputList = new List<string>();
-            PasswordResultType result = ua.CheckPassword(passWord);
+            PasswordResultType result = _ua.CheckPassword(passWord);
             if (Equals(result & PasswordResultType.PasswordNoUpperCaseLetter, PasswordResultType.PasswordNoUpperCaseLetter))
             {
                 outputList.Add("Please choose a password with at least one uppercase letter.");
@@ -147,20 +167,34 @@ namespace OnlineCasinoProjectConsole
             return outputList;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="passWord"></param>
+        /// <returns></returns>
         public string SignUp(string userName, string idNumber, string phoneNumber, string passWord)
         {
-            ua.SignUp(userName, idNumber, phoneNumber, passWord);
+            _ua.SignUp(userName, idNumber, phoneNumber, passWord);
             string output = "New account has been registered.";
             return output;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="passWord"></param>
+        /// <returns></returns>
         public (string, bool) CheckLogin(string userName, string passWord)
         {
             string output = string.Empty;
             bool isOwner = false;
-            if (ua.Login(userName, passWord))
+            if (_ua.Login(userName, passWord))
             {
-                if (ua.CurrentUser.IsOwner)
+                if (_ua.CurrentUser.IsOwner)
                 {
                     output = ("\nWelcome Owner." +
                         "\nWould you like to" +
@@ -182,17 +216,26 @@ namespace OnlineCasinoProjectConsole
             return (output, isOwner);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputPrizeSetting"></param>
         public void SetPrizeModuleStatus(int inputPrizeSetting)
         {
-            config.SetPrizeModuleStatus(inputPrizeSetting);
+            _config.SetPrizeModuleStatus(inputPrizeSetting);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputDateTime"></param>
+        /// <returns></returns>
         public string SeeDayFinancialReport(DateTime inputDateTime)
         {
             string output;
             if (inputDateTime != DateTime.MinValue)
             {
-                output = ($"\nEarnings for {inputDateTime:dd MMMMM yyyy}: ${fr.GenerateFinancialReportDay(inputDateTime)}");
+                output = ($"\nEarnings for {inputDateTime:dd MMMMM yyyy}: ${_fr.GenerateFinancialReportDay(inputDateTime)}");
             }
             else
             {
@@ -201,12 +244,17 @@ namespace OnlineCasinoProjectConsole
             return output;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputDateTime"></param>
+        /// <returns></returns>
         public IList<string> SeeMonthFinancialReport(DateTime inputDateTime)
         {
             IList<string> monthFinancialReport = new List<string>();
             if (inputDateTime != DateTime.MinValue)
             {
-                List<double> monthValueList = fr.GenerateFinancialReportMonth(inputDateTime);
+                List<double> monthValueList = _fr.GenerateFinancialReportMonth(inputDateTime);
                 monthFinancialReport.Add("\n");
                 for (int i = 1; i < 32; i++)
                 {
@@ -224,12 +272,17 @@ namespace OnlineCasinoProjectConsole
             return monthFinancialReport;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputDateTime"></param>
+        /// <returns></returns>
         public IList<string> SeeYearFinancialReport(DateTime inputDateTime)
         {
             IList<string> yearFinancialReport = new List<string>();
             if (inputDateTime != DateTime.MinValue)
             {
-                List<double> yearValueList = fr.GenerateFinancialReportYear(inputDateTime);
+                List<double> yearValueList = _fr.GenerateFinancialReportYear(inputDateTime);
                 yearFinancialReport.Add("\n");
                 for (int i = 1; i < 13; i++)
                 {
@@ -247,14 +300,23 @@ namespace OnlineCasinoProjectConsole
             return yearFinancialReport;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void LogOut()
         {
-            ua.Logout();
+            _ua.Logout();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="betAmount"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public (IList<int>, string) playSlot(int betAmount, string userName)
         {
-            (IList<int>, double, SlotsResultType) playSlotTuple = gambling.PlaySlot(betAmount, userName);
+            (IList<int>, double, SlotsResultType) playSlotTuple = _gambling.PlaySlot(betAmount, userName);
             (IList<int>, string) output;
             output.Item1 = playSlotTuple.Item1;
             output.Item2 = string.Empty;
