@@ -1,20 +1,26 @@
-﻿using CasinoWebAPI.Common;
-using CasinoWebAPI.Controllers;
-using CasinoWebAPI.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using CasinoWebAPI.Common;
+using CasinoWebAPI.Controllers;
+using CasinoWebAPI.Interfaces;
+using OnlineCasinoProjectConsole.Interfaces;
+using OnlineCasinoProjectConsole.Utility;
 
-namespace OnlineCasinoProjectConsole
+namespace OnlineCasinoProjectConsole.ViewModel
 {
+    /// <summary>
+    /// 
+    /// </summary>
     internal class CasinoViewModel : ICasinoViewModel
     {
         private readonly IConfigurationManager _config;
         private readonly IAuthenticationManager _ua;
         private readonly IReportManager _fr;
         private readonly IGamblingManager _gambling;
-
-
+        /// <summary>
+        /// 
+        /// </summary>
         internal CasinoViewModel()
         {
             _config = new ConfigurationController();
@@ -61,7 +67,7 @@ namespace OnlineCasinoProjectConsole
         /// </summary>
         /// <param name="idNumber"></param>
         /// <returns></returns>
-        public string CheckIDNumber(string idNumber)
+        public string CheckIdNumber(string idNumber)
         {
             string output = string.Empty;
             IdResultType result = _ua.CheckId(idNumber);
@@ -228,29 +234,24 @@ namespace OnlineCasinoProjectConsole
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputDateTime"></param>
+        /// <param name="inputDay"></param>
         /// <returns></returns>
-        public string SeeDayFinancialReport(DateTime inputDateTime)
+        public string SeeDayFinancialReport(string inputDay)
         {
-            string output;
-            if (inputDateTime != DateTime.MinValue)
-            {
-                output = ($"\nEarnings for {inputDateTime:dd MMMMM yyyy}: ${_fr.GenerateFinancialReportDay(inputDateTime)}");
-            }
-            else
-            {
-                output = "Incorrect date format.";
-            }
+            DateTime inputDateTime = DateConverter.InputDayConvert(inputDay);
+            var output = inputDateTime != DateTime.MinValue ? 
+                $"\nEarnings for {inputDateTime:dd MMMMM yyyy}: ${_fr.GenerateFinancialReportDay(inputDateTime)}" : "Incorrect date format.";
             return output;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputDateTime"></param>
+        /// <param name="inputMonth"></param>
         /// <returns></returns>
-        public IList<string> SeeMonthFinancialReport(DateTime inputDateTime)
+        public IList<string> SeeMonthFinancialReport(string inputMonth)
         {
+            DateTime inputDateTime = DateConverter.InputDayConvert(inputMonth);
             IList<string> monthFinancialReport = new List<string>();
             if (inputDateTime != DateTime.MinValue)
             {
@@ -258,7 +259,7 @@ namespace OnlineCasinoProjectConsole
                 monthFinancialReport.Add("\n");
                 for (int i = 1; i < 32; i++)
                 {
-                    if (!(monthValueList[i] == 0.0))
+                    if (monthValueList[i] != 0.0)
                     {
                         monthFinancialReport.Add($"{i} {inputDateTime:MMMM yyyy}: ${monthValueList[i]}");
                     }
@@ -275,10 +276,11 @@ namespace OnlineCasinoProjectConsole
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputDateTime"></param>
+        /// <param name="inputYear"></param>
         /// <returns></returns>
-        public IList<string> SeeYearFinancialReport(DateTime inputDateTime)
+        public IList<string> SeeYearFinancialReport(string inputYear)
         {
+            DateTime inputDateTime = DateConverter.InputDayConvert(inputYear);
             IList<string> yearFinancialReport = new List<string>();
             if (inputDateTime != DateTime.MinValue)
             {
@@ -314,7 +316,7 @@ namespace OnlineCasinoProjectConsole
         /// <param name="betAmount"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public (IList<int>, string) playSlot(int betAmount, string userName)
+        public (IList<int>, string) PlaySlot(int betAmount, string userName)
         {
             (IList<int>, double, SlotsResultType) playSlotTuple = _gambling.PlaySlot(betAmount, userName);
             (IList<int>, string) output;
@@ -324,7 +326,7 @@ namespace OnlineCasinoProjectConsole
             {
                 case SlotsResultType.None:
                     {
-                        output.Item2 = $"\nUnfortunately, you did not win anything. Thank you for playing.";
+                        output.Item2 = "\nUnfortunately, you did not win anything. Thank you for playing.";
                         break;
                     }
                 case SlotsResultType.Double:
@@ -344,6 +346,27 @@ namespace OnlineCasinoProjectConsole
                     }
             }
             return output;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="value"></param>
+        public void ParseInputString(string input, out int? value)
+        {
+            try
+            {
+                value = Convert.ToInt32(input);
+            }
+            catch (FormatException)
+            {
+                value = null;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                value = null;
+            }
         }
     }
 }

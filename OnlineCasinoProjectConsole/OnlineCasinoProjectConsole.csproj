@@ -52,8 +52,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CasinoViewModel.cs" />
-    <Compile Include="ICasinoViewModel.cs" />
+    <Compile Include="ViewModel\CasinoViewModel.cs" />
+    <Compile Include="Interfaces\ICasinoViewModel.cs" />
     <Compile Include="Utility\DateConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,5 +79,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
