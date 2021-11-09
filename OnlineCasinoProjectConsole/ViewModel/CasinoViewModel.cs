@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using CasinoWebAPI.Common;
+using Casino.Common;
 using CasinoWebAPI.Controllers;
 using CasinoWebAPI.Interfaces;
 using OnlineCasinoProjectConsole.Interfaces;
@@ -200,7 +200,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             bool isOwner = false;
             if (_ua.Login(userName, passWord))
             {
-                if (_ua.CurrentUser.IsOwner)
+                if ((bool)_ua.IsOwner())
                 {
                     output = ("\nWelcome Owner." +
                         "\nWould you like to" +

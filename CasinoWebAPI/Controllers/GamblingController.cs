@@ -1,4 +1,4 @@
-﻿using CasinoWebAPI.Common;
+﻿using Casino.Common;
 using CasinoWebAPI.Interfaces;
 using CasinoWebAPI.Models;
 using CasinoWebAPI.Utility;

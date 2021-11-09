@@ -1,4 +1,4 @@
-﻿using CasinoWebAPI.Common;
+﻿using Casino.Common;
 using CasinoWebAPI.Models;
 
 namespace CasinoWebAPI.Interfaces
@@ -52,6 +52,11 @@ namespace CasinoWebAPI.Interfaces
         /// <param name="password"></param>
         /// <returns></returns>
         bool Login(string username, string password);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        bool? IsOwner();
         /// <summary>
         /// 
         /// </summary>

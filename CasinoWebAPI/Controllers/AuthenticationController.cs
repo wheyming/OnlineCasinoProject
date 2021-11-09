@@ -1,4 +1,4 @@
-﻿using CasinoWebAPI.Common;
+﻿using Casino.Common;
 using CasinoWebAPI.Interfaces;
 using CasinoWebAPI.Models;
 using CasinoWebAPI.Utility;
@@ -326,6 +326,13 @@ namespace CasinoWebAPI.Controllers
         public void Logout()
         {
             CurrentUser = null;
+        }
+        public bool? IsOwner()
+        {
+            if (CurrentUser != null)
+                return CurrentUser.IsOwner;
+            else
+                return null;
         }
     }
 }

@@ -1,29 +1,25 @@
-﻿namespace CasinoWebAPI.Common
+﻿namespace Casino.Common
 {
     /// <summary>
     /// 
     /// </summary>
-    internal enum IdResultType
+    public enum SlotsResultType
     {
         /// <summary>
         /// 
         /// </summary>
-        DuplicateId,
+        None,
         /// <summary>
         /// 
         /// </summary>
-        IdIncorrect,
+        Double,
         /// <summary>
         /// 
         /// </summary>
-        IdDataAccessError,
+        Triple,
         /// <summary>
         /// 
         /// </summary>
-        UnhandledIdError,
-        /// <summary>
-        /// 
-        /// </summary>
-        None
+        JackPot
     }
 }

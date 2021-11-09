@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace CasinoWebAPI.Common
+namespace Casino.Common
 {
     /// <summary>
     /// 
     /// </summary>
     [Flags]
-    internal enum PasswordResultType
+    public enum PasswordResultType
     {
         /// <summary>
         /// 

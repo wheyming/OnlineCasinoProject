@@ -1,26 +1,26 @@
-﻿namespace CasinoWebAPI.Common
+﻿namespace Casino.Common
 {
     /// <summary>
     /// 
     /// </summary>
-    internal enum PhoneNumberResultType
+    public enum IdResultType
     {
         /// <summary>
         /// 
         /// </summary>
-        DuplicatePhoneNumber,
+        DuplicateId,
         /// <summary>
         /// 
         /// </summary>
-        PhoneNumberIncorrect,
+        IdIncorrect,
         /// <summary>
         /// 
         /// </summary>
-        PhoneNumberDataAccessError,
+        IdDataAccessError,
         /// <summary>
         /// 
         /// </summary>
-        UnhandledPhoneNumberError,
+        UnhandledIdError,
         /// <summary>
         /// 
         /// </summary>

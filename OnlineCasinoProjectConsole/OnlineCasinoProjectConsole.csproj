@@ -62,12 +62,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CasinoWebAPI\CasinoWebAPI.csproj">
-      <Project>{0c1ca4d8-687d-4687-8794-d17e30e94d3f}</Project>
-      <Name>CasinoWebAPI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
@@ -79,6 +73,15 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Casino.Common\Casino.Common.csproj">
+      <Project>{aba18a5f-c981-4b16-b483-60652e88ff39}</Project>
+      <Name>Casino.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CasinoWebAPI\CasinoWebAPI.csproj">
+      <Project>{0c1ca4d8-687d-4687-8794-d17e30e94d3f}</Project>
+      <Name>CasinoWebAPI</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
