@@ -7,6 +7,7 @@ namespace OnlineCasinoProjectConsole.Interfaces
     /// </summary>
     internal interface ICasinoViewModel
     {
+
         /// <summary>
         /// 
         /// </summary>
