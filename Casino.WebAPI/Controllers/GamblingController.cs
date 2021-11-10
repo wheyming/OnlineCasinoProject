@@ -34,7 +34,7 @@ namespace Casino.WebAPI.Controllers
             _financialReport = new ReportController();
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("playslot")]
         /// <summary>
         /// 

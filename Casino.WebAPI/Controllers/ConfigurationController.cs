@@ -14,7 +14,7 @@ namespace Casino.WebAPI.Controllers
         /// 
         /// </summary>
         public bool IsPrizeEnabled { get; private set; }
-        [HttpPost]
+        [HttpGet]
         [Route("setprizemodule")]
         /// <summary>
         /// 

@@ -254,7 +254,7 @@ namespace Casino.WebAPI.Controllers
             }
             return type;
         }
-        [HttpPost]
+        [HttpGet]
         [Route("signup")]
         /// <summary>
         /// 
