@@ -1,5 +1,4 @@
-﻿using OnlineCasinoProjectConsole;
-using System;
+﻿using System;
 using Xunit;
 
 namespace OnlineCasinoTesting

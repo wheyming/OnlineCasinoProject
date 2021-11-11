@@ -2,318 +2,190 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using OnlineCasinoProjectConsole.Interfaces;
+using OnlineCasinoProjectConsole.ViewModel;
 
 namespace OnlineCasinoProjectConsole
 {
-    class Program
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        public static void Main(string[] args)
         {
             bool startupBool = true;
-            ICasinoConfiguration config = new CasinoConfiguration();
-            IFileHandling FH = new FileHandling();
-            IUserAuthentication UA = new UserAuthentication(FH);
-            IFinancialReport FR = new FinancialReport(FH);
-            ICustomRandom CR = new CustomRandom();
-            IGambling gambling = new Gambling(FH, CR, config, FR); string input1_1;
-            string input1_2;
-            string input1_3;
-            string input1_4;
-            FR.ReportListInitialize();
+            ICasinoViewModel mv = new CasinoViewModel();
             do
             {
-                try
-                {
-                    Console.WriteLine(DateTime.Now.ToString());
-                    Console.WriteLine("Welcome, would you like to\n" +
-                        "1) Signup\n" +
-                        "2) Login?\n" +
-                        "3) End Program?");
-                    int input = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                Console.WriteLine("Welcome, would you like to\n" +
+                                  "1) Sign up\n" +
+                                  "2) Login?\n" +
+                                  "3) End Program?");
+                string inputStr = Console.ReadLine();
+                mv.ParseInputStringInt(inputStr, out var input);
+                if (input == null)
+                    Console.WriteLine("Invalid input." + Environment.NewLine);
+                else
                     switch (input)
                     {
                         case 1:
                             {
                                 bool insideMenu = true;
+                                string input11;
                                 do
                                 {
-                                    Console.WriteLine("Please input username.");
-                                    input1_1 = Console.ReadLine();
-                                    UserNameResultType result = UA.CheckUserName(input1_1);
-                                    switch (result)
-                                    {
-                                        case UserNameResultType.None:
-                                            insideMenu = false;
-                                            break;
-                                        case UserNameResultType.DuplicateUser:
-                                            Console.WriteLine("Duplicate Username.");
-                                            break;
-                                        case UserNameResultType.UnhandledUserError:
-                                            Console.WriteLine("Unexpected Error.");
-                                            break;
-                                        case UserNameResultType.UserNameContainsSpace:
-                                            Console.WriteLine("Please Create A Username Without Space.");
-                                            break;
-                                        case UserNameResultType.UserNameDataAccessError:
-                                            Console.WriteLine("Unable to find file.");
-                                            break;
-                                        case UserNameResultType.UserNameLengthIncorrect:
-                                            Console.WriteLine("Please create a username between 6 to 24 characters.");
-                                            break;
-                                    }
-                                } while (insideMenu);
-                                insideMenu = true;
-                                do
-                                {
-                                    Console.WriteLine("Please input id number.");
-                                    input1_2 = Console.ReadLine();
-                                    IdResultType result = UA.CheckId(input1_2);
-                                    switch (result)
-                                    {
-                                        case IdResultType.None:
-                                            {
-                                                insideMenu = false;
-                                                break;
-                                            }
-                                        case IdResultType.DuplicateId:
-                                            {
-                                                Console.WriteLine("Duplicate idNumber.");
-                                                break;
-                                            }
-                                        case IdResultType.IdIncorrect:
-                                            {
-                                                Console.WriteLine("Invalid ID Number");
-                                                break;
-                                            }
-                                        case IdResultType.IdDataAccessError:
-                                            {
-                                                Console.WriteLine("Unable to find file.");
-                                                break;
-                                            }
-                                        case IdResultType.UnhandledIdError:
-                                            {
-                                                Console.WriteLine("Unexpected Error.");
-                                                break;
-                                            }
-                                    }
-                                } while (insideMenu);
-                                insideMenu = true;
-                                do
-                                {
-                                    Console.WriteLine("Please input phone number.");
-                                    input1_3 = Console.ReadLine();
-                                    PhoneNumberResultType result = UA.CheckPhoneNumber(input1_3);
-                                    switch (result)
-                                    {
-                                        case PhoneNumberResultType.None:
-                                            {
-                                                insideMenu = false;
-                                                break;
-                                            }
-                                        case PhoneNumberResultType.DuplicatePhoneNumber:
-                                            {
-                                                Console.WriteLine("Duplicate Phone Number.");
-                                                break;
-                                            }
-                                        case PhoneNumberResultType.PhoneNumberIncorrect:
-                                            {
-                                                Console.WriteLine("Invalid Phone Number");
-                                                break;
-                                            }
-                                        case PhoneNumberResultType.PhoneNumberDataAccessError:
-                                            {
-                                                Console.WriteLine("Unable to find file.");
-                                                break;
-                                            }
-                                        case PhoneNumberResultType.UnhandledPhoneNumberError:
-                                            {
-                                                Console.WriteLine("Unexpected Error.");
-                                                break;
-                                            }
-                                    }
-                                } while (insideMenu);
-                                insideMenu = true;
-                                do
-                                {
-                                    Console.WriteLine("Please input password.");
-                                    input1_4 = Console.ReadLine();
-                                    PasswordResultType result = UA.CheckPassword(input1_4);
-                                    if (Equals(result & PasswordResultType.PasswordNoUpperCaseLetter, PasswordResultType.PasswordNoUpperCaseLetter))
-                                    {
-                                        Console.WriteLine("Please choose a password with at least one uppercase letter.");
-                                    }
-                                    if (Equals(result & PasswordResultType.PasswordNoLowerCaseLetter, PasswordResultType.PasswordNoLowerCaseLetter))
-                                    {
-                                        Console.WriteLine("Please choose a password with at least one lowercase letter.");
-                                    }
-                                    if (Equals(result & PasswordResultType.PasswordNoSpecialCharacter, PasswordResultType.PasswordNoSpecialCharacter))
-                                    {
-                                        Console.WriteLine("Please choose a password with at least one special character.");
-                                    }
-                                    if (Equals(result & PasswordResultType.PasswordNoDigits, PasswordResultType.PasswordNoDigits))
-                                    {
-                                        Console.WriteLine("Please choose a password with at least one digit.");
-                                    }
-                                    if (Equals(result & PasswordResultType.PasswordThreeRepeatedCharacters, PasswordResultType.PasswordThreeRepeatedCharacters))
-                                    {
-                                        Console.WriteLine("Please choose a password with at most two continuous repeated characters.");
-                                    }
-                                    if (Equals(result & PasswordResultType.IncorrectPasswordLength, PasswordResultType.IncorrectPasswordLength))
-                                    {
-                                        Console.WriteLine("Please choose a password between 6 to 24 characters.");
-                                    }
-                                    if (Equals(result & PasswordResultType.UnhandledPasswordError, PasswordResultType.UnhandledPasswordError))
-                                    {
-                                        Console.WriteLine("Please contact administrator.");
-                                    }
-                                    if (Equals(result & PasswordResultType.None, PasswordResultType.None))
-                                    {
+                                    Console.WriteLine("\nPlease input username.");
+                                    input11 = Console.ReadLine();
+                                    string output = mv.CheckUserName(input11);
+                                    if (!string.IsNullOrWhiteSpace(output))
+                                        Console.WriteLine(output);
+                                    else
                                         insideMenu = false;
-                                    }
                                 } while (insideMenu);
-                                UA.SignUp(input1_1, input1_2, input1_3, input1_4);
-                                Console.WriteLine("New account has been registered.");
+                                insideMenu = true;
+                                string input12;
+                                do
+                                {
+                                    Console.WriteLine("\nPlease input id number.");
+                                    input12 = Console.ReadLine();
+                                    string output = mv.CheckIdNumber(input12);
+                                    if (!string.IsNullOrWhiteSpace(output))
+                                        Console.WriteLine(output);
+                                    else
+                                        insideMenu = false;
+                                } while (insideMenu);
+                                insideMenu = true;
+                                string input13;
+                                do
+                                {
+                                    Console.WriteLine("\nPlease input phone number.");
+                                    input13 = Console.ReadLine();
+                                    string output = mv.CheckPhoneNumber(input13);
+                                    if (!string.IsNullOrWhiteSpace(output))
+                                        Console.WriteLine(output);
+                                    else
+                                        insideMenu = false;
+                                } while (insideMenu);
+                                insideMenu = true;
+                                string input14;
+                                do
+                                {
+                                    Console.WriteLine("\nPlease input password.");
+                                    input14 = Console.ReadLine();
+                                    IList<string> outputList = mv.CheckPassword(input14);
+                                    if (outputList.Count != 0)
+                                        foreach (string output in outputList)
+                                            Console.WriteLine(output);
+                                    else
+                                        insideMenu = false;
+                                } while (insideMenu);
+                                string signUpOutput = mv.SignUp(input11, input12, input13, input14);
+                                Console.WriteLine(signUpOutput);
                                 break;
                             }
                         case 2:
                             {
-                                try
+                                Console.WriteLine("Username: ");
+                                string input21 = Console.ReadLine();
+                                Console.WriteLine("Password: ");
+                                string input22 = Console.ReadLine();
+                                (string, bool?) checkLoginOutput = mv.CheckLogin(input21, input22);
+                                if (!string.IsNullOrWhiteSpace(checkLoginOutput.Item1))
                                 {
-                                    Console.WriteLine("Username: ");
-                                    string input2_1 = Console.ReadLine();
-                                    Console.WriteLine("Password: ");
-                                    string input2_2 = Console.ReadLine();
-                                    if (UA.Login(input2_1, input2_2) == true)
+                                    bool loginBool = true;
+                                    do
                                     {
-                                        bool loginBool = true;
-                                        do
+                                        Console.WriteLine(checkLoginOutput.Item1);
+                                        if (checkLoginOutput.Item2 == null)
                                         {
-                                            if (UA.CurrentUser.IsOwner)
-                                            {
-                                                Console.WriteLine("\nWelcome Owner.");
-                                                Console.WriteLine("Would you like to" +
-                                                    "\n1.) Set prize module?" +
-                                                    "\n2.) View financial report for a certain day?" +
-                                                    "\n3.) View financial report for a certain month?" +
-                                                    "\n4.) View financial report for a certain year?" +
-                                                    "\n5.) Log out.");
-                                                try
-                                                {
-                                                    int input3_3 = Convert.ToInt32(Console.ReadLine());
-                                                    switch (input3_3)
-                                                    {
-                                                        case 1:
-                                                            {
-                                                                Console.WriteLine("Would you like to" +
-                                                                    "\n1.) Activate prize giving module?" +
-                                                                    "\n2.) Deactivate prize giving module?");
-                                                                bool input3_4 = Convert.ToBoolean(Console.ReadLine());
-                                                                config.SetPrizeModuleStatus(input3_4);
-                                                                break;
-                                                            }
-                                                        case 2:
-                                                            {
-                                                                Console.WriteLine("Which day would you like to view the financial report for?");
-                                                                string input3_5 = Console.ReadLine();
-                                                                DateTime tempDateDay = DateConverter.InputDayConvert(input3_5);
-                                                                if (tempDateDay != DateTime.MinValue)
-                                                                {
-                                                                    Console.WriteLine($"\nEarnings for {tempDateDay:dd MMMMM yyyy}: ${FR.GenerateFinancialReportDay(tempDateDay)}");
-                                                                }
-                                                                else
-                                                                {
-                                                                    Console.WriteLine("Incorrect date format.");
-                                                                }
-                                                                break;
-                                                            }
-                                                        case 3:
-                                                            {
-                                                                Console.WriteLine("Which month of the year would you like to view the financial report for?");
-                                                                string input3_6 = Console.ReadLine();
-                                                                DateTime tempDateMonth = DateConverter.InputMonthConvert(input3_6);
-                                                                if (tempDateMonth != DateTime.MinValue)
-                                                                {
-                                                                    List<double> monthValueList = FR.GenerateFinancialReportMonth(tempDateMonth);
-                                                                    Console.WriteLine("\n");
-                                                                    for (int i = 1; i < 32; i++)
-                                                                    {
-                                                                        if (!(monthValueList[i] == 0.0))
-                                                                        {
-                                                                            Console.WriteLine($"{i} {tempDateMonth:MMMM yyyy}: ${monthValueList[i]}");
-                                                                        }
-                                                                    }
-                                                                    Console.WriteLine($"Earnings for {tempDateMonth:MMMMM yyyy}: ${monthValueList[0]}");
-                                                                }
-                                                                else
-                                                                {
-                                                                    Console.WriteLine("Incorrect date format.");
-                                                                }
-                                                                break;
-                                                            }
-                                                        case 4:
-                                                            {
-                                                                Console.WriteLine("Which year would you like to view the financial report for?");
-                                                                string input3_7 = Console.ReadLine();
-                                                                DateTime tempDateYear = DateConverter.InputYearConvert(input3_7);
-                                                                if (tempDateYear != DateTime.MinValue)
-                                                                {
-                                                                    List<double> yearValueList = FR.GenerateFinancialReportYear(tempDateYear);
-                                                                    Console.WriteLine("\n");
-                                                                    for (int i = 1; i < 13; i++)
-                                                                    {
-                                                                        if (!(yearValueList[i] == 0.0))
-                                                                        {
-                                                                            Console.WriteLine($"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)} {tempDateYear:yyyy}: ${yearValueList[i]}");
-                                                                        }
-                                                                    }
-                                                                    Console.WriteLine($"Earnings for {tempDateYear:yyyy}: ${yearValueList[0]}");
-                                                                }
-                                                                else
-                                                                {
-                                                                    Console.WriteLine("Incorrect date format.");
-                                                                }
-                                                                break;
-                                                            }
-                                                        case 5:
-                                                            {
-                                                                UA.Logout();
-                                                                loginBool = false;
-                                                                break;
-                                                            }
-                                                        default:
-                                                            {
-                                                                Console.WriteLine("Invalid input. Please only input 1 to 4");
-                                                                break;
-                                                            }
-                                                    }
-
-                                                }
-                                                catch (FormatException)
-                                                {
-                                                    Console.WriteLine("Invalid input A");
-                                                }
-                                                catch (ArgumentOutOfRangeException)
-                                                {
-                                                    Console.WriteLine("Invalid input B");
-                                                }
-                                            }
+                                            Console.WriteLine("Login error has occured.");
+                                        }
+                                        if (checkLoginOutput.Item2 == true)
+                                        {
+                                            inputStr = Console.ReadLine();
+                                            mv.ParseInputStringInt(inputStr, out var input33);
+                                            if (input == null)
+                                                Console.WriteLine("Invalid input." + Environment.NewLine);
                                             else
                                             {
-                                                Console.WriteLine($"Welcome {input2_1}");
-                                                Console.WriteLine("Would you like to" +
-                                                    "\n1.) Play Slots?" +
-                                                    "\n2.) Logout?");
-                                                try
+                                                switch (input33)
                                                 {
-                                                    int input2_3 = Convert.ToInt32(Console.ReadLine());
-                                                    switch (input2_3)
-                                                    {
-                                                        case 1:
-                                                            {
-                                                                Console.WriteLine("How much money would you like to bet?");
-                                                                int input2_4 = Convert.ToInt32(Console.ReadLine());
+                                                    case 1:
+                                                        {
+                                                            Console.WriteLine("Would you like to" +
+                                                                              "\n1.) Activate prize giving module?" +
+                                                                              "\n2.) Deactivate prize giving module?");
+                                                            int input34 = Convert.ToInt32(Console.ReadLine());
+                                                            string prizeOutput = mv.SetPrizeModuleStatus(input34);
+                                                            Console.WriteLine(prizeOutput);
+                                                            break;
+                                                        }
+                                                    case 2:
+                                                        {
+                                                            Console.WriteLine("Which day would you like to view the financial report for?");
+                                                            string input35 = Console.ReadLine();
+                                                            string dayOutput = mv.SeeDayFinancialReport(input35);
+                                                            Console.WriteLine(dayOutput);
+                                                            break;
+                                                        }
+                                                    case 3:
+                                                        {
+                                                            Console.WriteLine("Which month of the year would you like to view the financial report for?");
+                                                            string input36 = Console.ReadLine();
+                                                            IList<string> monthOutput = mv.SeeMonthFinancialReport(input36);
+                                                            foreach (string report in monthOutput)
+                                                                Console.WriteLine(report);
 
-                                                                (int[], double, SlotsResultType) playSlotTuple = gambling.PlaySlot(input2_4, input2_1);
+                                                            break;
+                                                        }
+                                                    case 4:
+                                                        {
+                                                            Console.WriteLine("Which year would you like to view the financial report for?");
+                                                            string input37 = Console.ReadLine();
+                                                            IList<string> yearOutput = mv.SeeYearFinancialReport(input37);
+                                                            foreach (string report in yearOutput)
+                                                                Console.WriteLine(report);
+
+                                                            break;
+                                                        }
+                                                    case 5:
+                                                        {
+                                                            mv.LogOut();
+                                                            loginBool = false;
+                                                            break;
+                                                        }
+                                                    default:
+                                                        {
+                                                            Console.WriteLine("Invalid input. Please only input 1 to 4");
+                                                            break;
+                                                        }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            inputStr = Console.ReadLine();
+                                            mv.ParseInputStringInt(inputStr, out var input23);
+                                            if (input == null)
+                                                Console.WriteLine("Invalid input." + Environment.NewLine);
+                                            else
+                                            {
+                                                switch (input23)
+                                                {
+                                                    case 1:
+                                                        {
+                                                            Console.WriteLine("How much money would you like to bet?");
+                                                            string input24 = (Console.ReadLine());
+                                                            mv.ParseInputStringDouble(input24, out var value);
+                                                            if (value != 0)
+                                                            {
+                                                                (IList<int>, string) playSlotTuple = mv.PlaySlot(value, input21);
                                                                 Console.Write(playSlotTuple.Item1[0]);
                                                                 Thread.Sleep(500);
                                                                 Console.Write('.');
@@ -323,68 +195,34 @@ namespace OnlineCasinoProjectConsole
                                                                 Console.Write('.');
                                                                 Thread.Sleep(500);
                                                                 Console.Write(playSlotTuple.Item1[2]);
-                                                                switch (playSlotTuple.Item3)
-                                                                {
-                                                                    case SlotsResultType.None:
-                                                                        {
-                                                                            Console.WriteLine($"\nUnfortunately, you did not win anything. Thank you for playing.");
-                                                                            break;
-                                                                        }
-                                                                    case SlotsResultType.Double:
-                                                                        {
-                                                                            Console.WriteLine($"\nDOUBLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}");
-                                                                            break;
-                                                                        }
-                                                                    case SlotsResultType.Triple:
-                                                                        {
-                                                                            Console.WriteLine($"\nTRIPLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}");
-                                                                            break;
-                                                                        }
-                                                                    case SlotsResultType.JackPot:
-                                                                        {
-                                                                            Console.WriteLine($"\nJACKPOT!! Congratulations. Your winnings are: {playSlotTuple.Item2}");
-                                                                            break;
-                                                                        }
-                                                                }
-                                                                break;
+                                                                Console.WriteLine(playSlotTuple.Item2);
                                                             }
-                                                        case 2:
+                                                            else
                                                             {
-
-                                                                UA.Logout();
-                                                                loginBool = false;
-                                                                Console.WriteLine("Good bye.");
-                                                                break;
+                                                                Console.WriteLine("Invalid input.");
                                                             }
-                                                        default:
-                                                            {
-                                                                Console.WriteLine("Invalid input.\n");
-                                                                break;
-                                                            }
-                                                    }
-                                                }
-                                                catch (FormatException)
-                                                {
-                                                    Console.WriteLine("Invalid input.\n");
-                                                }
-                                                catch (OverflowException)
-                                                {
-                                                    Console.WriteLine("Invalid input.\n");
+                                                            break;
+                                                        }
+                                                    case 2:
+                                                        {
+                                                            mv.LogOut();
+                                                            loginBool = false;
+                                                            Console.WriteLine("Good bye.");
+                                                            break;
+                                                        }
+                                                    default:
+                                                        {
+                                                            Console.WriteLine("Invalid input.\n");
+                                                            break;
+                                                        }
                                                 }
                                             }
-                                        } while (loginBool == true);
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Incorrect username or password.");
-                                    }
-                                    break;
+                                        }
+                                    } while (loginBool);
                                 }
-                                catch (FormatException)
-                                {
+                                else
                                     Console.WriteLine("Incorrect username or password.");
-                                    break;
-                                }
+                                break;
                             }
                         case 3:
                             {
@@ -392,13 +230,7 @@ namespace OnlineCasinoProjectConsole
                                 break;
                             }
                     }
-                }
-                catch (FormatException)
-                {
-                    Console.WriteLine("Invalid input.");
-                }
-            } while (startupBool == true);
+            } while (startupBool);
         }
-
     }
 }

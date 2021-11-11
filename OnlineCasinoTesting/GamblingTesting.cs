@@ -1,5 +1,4 @@
 ﻿using Moq;
-using OnlineCasinoProjectConsole;
 using System;
 using Xunit;
 
