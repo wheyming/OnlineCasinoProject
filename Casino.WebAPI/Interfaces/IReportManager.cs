@@ -17,7 +17,7 @@ namespace Casino.WebAPI.Interfaces
         /// 
         /// </summary>
         /// <param name="report"></param>
-        void UpdateReportList(Report report);
+        void UpdateReportList(double betAmount, double winnings, DateTime dateTime);
         /// <summary>
         /// 
         /// </summary>

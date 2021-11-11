@@ -1,4 +1,5 @@
 ﻿using Casino.WebAPI.Interfaces;
+using Casino.WebAPI.Models;
 using System;
 using System.Web.Http;
 
@@ -10,25 +11,23 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class ConfigurationController : ApiController, IConfigurationManager
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool IsPrizeEnabled { get; private set; }
         [HttpGet]
         [Route("setprizemodule")]
         /// <summary>
         /// 
         /// </summary>
         /// <param name="inputPrizeSetting"></param>
-        public void SetPrizeModuleStatus(int inputPrizeSetting)
+        public string SetPrizeModuleStatus(int inputPrizeSetting)
         {
             if (inputPrizeSetting == 1)
             {
-                IsPrizeEnabled = true;
+                //Set prizemodule in DB
+                return "PrizeGivingModule has been activated.";
             }
             else if (inputPrizeSetting == 2)
             {
-                IsPrizeEnabled = false;
+                //Set prizemodule in DB
+                return "PrizeGivingModule has been activated.";
             }
             else
             {

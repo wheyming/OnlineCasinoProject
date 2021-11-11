@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Casino.Common;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace Casino.WebAPI.Models
 {
@@ -23,10 +25,6 @@ namespace Casino.WebAPI.Models
         /// </summary>
         [JsonProperty]
         public DateTime Date { get; private set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public Report() { }
         /// <summary>
         /// 
         /// </summary>

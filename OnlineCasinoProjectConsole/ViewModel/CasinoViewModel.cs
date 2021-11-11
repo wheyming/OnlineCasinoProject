@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Net.Http;
 using Casino.Common;
 using OnlineCasinoProjectConsole.Interfaces;
@@ -20,9 +21,17 @@ namespace OnlineCasinoProjectConsole.ViewModel
         internal CasinoViewModel()
         {
             _casinoClient = new HttpClient();
+#if DEBUG
+            _casinoClient.BaseAddress = new Uri("https://localhost:44353/");
+#else
             _casinoClient.BaseAddress = new Uri("http://mycasino.me");
+#endif
             var responseTask = _casinoClient.GetAsync("api/financialreport/initialize");
             responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+            }
         }
 
         /// <summary>
@@ -215,10 +224,10 @@ namespace OnlineCasinoProjectConsole.ViewModel
         public string SignUp(string userName, string idNumber, string phoneNumber, string passWord)
         {
             string output = string.Empty;
-            var responseTask = _casinoClient.GetAsync("api/Authentication/signup?userName=" + userName +
+            var responseTask = _casinoClient.GetAsync("api/Authentication/signup?username=" + userName +
                 "&idNumber=" + idNumber +
                 "&phoneNumber=" + phoneNumber +
-                "&passWord=" + passWord);
+                "&password=" + passWord);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -245,32 +254,22 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <param name="userName"></param>
         /// <param name="passWord"></param>
         /// <returns></returns>
-        public (string, bool) CheckLogin(string userName, string passWord)
+        public (string, bool?) CheckLogin(string userName, string passWord)
         {
             string output = string.Empty;
-            bool isOwner = false;           
-            bool isLoginSuccess = false;
+            (bool?,bool?) isLoginSuccess = (false, false);
             var responseTask = _casinoClient.GetAsync("api/Authentication/login?username=" + userName + "&password=" + passWord);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
+                var readTask = result.Content.ReadAsAsync<(bool?,bool?)>();
                 readTask.Wait();
                 isLoginSuccess = readTask.Result;
             }
-            if (isLoginSuccess)
+            if (isLoginSuccess.Item1 == true)
             {
-                responseTask = _casinoClient.GetAsync("isowner");
-                responseTask.Wait();
-                result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readTask = result.Content.ReadAsAsync<bool?>();
-                    readTask.Wait();
-                    isOwner = (bool)readTask.Result;
-                }
-                if (isOwner)
+                if (isLoginSuccess.Item2 == true)
                 {
                     output = ("\nWelcome Owner." +
                         "\nWould you like to" +
@@ -279,9 +278,8 @@ namespace OnlineCasinoProjectConsole.ViewModel
                         "\n3.) View financial report for a certain month?" +
                         "\n4.) View financial report for a certain year?" +
                         "\n5.) Log out.");
-                    isOwner = true;
                 }
-                else
+                else if (isLoginSuccess.Item2 == false)
                 {
                     output = ($"Welcome {userName}." +
                         "\nWould you like to" +
@@ -289,17 +287,26 @@ namespace OnlineCasinoProjectConsole.ViewModel
                         "\n2.) Logout?");
                 }
             }
-            return (output, isOwner);
+            return (output, isLoginSuccess.Item2);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="inputPrizeSetting"></param>
-        public void SetPrizeModuleStatus(int inputPrizeSetting)
+        public string SetPrizeModuleStatus(int inputPrizeSetting)
         {
             var responseTask = _casinoClient.GetAsync("api/Configuration/setprizemodule?inputPrizeSetting=" + inputPrizeSetting);
             responseTask.Wait();
+            var result = responseTask.Result;
+            string output = string.Empty;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<string>();
+                readTask.Wait();
+                output = readTask.Result;    
+            }
+            return output;
         }
 
         /// <summary>
@@ -337,7 +344,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public IList<string> SeeMonthFinancialReport(string inputMonth)
         {
-            DateTime inputDateTime = DateConverter.InputDayConvert(inputMonth);
+            DateTime inputDateTime = DateConverter.InputMonthConvert(inputMonth);
             IList<string> monthFinancialReport = new List<string>();
             IList<double> monthValueList = new List<double>();
             if (inputDateTime != DateTime.MinValue)
@@ -379,7 +386,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public IList<string> SeeYearFinancialReport(string inputYear)
         {
-            DateTime inputDateTime = DateConverter.InputDayConvert(inputYear);
+            DateTime inputDateTime = DateConverter.InputYearConvert(inputYear);
             IList<string> yearFinancialReport = new List<string>();
             IList<double> yearValueList = new List<double>();
             if (inputDateTime != DateTime.MinValue)
@@ -429,20 +436,26 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <param name="betAmount"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public (IList<int>, string) PlaySlot(int betAmount, string userName)
+        public (IList<int>, string) PlaySlot(double betAmount, string userName)
         {
-            (IList<int>, double, SlotsResultType) playSlotTuple;
+            (IList<int>, double, SlotsResultType, double, DateTime) playSlotTuple;
             (IList<int>, string) output;
-            var responseTask = _casinoClient.GetAsync("api/Gambling/playslot?betamount=" + betAmount + "userName=" + userName);
+            var responseTask = _casinoClient.GetAsync("api/Gambling/playSlot?betamount=" + betAmount + "&username=" + userName);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<(IList<int>, double, SlotsResultType)>();
+                var readTask = result.Content.ReadAsAsync<(IList<int>, double, SlotsResultType, double, DateTime)>();
                 readTask.Wait();
                 playSlotTuple = readTask.Result;
                 output.Item1 = playSlotTuple.Item1;
                 output.Item2 = string.Empty;
+
+                responseTask = _casinoClient.GetAsync("api/FinancialReport/updatereport?betAmount=" + playSlotTuple.Item4 +
+                    "&winnings=" + playSlotTuple.Item2 +
+                    "&dateTime=" + playSlotTuple.Item5);
+                responseTask.Wait();
+
                 switch (playSlotTuple.Item3)
                 {
                     case SlotsResultType.None:
@@ -479,7 +492,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// </summary>
         /// <param name="input"></param>
         /// <param name="value"></param>
-        public void ParseInputString(string input, out int? value)
+        public void ParseInputStringInt(string input, out int? value)
         {
             try
             {
@@ -492,6 +505,27 @@ namespace OnlineCasinoProjectConsole.ViewModel
             catch (ArgumentOutOfRangeException)
             {
                 value = null;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="value"></param>
+        public void ParseInputStringDouble(string input, out double value)
+        {
+            try
+            {
+                value = Convert.ToDouble(input);
+            }
+            catch (FormatException)
+            {
+                value = 0;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                value = 0;
             }
         }
     }

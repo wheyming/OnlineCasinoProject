@@ -5,6 +5,7 @@ using Casino.WebAPI.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
@@ -18,8 +19,6 @@ namespace Casino.WebAPI.Controllers
         private List<Report> _amountList;
         private readonly IFileManager _fileHandling;
         private readonly IRandomNumberGenerator _customRandom;
-        private readonly IConfigurationManager _config;
-        private readonly IReportManager _financialReport;
         /// <summary>
         /// 
         /// </summary>
@@ -30,8 +29,7 @@ namespace Casino.WebAPI.Controllers
             _fileHandling = new FileManager();
             _customRandom = new RandomNumberGenerator();
             _amountList = new List<Report>();
-            _config = new ConfigurationController();
-            _financialReport = new ReportController();
+            Directory.SetCurrentDirectory("C:\\tempCasino");
         }
 
         [HttpGet]
@@ -42,10 +40,10 @@ namespace Casino.WebAPI.Controllers
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        public (IList<int>, double, SlotsResultType) PlaySlot(double betAmount, string username)
+        public (IList<int>, double, SlotsResultType, double, DateTime) PlaySlot(double betAmount, string username)
         {
             IList<int> rolledNumber = new List<int>();
-            if (_config.IsPrizeEnabled == false)
+            if (PrizeModule.IsPrizeEnabled == false)
             {
                 rolledNumber = _customRandom.RollRandomNumberPrizeNotActivated();
             }
@@ -54,8 +52,8 @@ namespace Casino.WebAPI.Controllers
                 rolledNumber = _customRandom.RollRandomNumberPrizeActivated();
             }
             (double, SlotsResultType) winningsAndResultType = CalculateWinningsSlot(rolledNumber, betAmount);
-            StoreWinningsInfo(winningsAndResultType.Item1, betAmount, username);
-            return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2);
+            DateTime resultTime = StoreWinningsInfo(winningsAndResultType.Item1, betAmount, username);
+            return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2, betAmount, resultTime);
         }
         /// <summary>
         /// 
@@ -95,7 +93,7 @@ namespace Casino.WebAPI.Controllers
         /// <param name="payout"></param>
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
-        private void StoreWinningsInfo(double payout, double betAmount, string username)
+        private DateTime StoreWinningsInfo(double payout, double betAmount, string username)
         {
             DateTime storeWinningsTime = DateTime.Now;
             Report report = new Report(betAmount, payout, storeWinningsTime);
@@ -117,7 +115,7 @@ namespace Casino.WebAPI.Controllers
             {
                 _amountList.Clear();
             }
-            _financialReport.UpdateReportList(report);
+            //_financialReport.UpdateReportList(report);
 
             _amountList?.Add(report);
             string jsonAmountList = JsonConvert.SerializeObject(_amountList);
@@ -135,6 +133,7 @@ namespace Casino.WebAPI.Controllers
             _amountList?.Add(report);
             jsonAmountList = JsonConvert.SerializeObject(_amountList);
             _fileHandling.WriteAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
+            return storeWinningsTime;
         }
     }
 }

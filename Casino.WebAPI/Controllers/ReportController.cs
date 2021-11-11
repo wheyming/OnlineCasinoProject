@@ -19,14 +19,12 @@ namespace Casino.WebAPI.Controllers
         private List<Report> _reportList;
         private readonly IFileManager _fileHandling;
 
-        [HttpGet]
-        [Route("initialize")]
         /// <summary>
         /// 
         /// </summary>
         public void ReportListInitialize()
         {
-            GetLatestFinancialReports();
+            //GetLatestFinancialReports();
         }
 
         /// <summary>
@@ -48,22 +46,27 @@ namespace Casino.WebAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("updatereport")]
         /// <summary>
         /// 
         /// </summary>
         /// <param name="report"></param>
-        public void UpdateReportList(Report report)
+        public void UpdateReportList(double betAmount, double winnings, DateTime dateTime)
         {
+            GetLatestFinancialReports();
+            Report report = new Report(betAmount, winnings, dateTime);
             _reportList.Add(report);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public ReportController()
+        internal ReportController()
         {
             _fileHandling = new FileManager();
             _reportList = new List<Report>();
+            Directory.SetCurrentDirectory("C:\\tempCasino");
         }
 
         [HttpGet]
@@ -75,6 +78,7 @@ namespace Casino.WebAPI.Controllers
         /// <returns></returns>
         public List<double> GenerateFinancialReportMonth(DateTime monthYear)
         {
+            GetLatestFinancialReports();
             List<double> monthlyFinancialReport = new List<double>(new double[32]);
             try
             {
@@ -100,6 +104,7 @@ namespace Casino.WebAPI.Controllers
         /// <returns></returns>
         public List<double> GenerateFinancialReportYear(DateTime year)
         {
+            GetLatestFinancialReports();
             List<double> yearlyFinancialReport = new List<double>(new double[13]);
             try
             {
@@ -125,6 +130,7 @@ namespace Casino.WebAPI.Controllers
         /// <returns></returns>
         public double GenerateFinancialReportDay(DateTime date)
         {
+            GetLatestFinancialReports();
             double dailyFinancialReport = new double();
             try
             {

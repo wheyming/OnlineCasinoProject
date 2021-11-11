@@ -51,7 +51,7 @@ namespace Casino.WebAPI.Interfaces
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        bool Login(string username, string password);
+        (bool?, bool?) Login(string username, string password);
         /// <summary>
         /// 
         /// </summary>

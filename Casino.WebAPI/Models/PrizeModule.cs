@@ -7,7 +7,7 @@ namespace Casino.WebAPI.Models
 {
     public class PrizeModule
     {
-        public bool IsPrizeEnabled { get; private set; }
+        public static bool IsPrizeEnabled { get; private set; }
         public PrizeModule(bool isPrizeEnabled)
         {
             IsPrizeEnabled = isPrizeEnabled;

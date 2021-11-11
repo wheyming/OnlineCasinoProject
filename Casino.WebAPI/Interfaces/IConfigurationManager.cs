@@ -8,11 +8,7 @@
         /// <summary>
         /// 
         /// </summary>
-        bool IsPrizeEnabled { get; }
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="status"></param>
-        void SetPrizeModuleStatus(int inputPrizeSetting);
+        string SetPrizeModuleStatus(int inputPrizeSetting);
     }
 }

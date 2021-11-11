@@ -7,7 +7,6 @@ namespace OnlineCasinoProjectConsole.Interfaces
     /// </summary>
     internal interface ICasinoViewModel
     {
-
         /// <summary>
         /// 
         /// </summary>
@@ -47,12 +46,12 @@ namespace OnlineCasinoProjectConsole.Interfaces
         /// <param name="userName"></param>
         /// <param name="passWord"></param>
         /// <returns></returns>
-        (string, bool) CheckLogin(string userName, string passWord);
+        (string, bool?) CheckLogin(string userName, string passWord);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="inputPrizeSetting"></param>
-        void SetPrizeModuleStatus(int inputPrizeSetting);
+        string SetPrizeModuleStatus(int inputPrizeSetting);
 
         /// <summary>
         /// 
@@ -84,12 +83,18 @@ namespace OnlineCasinoProjectConsole.Interfaces
         /// <param name="betAmount"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        (IList<int>, string) PlaySlot(int betAmount, string userName);
+        (IList<int>, string) PlaySlot(double betAmount, string userName);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="input"></param>
         /// <param name="value"></param>
-        void ParseInputString(string input, out int? value);
+        void ParseInputStringInt(string input, out int? value);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="value"></param>
+        void ParseInputStringDouble(string input, out double value);
     }
 }

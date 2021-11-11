@@ -23,11 +23,20 @@ namespace Casino.WebAPI.Controllers
         internal AuthenticationController()
         {
             _fileHandling = new FileManager();
+            Directory.SetCurrentDirectory("C:\\tempCasino");
+        }
+
+        [HttpGet]
+        [Route("sos")]
+        public string CheckDir()
+        {
+            return Directory.GetCurrentDirectory();
         }
         /// <summary>
         /// 
         /// </summary>
         public User CurrentUser { get; private set; }
+
         [HttpGet]
         [Route("checkusername")]
         /// <summary>
@@ -92,7 +101,7 @@ namespace Casino.WebAPI.Controllers
             IdResultType type = IdResultType.None;
             try
             {
-                if (idNumber.Length != 9 || (!Equals(char.ToUpper(idNumber[0]), 'S') && !Equals(char.ToUpper(idNumber[0]), 'T')) || !Char.IsLetter(idNumber[8]))
+                if (idNumber.Length != 9 || (!Equals(char.ToUpper(idNumber[0]), 'S') && !Equals(char.ToUpper(idNumber[0]), 'T')) || !char.IsLetter(idNumber[8]))
                 {
                     type = IdResultType.IdIncorrect;
                 }
@@ -300,13 +309,15 @@ namespace Casino.WebAPI.Controllers
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public bool Login(string username, string password)
+        public (bool?,bool?) Login(string username, string password)
         {
+            bool? loginSuccess = false;
+            bool? isOwner;
             try
             {
                 if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json")) == null)
                 {
-                    return false;
+                    loginSuccess = null;
                 }
                 else
                 {
@@ -321,19 +332,24 @@ namespace Casino.WebAPI.Controllers
                                 if (Equals(user.Password, password))
                                 {
                                     CurrentUser = user;
-                                    return true;
+                                    loginSuccess = true;
+                                    break;
                                 }
                             }
                         }
                     }
-
-                    return false;
                 }
+                if (CurrentUser != null)
+                    isOwner = CurrentUser.IsOwner;
+                else
+                    isOwner = null;
             }
             catch (IOException)
             {
-                return false;
+                loginSuccess = null;
+                isOwner = null;
             }
+            return (loginSuccess, isOwner);
         }
         [HttpGet]
         [Route("logout")]
