@@ -1,122 +1,114 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    public class Gambling
+    public class Gambling : IGambling
     {
-        char firstNum;
-        char secondNum;
-        char thirdNum;
-        double winnings;
 
         [JsonProperty]
-        List<FinancialReport> amountList = new List<FinancialReport>();
+        List<Report> amountList = new List<Report>();
 
         private IFileHandling _fileHandling;
         private ICustomRandom _customRandom;
+        private ICasinoConfiguration _config;
+        private IFinancialReport _financialReport;
 
-        public Gambling(IFileHandling fileHandling, ICustomRandom customRandom)
+        public Gambling(IFileHandling fileHandling, ICustomRandom customRandom, ICasinoConfiguration config, IFinancialReport financialReport)
         {
             _fileHandling = fileHandling;
             _customRandom = customRandom;
+            _config = config;
+            _financialReport = financialReport;
         }
 
         // int values are in ASCII so that when converted to char will be 0 to 9.
-        public string playSlot(double betAmount, string username, bool prizeModuleBool)
+        public (int[], double, SlotsResultType) PlaySlot(double betAmount, string username)
         {
-            int[] slotnumbers = new int[] { 48, 49, 50, 51, 52, 53, 54, 56, 57 };
-            firstNum = Convert.ToChar(_customRandom.randomInt1(48, 57));
-            secondNum = Convert.ToChar(_customRandom.randomInt2(48, 57));
+            int[] slotnumbers = new int[] { 0, 1, 2, 3, 4, 5, 6, 8, 9 };
+            int[] rolledNumber = new int[3];
+            rolledNumber[0] = _customRandom.randomInt1(0, 9);
+            rolledNumber[1] = _customRandom.randomInt2(0, 9);
 
-            if (prizeModuleBool == false && firstNum == '7' && secondNum == '7')
+            if (_config.IsPrizeEnabled == false && rolledNumber[0] == 7 && rolledNumber[1] == 7)
             {
-                thirdNum = Convert.ToChar(slotnumbers[_customRandom.randomIntMax(slotnumbers.Length)]);
+                rolledNumber[2] = slotnumbers[_customRandom.randomIntMax(slotnumbers.Length)];
             }
             else
             {
-                thirdNum = Convert.ToChar(_customRandom.randomInt3(48, 57));
+                rolledNumber[2] = _customRandom.randomInt3(0, 9);
             }
-            Console.Write(firstNum);
-            Thread.Sleep(500);
-            Console.Write('.');
-            Thread.Sleep(500);
-            Console.Write(secondNum);
-            Thread.Sleep(500);
-            Console.Write('.');
-            Thread.Sleep(500);
-            Console.Write(thirdNum);
-            string numberCombined = Convert.ToString(firstNum) + Convert.ToString(secondNum) + Convert.ToString(thirdNum);
-            storeWinningsInfo(calculateWinningsSlot(numberCombined, betAmount), betAmount, username);
-            return numberCombined;
+            (double, SlotsResultType) winningsAndResultType = CalculateWinningsSlot(rolledNumber, betAmount);
+            StoreWinningsInfo(winningsAndResultType.Item1, betAmount, username);
+            return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2);
         }
 
-        private double calculateWinningsSlot(string number, double betAmount)
+        private (double, SlotsResultType) CalculateWinningsSlot(int[] number, double betAmount)
         {
+            double winnings;
+            SlotsResultType resultType;
             if ((number[0] == '7') && (number[1] == '7') && (number[2] == '7'))
             {
                 winnings = betAmount * 7;
-                Console.WriteLine($"\nJACKPOT!! Congratulations. Your winnings is: {winnings}");
+                resultType = SlotsResultType.JackPot;
             }
             else if ((number[0] == number[1]) && (number[1] == number[2]))
             {
                 winnings = betAmount * 3;
-                Console.WriteLine($"\nTRIPLE!! Congratulations. Your winnings is: {winnings}");
+                resultType = SlotsResultType.Triple;
             }
             else if ((number[0] == number[1]) || (number[1] == number[2]))
             {
                 winnings = betAmount * 2;
-                Console.WriteLine($"\nDOUBLE!! Congratulations. Your winnings is: {winnings}");
+                resultType = SlotsResultType.Double;
             }
             else
             {
                 winnings = 0;
-                Console.WriteLine($"\nUnfortunately, you did not win anything. Thank you for playing.");
+                resultType = SlotsResultType.None;
             }
-            return winnings;
+            return (winnings, resultType);
         }
 
-        public void storeWinningsInfo(double payout, double betAmount, string username)
+        public void StoreWinningsInfo(double payout, double betAmount, string username)
         {
             DateTime storeWinningsTime = DateTime.Now;
+            Report report = new Report(betAmount, payout, storeWinningsTime);
             if (!_fileHandling.directoryExists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM")))
             {
                 _fileHandling.createDirectory("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM"));
             }
             if (!_fileHandling.directoryExists("FinancialReport\\" + storeWinningsTime.ToString("yyMM")))
             {
-               _fileHandling.createDirectory("FinancialReport\\" + storeWinningsTime.ToString("yyMM"));
+                _fileHandling.createDirectory("FinancialReport\\" + storeWinningsTime.ToString("yyMM"));
             }
 
 
             if (_fileHandling.fileExists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
             {
-                amountList = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
+                amountList = JsonConvert.DeserializeObject<List<Report>>(_fileHandling.readAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
             }
             else
             {
                 amountList.Clear();
             }
-            FinancialReport financialReport = new FinancialReport(betAmount, payout);
-            amountList.Add(financialReport);
+            _financialReport.UpdateReportList(report);
+
+            amountList.Add(report);
             string jsonAmountList = JsonConvert.SerializeObject(amountList);
             _fileHandling.writeAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
 
+
             if (_fileHandling.fileExists("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
             {
-                amountList = JsonConvert.DeserializeObject<List<FinancialReport>>(_fileHandling.readAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
+                amountList = JsonConvert.DeserializeObject<List<Report>>(_fileHandling.readAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
             }
             else
             {
                 amountList.Clear();
             }
-            amountList.Add(financialReport);
+            amountList.Add(report);
             jsonAmountList = JsonConvert.SerializeObject(amountList);
             _fileHandling.writeAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
         }

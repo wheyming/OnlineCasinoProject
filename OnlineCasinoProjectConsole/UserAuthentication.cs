@@ -2,24 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineCasinoProjectConsole
 {
-    public class UserAuthentication
+    /// <summary>
+    /// 
+    /// </summary>
+    public class UserAuthentication : IUserAuthentication
     {
-        bool loginBool;
-        bool duplicatebool;
-        List<Gambler> gamblerList = new List<Gambler>();
-
         private IFileHandling _fileHandling;
-
         public UserAuthentication(IFileHandling fileHandling)
         {
             _fileHandling = fileHandling;
         }
+
+        public User CurrentUser { get; private set; }
 
         /// <summary>
         /// Criteria to check:
@@ -27,56 +24,42 @@ namespace OnlineCasinoProjectConsole
         /// No spaces
         /// </summary>
         /// <param name="username"></param>
-        /// <returns> bool: To check if we input is valid. </returns>
-        public bool checkUsername(string username)
+        /// <returns> UserNameResultType: Returns CheckUserName Return Type. </returns>
+        public UserNameResultType CheckUserName(string username)
         {
+            UserNameResultType type = UserNameResultType.None;
             try
             {
-                duplicatebool = false;
                 if (username.Length < 6 || username.Length > 24)
                 {
-                    Console.WriteLine("Please create a username between 6 to 24 characters.");
-                    duplicatebool = true;
+                    type = UserNameResultType.UserNameLengthIncorrect;
                 }
                 foreach (char character in username)
                 {
                     if (char.IsWhiteSpace(character))
                     {
-                        Console.WriteLine("Please create a username without space.");
-                        duplicatebool = true;
+                        type = UserNameResultType.UserNameContainsSpace;
                         break;
                     }
                 }
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
                 {
-                }
-                else
-                {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambleruser in gamblerList)
+                    if (Equals(gambleruser.UserName, username))
                     {
-                        if (Equals(gambleruser.username, username))
-                        {
-                            Console.WriteLine("Duplicate username.");
-                            duplicatebool = true;
-                            break;
-                        }
+                        type = UserNameResultType.DuplicateUser;
+                        break;
                     }
                 }
-                return duplicatebool;
             }
             catch (IOException)
             {
-                Console.WriteLine("Unable to find file.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = UserNameResultType.UserNameDataAccessError;
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
-                Console.WriteLine("Null input.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = UserNameResultType.UnhandledUserError;
             }
+            return type;
         }
 
         /// <summary>
@@ -86,46 +69,33 @@ namespace OnlineCasinoProjectConsole
         /// </summary>
         /// <param name="idNumber"></param>
         /// <returns> bool: To check if we input is valid. </returns>
-        public bool checkID(string idNumber)
+        public IdResultType CheckId(string idNumber)
         {
+            IdResultType type = IdResultType.None;
             try
             {
-                duplicatebool = false;
                 if (idNumber.Length != 9 || (!Equals(char.ToUpper(idNumber[0]), 'S') && !Equals(char.ToUpper(idNumber[0]), 'T')) || !Char.IsLetter(idNumber[8]))
                 {
-                    duplicatebool = true;
-                    Console.WriteLine("Invalid ID Number");
+                    type = IdResultType.IdIncorrect;
                 }
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
                 {
-                }
-                else
-                {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambleruser in gamblerList)
+                    if (Equals(gambleruser.IDNumber, idNumber))
                     {
-                        if (Equals(gambleruser.idNumber, idNumber))
-                        {
-                            Console.WriteLine("Duplicate idNumber.");
-                            duplicatebool = true;
-                            break;
-                        }
+                        type = IdResultType.DuplicateId;
+                        break;
                     }
                 }
-                return duplicatebool;
             }
             catch (IOException)
             {
-                Console.WriteLine("Unable to find file.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = IdResultType.IdDataAccessError;
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
-                Console.WriteLine("Null input.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = IdResultType.UnhandledIdError;
             }
+            return type;
         }
 
         /// <summary>
@@ -133,15 +103,14 @@ namespace OnlineCasinoProjectConsole
         /// </summary>
         /// <param name="phoneNumber"></param>
         /// <returns> bool: To check if we input is valid. </returns>
-        public bool checkPhoneNumber(string phoneNumber)
+        public PhoneNumberResultType CheckPhoneNumber(string phoneNumber)
         {
+            PhoneNumberResultType type = PhoneNumberResultType.None;
             try
             {
-                duplicatebool = false;
                 if (phoneNumber.Length != 8)
                 {
-                    Console.WriteLine("Invalid phone number");
-                    duplicatebool = true;
+                    type = PhoneNumberResultType.PhoneNumberIncorrect;
                 }
                 foreach (char character in phoneNumber)
                 {
@@ -151,40 +120,29 @@ namespace OnlineCasinoProjectConsole
                     }
                     else
                     {
-                        duplicatebool = true;
+                        type = PhoneNumberResultType.PhoneNumberIncorrect;
                         break;
                     }
                 }
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                foreach (User gambleruser in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
                 {
-                }
-                else
-                {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambleruser in gamblerList)
+                    if (Equals(gambleruser.PhoneNumber, phoneNumber))
                     {
-                        if (Equals(gambleruser.phoneNumber, phoneNumber))
-                        {
-                            Console.WriteLine("Duplicate Phone Number.");
-                            duplicatebool = true;
-                            break;
-                        }
+                        type = PhoneNumberResultType.DuplicatePhoneNumber;
+                        break;
                     }
                 }
-                return duplicatebool;
             }
             catch (IOException)
             {
-                Console.WriteLine("Unable to find file.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = PhoneNumberResultType.PhoneNumberDataAccessError;
+
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
-                Console.WriteLine("Null input.");
-                duplicatebool = true;
-                return duplicatebool;
+                type = PhoneNumberResultType.UnhandledPhoneNumberError;
             }
+            return type;
         }
 
         /// <summary>
@@ -193,17 +151,16 @@ namespace OnlineCasinoProjectConsole
         /// </summary>
         /// <param name="password"></param>
         /// <returns> bool: To check if we input is valid. </returns>
-        public bool checkPassword(string password)
+        public PasswordResultType CheckPassword(string password)
         {
+            PasswordResultType type = PasswordResultType.None;
             try
             {
                 char[] specialchar = new char[] { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=', '_', '-', '{', '}', '[', ']', ':', ';', '"', '\'', '?', '<', '>', ',', '.' };
-                duplicatebool = false;
 
                 if (password.Length < 6 || password.Length > 24)
                 {
-                    Console.WriteLine("Please create a password between 6 to 24 characters.");
-                    duplicatebool = true;
+                    type |= PasswordResultType.IncorrectPasswordLength;
                 }
                 int j = 0;
                 int k = 0;
@@ -230,17 +187,17 @@ namespace OnlineCasinoProjectConsole
                 if (j == 0)
                 {
                     Console.WriteLine("Please create a password with at least one uppercase letter.");
-                    duplicatebool = true;
+                    type |= PasswordResultType.PasswordNoUpperCaseLetter;
                 }
                 if (k == 0)
                 {
                     Console.WriteLine("Please create a password with at least one lowercase letter.");
-                    duplicatebool = true;
+                    type |= PasswordResultType.PasswordNoLowerCaseLetter;
                 }
                 if (l == 0)
                 {
                     Console.WriteLine("Please create a password with at least one digit.");
-                    duplicatebool = true;
+                    type |= PasswordResultType.PasswordNoDigits;
                 }
                 bool q = true;
                 foreach (char c in password)
@@ -256,105 +213,99 @@ namespace OnlineCasinoProjectConsole
                 }
                 if (q == true)
                 {
-                    Console.WriteLine("Please create a password with at least one special character.");
-                    duplicatebool = true;
+                    type |= PasswordResultType.PasswordThreeRepeatedCharacters;
                 }
                 for (int i = 0; i < (password.Length - 2); i++)
                 {
                     if (Equals(password[i], password[i + 1]) && Equals(password[i + 1], password[i + 2]))
                     {
-                        Console.WriteLine("Please create a password with maximum of 2 repeated characters.");
-                        duplicatebool = true;
+                        type |= PasswordResultType.PasswordThreeRepeatedCharacters;
                     }
                 }
-                return duplicatebool;
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
-                Console.WriteLine("Null input.");
-                duplicatebool = true;
-                return duplicatebool;
+                type |= PasswordResultType.UnhandledPasswordError;
             }
+            return type;
         }
 
-
-        public string signup(string username, string idNumber, string phoneNumber, string password)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool SignUp(string username, string idNumber, string phoneNumber, string password)
         {
             try
             {
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                List<User> gamblerList = new List<User>();
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")) == null)
                 {
-                    Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
+                    User gambler = new User(username, idNumber, phoneNumber, password);
                     gamblerList.Add(gambler);
                     string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                    _fileHandling.writeAllText("Gambler.json", gamblerListStr);
-                    return gamblerListStr;
+                    _fileHandling.writeAllText("User.json", gamblerListStr);
                 }
                 else
                 {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    Gambler gambler = new Gambler(username, idNumber, phoneNumber, password);
+                    gamblerList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json"));
+                    User gambler = new User(username, idNumber, phoneNumber, password);
                     gamblerList.Add(gambler);
                     string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                    _fileHandling.writeAllText("Gambler.json", gamblerListStr);
-                    return gamblerListStr;
+                    _fileHandling.writeAllText("User.json", gamblerListStr);
                 }
+                return true;
             }
             catch (IOException)
             {
-                Console.WriteLine("File does not exist, contact administrator.");
-                return "";
+                return false;
             }
         }
 
-
-        public bool login(string username, string password)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool Login(string username, string password)
         {
             try
             {
-                if (JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json")) == null)
+                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")) == null)
                 {
-                    Console.WriteLine("Invalid username or password.");
-                    loginBool = false;
+                    return false;
                 }
                 else
                 {
-                    gamblerList = JsonConvert.DeserializeObject<List<Gambler>>(_fileHandling.readAllText("Gambler.json"));
-                    foreach (Gambler gambler in gamblerList)
+                    foreach (User user in JsonConvert.DeserializeObject<List<User>>(_fileHandling.readAllText("User.json")))
                     {
-                        if (Equals(gambler.username, username))
+                        if (Equals(user.UserName, username))
                         {
-                            if (Equals(gambler.password, password))
+                            if (Equals(user.Password, password))
                             {
-                                loginBool = true;
-                                break;
+                                CurrentUser = user;
+                                return true;
                             }
                         }
-                        else
-                        {
-                            loginBool = false;
-                        }
                     }
+                    return false;
                 }
-                if (loginBool == false)
-                {
-                    Console.WriteLine("Invalid username or password.");
-                }
-                return loginBool;
             }
             catch (IOException)
             {
-                Console.WriteLine("File does not exist, contact administrator.");
-                loginBool = false;
-                return loginBool;
+                return false;
             }
         }
 
+        public void Logout()
+        {
+            CurrentUser = null;
+        }
 
-        //linQ
-        //var user = gamblerList.First(x => x.username == username);
-        //if(user != null)
-        //    {
-        //    }
     }
 }

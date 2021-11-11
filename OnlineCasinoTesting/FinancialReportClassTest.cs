@@ -1,11 +1,7 @@
 ﻿using Moq;
 using OnlineCasinoProjectConsole;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace OnlineCasinoTesting
@@ -131,10 +127,10 @@ namespace OnlineCasinoTesting
             for (int i = 0; i < 13; i++)
             {
 
-                    _mockFileHandling.Setup(t => t.directoryExists("FinancialReport\\" + date.ToString("yy") + i.ToString("00"))).Returns(false);
-                    string DirectoryName = "FinancialReport\\" + date.ToString("yy") + i.ToString("00");
-                    _mockFileHandling.Setup(t => t.directoryGetFiles(DirectoryName)).Returns(returnedfileNames);
-                    _mockFileHandling.Setup(t => t.readAllText(strReturnedfileNames)).Returns(returnedStr);
+                _mockFileHandling.Setup(t => t.directoryExists("FinancialReport\\" + date.ToString("yy") + i.ToString("00"))).Returns(false);
+                string DirectoryName = "FinancialReport\\" + date.ToString("yy") + i.ToString("00");
+                _mockFileHandling.Setup(t => t.directoryGetFiles(DirectoryName)).Returns(returnedfileNames);
+                _mockFileHandling.Setup(t => t.readAllText(strReturnedfileNames)).Returns(returnedStr);
             }
             //_mockFileHandling.Setup(t => t.directoryGetFiles(DirectoryName)).Returns(returnedfileNames);
             //_mockFileHandling.Setup(t => t.readAllText(strReturnedfileNames)).Returns(returnedStr);
