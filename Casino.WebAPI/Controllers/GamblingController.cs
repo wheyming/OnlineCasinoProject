@@ -1,11 +1,11 @@
 ﻿using Casino.Common;
+using Casino.WebAPI.EntityFramework;
 using Casino.WebAPI.Interfaces;
 using Casino.WebAPI.Models;
 using Casino.WebAPI.Utility;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
@@ -16,8 +16,6 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class GamblingController : ApiController, IGamblingManager
     {
-        private List<Report> _amountList;
-        private readonly IFileManager _fileHandling;
         private readonly IRandomNumberGenerator _customRandom;
         /// <summary>
         /// 
@@ -26,10 +24,7 @@ namespace Casino.WebAPI.Controllers
         /// <param name="financialReport"></param>
         public GamblingController()
         {
-            _fileHandling = new FileManager();
             _customRandom = new RandomNumberGenerator();
-            _amountList = new List<Report>();
-            Directory.SetCurrentDirectory("C:\\tempCasino");
         }
 
         [HttpGet]
@@ -43,7 +38,12 @@ namespace Casino.WebAPI.Controllers
         public (IList<int>, double, SlotsResultType, double, DateTime) PlaySlot(double betAmount, string username)
         {
             IList<int> rolledNumber = new List<int>();
-            if (PrizeModule.IsPrizeEnabled == false)
+            PrizeModule prizeModule;
+            using (CasinoContext casinoContext = new CasinoContext())
+            {
+                prizeModule = casinoContext.PrizeModule.Where(x => x.Identifier == 1).FirstOrDefault();
+            }
+            if (prizeModule.IsPrizeEnabled == false)
             {
                 rolledNumber = _customRandom.RollRandomNumberPrizeNotActivated();
             }
@@ -97,42 +97,11 @@ namespace Casino.WebAPI.Controllers
         {
             DateTime storeWinningsTime = DateTime.Now;
             Report report = new Report(betAmount, payout, storeWinningsTime);
-            if (!_fileHandling.DirectoryExists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM")))
+            using (CasinoContext casinoContext = new CasinoContext())
             {
-                _fileHandling.CreateDirectory("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM"));
+                casinoContext.Reports.Add(report);
+                casinoContext.SaveChanges();
             }
-            if (!_fileHandling.DirectoryExists("FinancialReport\\" + storeWinningsTime.ToString("yyMM")))
-            {
-                _fileHandling.CreateDirectory("FinancialReport\\" + storeWinningsTime.ToString("yyMM"));
-            }
-
-
-            if (_fileHandling.FileExists("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
-            {
-                _amountList = JsonConvert.DeserializeObject<List<Report>>(_fileHandling.ReadAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
-            }
-            else
-            {
-                _amountList.Clear();
-            }
-            //_financialReport.UpdateReportList(report);
-
-            _amountList?.Add(report);
-            string jsonAmountList = JsonConvert.SerializeObject(_amountList);
-            _fileHandling.WriteAllText("Users\\" + username + "\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
-
-
-            if (_fileHandling.FileExists("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"))
-            {
-                _amountList = JsonConvert.DeserializeObject<List<Report>>(_fileHandling.ReadAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json"));
-            }
-            else
-            {
-                _amountList?.Clear();
-            }
-            _amountList?.Add(report);
-            jsonAmountList = JsonConvert.SerializeObject(_amountList);
-            _fileHandling.WriteAllText("FinancialReport\\" + storeWinningsTime.ToString("yyMM") + "\\" + storeWinningsTime.ToString("yyyyMMdd") + ".json", jsonAmountList);
             return storeWinningsTime;
         }
     }

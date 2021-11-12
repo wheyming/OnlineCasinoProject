@@ -1,10 +1,10 @@
 ﻿using Casino.Common;
+using Casino.WebAPI.EntityFramework;
 using Casino.WebAPI.Interfaces;
 using Casino.WebAPI.Models;
-using Casino.WebAPI.Utility;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Web.Http;
 
@@ -14,24 +14,10 @@ namespace Casino.WebAPI.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public class AuthenticationController : ApiController,  IAuthenticationManager
+    public class AuthenticationController : ApiController, IAuthenticationManager
     {
-        private readonly IFileManager _fileHandling;
-        /// <summary>
-        /// 
-        /// </summary>
-        internal AuthenticationController()
-        {
-            _fileHandling = new FileManager();
-            Directory.SetCurrentDirectory("C:\\tempCasino");
-        }
+        List<User> userList;
 
-        [HttpGet]
-        [Route("sos")]
-        public string CheckDir()
-        {
-            return Directory.GetCurrentDirectory();
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -63,8 +49,12 @@ namespace Casino.WebAPI.Controllers
                         break;
                     }
                 }
-
-                List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
+                using (CasinoContext casinoContext = new CasinoContext())
+                {
+                    var getUserList = casinoContext.Users.ToListAsync();
+                    getUserList.Wait();
+                    userList = getUserList.Result;
+                }
                 if (userList != null)
                 {
                     foreach (User gambler in userList)
@@ -106,7 +96,12 @@ namespace Casino.WebAPI.Controllers
                     type = IdResultType.IdIncorrect;
                 }
 
-                List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
+                using (CasinoContext casinoContext = new CasinoContext())
+                {
+                    var getUserList = casinoContext.Users.ToListAsync();
+                    getUserList.Wait();
+                    userList = getUserList.Result;
+                }
                 if (userList != null)
                 {
                     foreach (User gambler in userList)
@@ -157,7 +152,13 @@ namespace Casino.WebAPI.Controllers
                     }
                 }
 
-                List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
+                using (CasinoContext casinoContext = new CasinoContext())
+                {
+                    var getUserList = casinoContext.Users.ToListAsync();
+                    getUserList.Wait();
+                    userList = getUserList.Result;
+                }
+                //List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
                 if (userList != null)
                 {
                     foreach (User gambler in userList)
@@ -277,21 +278,11 @@ namespace Casino.WebAPI.Controllers
         {
             try
             {
-                List<User> gamblerList = new List<User>();
-                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json")) == null)
+                using (CasinoContext casinoContext = new CasinoContext())
                 {
                     User gambler = new User(username, idNumber, phoneNumber, password);
-                    gamblerList.Add(gambler);
-                    string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                    _fileHandling.WriteAllText("User.json", gamblerListStr);
-                }
-                else
-                {
-                    gamblerList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
-                    User gambler = new User(username, idNumber, phoneNumber, password);
-                    gamblerList?.Add(gambler);
-                    string gamblerListStr = JsonConvert.SerializeObject(gamblerList);
-                    _fileHandling.WriteAllText("User.json", gamblerListStr);
+                    casinoContext.Users.Add(gambler);
+                    casinoContext.SaveChanges();
                 }
                 return true;
             }
@@ -309,32 +300,29 @@ namespace Casino.WebAPI.Controllers
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public (bool?,bool?) Login(string username, string password)
+        public (bool?, bool?) Login(string username, string password)
         {
             bool? loginSuccess = false;
             bool? isOwner;
             try
             {
-                if (JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json")) == null)
+                using (CasinoContext casinoContext = new CasinoContext())
                 {
-                    loginSuccess = null;
+                    var getUserList = casinoContext.Users.ToListAsync();
+                    getUserList.Wait();
+                    userList = getUserList.Result;
                 }
-                else
+                if (userList != null)
                 {
-                    List<User> userList =
-                        JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
-                    if (userList != null)
+                    foreach (User user in userList)
                     {
-                        foreach (User user in userList)
+                        if (Equals(user.UserName, username))
                         {
-                            if (Equals(user.UserName, username))
+                            if (Equals(user.Password, password))
                             {
-                                if (Equals(user.Password, password))
-                                {
-                                    CurrentUser = user;
-                                    loginSuccess = true;
-                                    break;
-                                }
+                                CurrentUser = user;
+                                loginSuccess = true;
+                                break;
                             }
                         }
                     }
@@ -359,18 +347,6 @@ namespace Casino.WebAPI.Controllers
         public void Logout()
         {
             CurrentUser = null;
-        }
-        [HttpGet]
-        [Route("isowner")]
-        /// <summary>
-        /// 
-        /// </summary>  
-        public bool? IsOwner()
-        {
-            if (CurrentUser != null)
-                return CurrentUser.IsOwner;
-            else
-                return null;
         }
     }
 }

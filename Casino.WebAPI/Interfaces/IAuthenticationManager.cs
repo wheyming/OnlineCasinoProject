@@ -55,11 +55,6 @@ namespace Casino.WebAPI.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        bool? IsOwner();
-        /// <summary>
-        /// 
-        /// </summary>
         void Logout();
     }
 }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using Casino.Common;
+﻿using Casino.Common;
 using OnlineCasinoProjectConsole.Interfaces;
 using OnlineCasinoProjectConsole.Utility;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Net.Http;
 
 namespace OnlineCasinoProjectConsole.ViewModel
 {
@@ -26,12 +25,8 @@ namespace OnlineCasinoProjectConsole.ViewModel
 #else
             _casinoClient.BaseAddress = new Uri("http://mycasino.me");
 #endif
-            var responseTask = _casinoClient.GetAsync("api/financialreport/initialize");
+            var responseTask = _casinoClient.GetAsync("api");
             responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
-            {
-            }
         }
 
         /// <summary>
@@ -257,13 +252,13 @@ namespace OnlineCasinoProjectConsole.ViewModel
         public (string, bool?) CheckLogin(string userName, string passWord)
         {
             string output = string.Empty;
-            (bool?,bool?) isLoginSuccess = (false, false);
+            (bool?, bool?) isLoginSuccess = (false, false);
             var responseTask = _casinoClient.GetAsync("api/Authentication/login?username=" + userName + "&password=" + passWord);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<(bool?,bool?)>();
+                var readTask = result.Content.ReadAsAsync<(bool?, bool?)>();
                 readTask.Wait();
                 isLoginSuccess = readTask.Result;
             }
@@ -304,7 +299,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<string>();
                 readTask.Wait();
-                output = readTask.Result;    
+                output = readTask.Result;
             }
             return output;
         }

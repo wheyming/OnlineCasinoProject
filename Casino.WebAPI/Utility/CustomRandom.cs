@@ -19,9 +19,9 @@ namespace Casino.WebAPI.Utility
         public IList<int> RollRandomNumberPrizeActivated()
         {
             IList<int> numbers = new List<int>();
-                numbers.Add(randomGenerator.Next(9));
-                numbers.Add(randomGenerator.Next(9));
-                numbers.Add(randomGenerator.Next(9));
+            numbers.Add(randomGenerator.Next(9));
+            numbers.Add(randomGenerator.Next(9));
+            numbers.Add(randomGenerator.Next(9));
             return numbers;
         }
 

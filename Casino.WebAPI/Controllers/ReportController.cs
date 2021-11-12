@@ -1,9 +1,9 @@
-﻿using Casino.WebAPI.Interfaces;
+﻿using Casino.WebAPI.EntityFramework;
+using Casino.WebAPI.Interfaces;
 using Casino.WebAPI.Models;
-using Casino.WebAPI.Utility;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Web.Http;
@@ -17,46 +17,19 @@ namespace Casino.WebAPI.Controllers
     public class ReportController : ApiController, IReportManager
     {
         private List<Report> _reportList;
-        private readonly IFileManager _fileHandling;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void ReportListInitialize()
-        {
-            //GetLatestFinancialReports();
-        }
 
         /// <summary>
         /// 
         /// </summary>
         private void GetLatestFinancialReports()
         {
-            if (!Directory.Exists("FinancialReport"))
+            using (CasinoContext casinoContext = new CasinoContext())
             {
-                Directory.CreateDirectory("FinancialReport");
+                var getReportList = casinoContext.Reports.ToListAsync<Report>();
+                getReportList.Wait();
+                _reportList = getReportList.Result;
             }
-            foreach (string dirPath in Directory.GetDirectories("FinancialReport"))
-            {
-                foreach (string filePath in Directory.GetFiles(dirPath))
-                {
-                    List<Report> fileReports = JsonConvert.DeserializeObject<List<Report>>(_fileHandling.ReadAllText(filePath));
-                    if (fileReports != null) _reportList = _reportList.Concat(fileReports).ToList();
-                }
-            }
-        }
-
-        [HttpGet]
-        [Route("updatereport")]
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="report"></param>
-        public void UpdateReportList(double betAmount, double winnings, DateTime dateTime)
-        {
-            GetLatestFinancialReports();
-            Report report = new Report(betAmount, winnings, dateTime);
-            _reportList.Add(report);
         }
 
         /// <summary>
@@ -64,9 +37,7 @@ namespace Casino.WebAPI.Controllers
         /// </summary>
         internal ReportController()
         {
-            _fileHandling = new FileManager();
             _reportList = new List<Report>();
-            Directory.SetCurrentDirectory("C:\\tempCasino");
         }
 
         [HttpGet]

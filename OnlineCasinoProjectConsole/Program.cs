@@ -1,9 +1,9 @@
-﻿using System;
+﻿using OnlineCasinoProjectConsole.Interfaces;
+using OnlineCasinoProjectConsole.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
-using OnlineCasinoProjectConsole.Interfaces;
-using OnlineCasinoProjectConsole.ViewModel;
 
 namespace OnlineCasinoProjectConsole
 {
@@ -24,7 +24,7 @@ namespace OnlineCasinoProjectConsole
             {
                 Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));
                 Console.WriteLine("Welcome, would you like to\n" +
-                                  "1) Sign up\n" +
+                                  "1) Sign up?\n" +
                                   "2) Login?\n" +
                                   "3) End Program?");
                 string inputStr = Console.ReadLine();
@@ -121,9 +121,17 @@ namespace OnlineCasinoProjectConsole
                                                             Console.WriteLine("Would you like to" +
                                                                               "\n1.) Activate prize giving module?" +
                                                                               "\n2.) Deactivate prize giving module?");
-                                                            int input34 = Convert.ToInt32(Console.ReadLine());
-                                                            string prizeOutput = mv.SetPrizeModuleStatus(input34);
-                                                            Console.WriteLine(prizeOutput);
+                                                            string input34 = Console.ReadLine();
+                                                            mv.ParseInputStringInt(input34, out var outputConvertInt);
+                                                            if (outputConvertInt == null)
+                                                            {
+                                                                Console.WriteLine("Invalid input." + Environment.NewLine);
+                                                            }
+                                                            else
+                                                            {
+                                                                string prizeOutput = mv.SetPrizeModuleStatus((int)outputConvertInt);
+                                                                Console.WriteLine(prizeOutput);
+                                                            }
                                                             break;
                                                         }
                                                     case 2:

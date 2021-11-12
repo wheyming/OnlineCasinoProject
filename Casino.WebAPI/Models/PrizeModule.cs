@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Casino.WebAPI.Models
 {
     public class PrizeModule
     {
-        public static bool IsPrizeEnabled { get; private set; }
+        [Key]
+        public int TimesChanged { get; set; }
+
+        public int Identifier { get; set; }
+
+        public bool IsPrizeEnabled { get; private set; }
+
+        public PrizeModule()
+        { }
+
         public PrizeModule(bool isPrizeEnabled)
         {
+            Identifier = 1;
             IsPrizeEnabled = isPrizeEnabled;
         }
     }

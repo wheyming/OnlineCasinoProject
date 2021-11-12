@@ -1,7 +1,5 @@
-﻿using Casino.Common;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Casino.WebAPI.Models
 {
@@ -10,20 +8,22 @@ namespace Casino.WebAPI.Models
     /// </summary>
     public class Report
     {
+        [Key]
+        public int ReportID { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
+
         public double BetAmount { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
+
         public double Payout { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
+
         public DateTime Date { get; private set; }
         /// <summary>
         /// 
@@ -37,5 +37,7 @@ namespace Casino.WebAPI.Models
             Payout = payout;
             Date = date;
         }
+        public Report()
+        { }
     }
 }

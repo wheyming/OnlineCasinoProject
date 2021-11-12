@@ -1,4 +1,6 @@
-﻿using System.Web.Http;
+﻿using Casino.WebAPI.EntityFramework;
+using System.Data.Entity;
+using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
 {
@@ -9,7 +11,10 @@ namespace Casino.WebAPI.Controllers
         [Route("")]
         public void Initialize()
         {
-
+            using(CasinoContext casinoContext = new CasinoContext())
+            {
+                casinoContext.Database.BeginTransaction();
+            }
         }
     }
 }
