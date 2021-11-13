@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
+using System.Linq;
 using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
@@ -35,12 +36,16 @@ namespace Casino.WebAPI.Controllers
         public UserNameResultType CheckUserName(string username)
         {
             UserNameResultType type = UserNameResultType.None;
-            try
+            if (username == null)
             {
-                if (username.Length < 6 || username.Length > 24)
-                {
-                    type = UserNameResultType.UserNameLengthIncorrect;
-                }
+                type = UserNameResultType.UserNameNullError;
+            }
+            else if (username.Length < 6 || username.Length > 24)
+            {
+                type = UserNameResultType.UserNameLengthIncorrect;
+            }
+            else
+            {
                 foreach (char character in username)
                 {
                     if (char.IsWhiteSpace(character))
@@ -49,31 +54,15 @@ namespace Casino.WebAPI.Controllers
                         break;
                     }
                 }
+                User user = null;
                 using (CasinoContext casinoContext = new CasinoContext())
                 {
-                    var getUserList = casinoContext.Users.ToListAsync();
-                    getUserList.Wait();
-                    userList = getUserList.Result;
+                    user = casinoContext.Users.Where(x => x.UserName.ToLower() == username.ToLower()).FirstOrDefault();
                 }
-                if (userList != null)
+                if (user != null)
                 {
-                    foreach (User gambler in userList)
-                    {
-                        if (Equals(gambler.UserName, username))
-                        {
-                            type = UserNameResultType.DuplicateUser;
-                            break;
-                        }
-                    }
+                    type = UserNameResultType.DuplicateUser;
                 }
-            }
-            catch (IOException)
-            {
-                type = UserNameResultType.UserNameDataAccessError;
-            }
-            catch (Exception)
-            {
-                type = UserNameResultType.UnhandledUserError;
             }
             return type;
         }
@@ -89,38 +78,25 @@ namespace Casino.WebAPI.Controllers
         public IdResultType CheckId(string idNumber)
         {
             IdResultType type = IdResultType.None;
-            try
+            if (idNumber == null)
             {
-                if (idNumber.Length != 9 || (!Equals(char.ToUpper(idNumber[0]), 'S') && !Equals(char.ToUpper(idNumber[0]), 'T')) || !char.IsLetter(idNumber[8]))
-                {
-                    type = IdResultType.IdIncorrect;
-                }
-
+                type = IdResultType.IdNullError;
+            }
+            else if (idNumber.Length != 9 || (!Equals(char.ToUpper(idNumber[0]), 'S') && !Equals(char.ToUpper(idNumber[0]), 'T')) || !char.IsLetter(idNumber[8]))
+            {
+                type = IdResultType.IdIncorrect;
+            }
+            else
+            {
+                User user = null;
                 using (CasinoContext casinoContext = new CasinoContext())
                 {
-                    var getUserList = casinoContext.Users.ToListAsync();
-                    getUserList.Wait();
-                    userList = getUserList.Result;
+                    user = casinoContext.Users.Where(x => x.IDNumber.ToLower() == idNumber.ToLower()).FirstOrDefault();
                 }
-                if (userList != null)
+                if (user != null)
                 {
-                    foreach (User gambler in userList)
-                    {
-                        if (Equals(gambler.IDNumber, idNumber))
-                        {
-                            type = IdResultType.DuplicateId;
-                            break;
-                        }
-                    }
+                    type = IdResultType.DuplicateId;
                 }
-            }
-            catch (IOException)
-            {
-                type = IdResultType.IdDataAccessError;
-            }
-            catch (Exception)
-            {
-                type = IdResultType.UnhandledIdError;
             }
             return type;
         }
@@ -134,12 +110,16 @@ namespace Casino.WebAPI.Controllers
         public PhoneNumberResultType CheckPhoneNumber(string phoneNumber)
         {
             PhoneNumberResultType type = PhoneNumberResultType.None;
-            try
+            if (phoneNumber == null)
             {
-                if (phoneNumber.Length != 8)
-                {
-                    type = PhoneNumberResultType.PhoneNumberIncorrect;
-                }
+                type = PhoneNumberResultType.PhoneNumberNullError;
+            }
+            else if (phoneNumber.Length != 8)
+            {
+                type = PhoneNumberResultType.PhoneNumberIncorrect;
+            }
+            else
+            {
                 foreach (char character in phoneNumber)
                 {
                     if (char.IsDigit(character))
@@ -151,34 +131,15 @@ namespace Casino.WebAPI.Controllers
                         break;
                     }
                 }
-
+                User user = null;
                 using (CasinoContext casinoContext = new CasinoContext())
                 {
-                    var getUserList = casinoContext.Users.ToListAsync();
-                    getUserList.Wait();
-                    userList = getUserList.Result;
+                    user = casinoContext.Users.Where(x => x.PhoneNumber.ToLower() == phoneNumber.ToLower()).FirstOrDefault();
                 }
-                //List<User> userList = JsonConvert.DeserializeObject<List<User>>(_fileHandling.ReadAllText("User.json"));
-                if (userList != null)
+                if (user != null)
                 {
-                    foreach (User gambler in userList)
-                    {
-                        if (Equals(gambler.PhoneNumber, phoneNumber))
-                        {
-                            type = PhoneNumberResultType.DuplicatePhoneNumber;
-                            break;
-                        }
-                    }
+                    type = PhoneNumberResultType.DuplicatePhoneNumber;
                 }
-            }
-            catch (IOException)
-            {
-                type = PhoneNumberResultType.PhoneNumberDataAccessError;
-
-            }
-            catch (Exception)
-            {
-                type = PhoneNumberResultType.UnhandledPhoneNumberError;
             }
             return type;
         }
@@ -193,10 +154,14 @@ namespace Casino.WebAPI.Controllers
         public PasswordResultType CheckPassword(string password)
         {
             PasswordResultType type = PasswordResultType.None;
-            try
-            {
-                char[] specialChars = new char[] { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=', '_', '-', '{', '}', '[', ']', ':', ';', '"', '\'', '?', '<', '>', ',', '.' };
+            char[] specialChars = new char[] { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=', '_', '-', '{', '}', '[', ']', ':', ';', '"', '\'', '?', '<', '>', ',', '.' };
 
+            if (password == null)
+            {
+                type = PasswordResultType.PasswordNullError;
+            }
+            else
+            {
                 if (password.Length < 6 || password.Length > 24)
                 {
                     type |= PasswordResultType.IncorrectPasswordLength;
@@ -206,32 +171,29 @@ namespace Casino.WebAPI.Controllers
                 int l = 0;
                 foreach (var t in password)
                 {
-                    if (Char.IsUpper(t))
+                    if (char.IsUpper(t))
                     {
                         j++;
                     }
-                    if (Char.IsLower(t))
+                    if (char.IsLower(t))
                     {
                         k++;
                     }
-                    if (Char.IsDigit(t))
+                    if (char.IsDigit(t))
                     {
                         l++;
                     }
                 }
                 if (j == 0)
                 {
-                    Console.WriteLine("Please create a password with at least one uppercase letter.");
                     type |= PasswordResultType.PasswordNoUpperCaseLetter;
                 }
                 if (k == 0)
                 {
-                    Console.WriteLine("Please create a password with at least one lowercase letter.");
                     type |= PasswordResultType.PasswordNoLowerCaseLetter;
                 }
                 if (l == 0)
                 {
-                    Console.WriteLine("Please create a password with at least one digit.");
                     type |= PasswordResultType.PasswordNoDigits;
                 }
                 bool q = true;
@@ -258,10 +220,6 @@ namespace Casino.WebAPI.Controllers
                     }
                 }
             }
-            catch (Exception)
-            {
-                type |= PasswordResultType.UnhandledPasswordError;
-            }
             return type;
         }
         [HttpGet]
@@ -286,7 +244,7 @@ namespace Casino.WebAPI.Controllers
                 }
                 return true;
             }
-            catch (IOException)
+            catch (Exception)
             {
                 return false;
             }
@@ -315,17 +273,13 @@ namespace Casino.WebAPI.Controllers
                 if (userList != null)
                 {
                     foreach (User user in userList)
-                    {
                         if (Equals(user.UserName, username))
-                        {
                             if (Equals(user.Password, password))
                             {
                                 CurrentUser = user;
                                 loginSuccess = true;
                                 break;
                             }
-                        }
-                    }
                 }
                 if (CurrentUser != null)
                     isOwner = CurrentUser.IsOwner;

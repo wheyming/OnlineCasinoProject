@@ -39,6 +39,10 @@ namespace Casino.Common
         /// <summary>
         /// 
         /// </summary>
-        None = 128
+        PasswordNullError = 128,
+        /// <summary>
+        /// 
+        /// </summary>
+        None = 256
     }
 }

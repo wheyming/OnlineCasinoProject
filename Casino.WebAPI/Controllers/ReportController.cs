@@ -3,8 +3,6 @@ using Casino.WebAPI.Interfaces;
 using Casino.WebAPI.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.IO;
 using System.Linq;
 using System.Web.Http;
 
@@ -16,28 +14,12 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class ReportController : ApiController, IReportManager
     {
-        private List<Report> _reportList;
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void GetLatestFinancialReports()
-        {
-            using (CasinoContext casinoContext = new CasinoContext())
-            {
-                var getReportList = casinoContext.Reports.ToListAsync<Report>();
-                getReportList.Wait();
-                _reportList = getReportList.Result;
-            }
-        }
 
         /// <summary>
         /// 
         /// </summary>
         internal ReportController()
         {
-            _reportList = new List<Report>();
         }
 
         [HttpGet]
@@ -49,19 +31,15 @@ namespace Casino.WebAPI.Controllers
         /// <returns></returns>
         public List<double> GenerateFinancialReportMonth(DateTime monthYear)
         {
-            GetLatestFinancialReports();
             List<double> monthlyFinancialReport = new List<double>(new double[32]);
-            try
+            using (CasinoContext casinoContext = new CasinoContext())
             {
-                List<Report> filteredReports = _reportList.Where(x => x.Date.Year == monthYear.Year && x.Date.Month == monthYear.Month).ToList();
+                List<Report> filteredReports = casinoContext.Reports.Where(x => x.Date.Year == monthYear.Year && x.Date.Month == monthYear.Month).ToList();
                 foreach (Report report in filteredReports)
                 {
                     monthlyFinancialReport[report.Date.Day] += report.BetAmount - report.Payout;
                     monthlyFinancialReport[0] += report.BetAmount - report.Payout;
                 }
-            }
-            catch (IOException)
-            {
             }
             return monthlyFinancialReport;
         }
@@ -75,19 +53,15 @@ namespace Casino.WebAPI.Controllers
         /// <returns></returns>
         public List<double> GenerateFinancialReportYear(DateTime year)
         {
-            GetLatestFinancialReports();
             List<double> yearlyFinancialReport = new List<double>(new double[13]);
-            try
+            using (CasinoContext casinoContext = new CasinoContext())
             {
-                List<Report> filteredReports = _reportList.Where(x => x.Date.Year == year.Year).ToList();
+                List<Report> filteredReports = casinoContext.Reports.Where(x => x.Date.Year == year.Year).ToList();
                 foreach (Report report in filteredReports)
                 {
                     yearlyFinancialReport[report.Date.Month] += (report.BetAmount - report.Payout);
                     yearlyFinancialReport[0] += report.BetAmount - report.Payout;
                 }
-            }
-            catch (IOException)
-            {
             }
             return yearlyFinancialReport;
         }
@@ -101,18 +75,14 @@ namespace Casino.WebAPI.Controllers
         /// <returns></returns>
         public double GenerateFinancialReportDay(DateTime date)
         {
-            GetLatestFinancialReports();
             double dailyFinancialReport = new double();
-            try
+            using (CasinoContext casinoContext = new CasinoContext())
             {
-                List<Report> filteredReports = _reportList.Where(x => x.Date.ToShortDateString() == date.ToShortDateString()).ToList();
+                List<Report> filteredReports = casinoContext.Reports.Where(x => x.Date.Year == date.Year && x.Date.Month == date.Month && x.Date.Day == date.Day).ToList();
                 foreach (Report report in filteredReports)
                 {
                     dailyFinancialReport += (report.BetAmount - report.Payout);
                 }
-            }
-            catch (IOException)
-            {
             }
             return dailyFinancialReport;
         }

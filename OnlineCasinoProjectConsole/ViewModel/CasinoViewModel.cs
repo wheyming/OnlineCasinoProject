@@ -58,10 +58,10 @@ namespace OnlineCasinoProjectConsole.ViewModel
                     output = "Unexpected Error.";
                     break;
                 case UserNameResultType.UserNameContainsSpace:
-                    output = "Please Create A Username Without Space.";
+                    output = "Please create a Username without Space.";
                     break;
-                case UserNameResultType.UserNameDataAccessError:
-                    output = "Unable to find file.";
+                case UserNameResultType.UserNameNullError:
+                    output = "Input cannot be Null.";
                     break;
                 case UserNameResultType.UserNameLengthIncorrect:
                     output = "Please create a username between 6 to 24 characters.";
@@ -98,8 +98,8 @@ namespace OnlineCasinoProjectConsole.ViewModel
                 case IdResultType.IdIncorrect:
                     output = "Invalid ID Number";
                     break;
-                case IdResultType.IdDataAccessError:
-                    output = "Unable to find file.";
+                case IdResultType.IdNullError:
+                    output = "Input cannot be Null.";
                     break;
                 case IdResultType.UnhandledIdError:
                     output = "Unexpected Error.";
@@ -142,9 +142,9 @@ namespace OnlineCasinoProjectConsole.ViewModel
                         output = "Invalid Phone Number";
                         break;
                     }
-                case PhoneNumberResultType.PhoneNumberDataAccessError:
+                case PhoneNumberResultType.PhoneNumberNullError:
                     {
-                        output = "Unable to find file.";
+                        output = "Input cannot be Null.";
                         break;
                     }
                 case PhoneNumberResultType.UnhandledPhoneNumberError:
@@ -173,6 +173,10 @@ namespace OnlineCasinoProjectConsole.ViewModel
                 var readTask = result.Content.ReadAsAsync<PasswordResultType>();
                 readTask.Wait();
                 checkPasswordResult = readTask.Result;
+            }
+            if (Equals(checkPasswordResult & PasswordResultType.PasswordNullError, PasswordResultType.PasswordNullError))
+            {
+                outputList.Add("Please do not leave password blank.");
             }
             if (Equals(checkPasswordResult & PasswordResultType.PasswordNoUpperCaseLetter, PasswordResultType.PasswordNoUpperCaseLetter))
             {
