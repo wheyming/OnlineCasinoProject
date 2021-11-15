@@ -17,6 +17,15 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class AuthenticationController : ApiController, IAuthenticationManager
     {
+        private string _connectionString;
+        public AuthenticationController()
+        {
+#if DEBUG
+                _connectionString = "DebugCasinoDBConnectionString";
+#else
+                _connectionString = "ReleaseCasinoDBConnectionString";
+#endif
+        }
         List<User> userList;
 
         /// <summary>
@@ -55,7 +64,7 @@ namespace Casino.WebAPI.Controllers
                     }
                 }
                 User user = null;
-                using (CasinoContext casinoContext = new CasinoContext())
+                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
                     user = casinoContext.Users.Where(x => x.UserName.ToLower() == username.ToLower()).FirstOrDefault();
                 }
@@ -89,7 +98,7 @@ namespace Casino.WebAPI.Controllers
             else
             {
                 User user = null;
-                using (CasinoContext casinoContext = new CasinoContext())
+                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
                     user = casinoContext.Users.Where(x => x.IDNumber.ToLower() == idNumber.ToLower()).FirstOrDefault();
                 }
@@ -132,7 +141,7 @@ namespace Casino.WebAPI.Controllers
                     }
                 }
                 User user = null;
-                using (CasinoContext casinoContext = new CasinoContext())
+                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
                     user = casinoContext.Users.Where(x => x.PhoneNumber.ToLower() == phoneNumber.ToLower()).FirstOrDefault();
                 }
@@ -236,7 +245,7 @@ namespace Casino.WebAPI.Controllers
         {
             try
             {
-                using (CasinoContext casinoContext = new CasinoContext())
+                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
                     User gambler = new User(username, idNumber, phoneNumber, password);
                     casinoContext.Users.Add(gambler);
@@ -264,7 +273,7 @@ namespace Casino.WebAPI.Controllers
             bool? isOwner;
             try
             {
-                using (CasinoContext casinoContext = new CasinoContext())
+                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
                     var getUserList = casinoContext.Users.ToListAsync();
                     getUserList.Wait();

@@ -16,15 +16,16 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class GamblingController : ApiController, IGamblingManager
     {
+        private string _connectionString;
         private readonly IRandomNumberGenerator _customRandom;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="config"></param>
-        /// <param name="financialReport"></param>
         public GamblingController()
         {
             _customRandom = new RandomNumberGenerator();
+#if DEBUG
+            _connectionString = "DebugCasinoDBConnectionString";
+#else
+                _connectionString = "ReleaseCasinoDBConnectionString";
+#endif
         }
 
         [HttpGet]
@@ -39,7 +40,7 @@ namespace Casino.WebAPI.Controllers
         {
             IList<int> rolledNumber = new List<int>();
             PrizeModule prizeModule;
-            using (CasinoContext casinoContext = new CasinoContext())
+            using (CasinoContext casinoContext = new CasinoContext(_connectionString))
             {
                 prizeModule = casinoContext.PrizeModule.Where(x => x.Identifier == 1).FirstOrDefault();
             }
@@ -97,7 +98,7 @@ namespace Casino.WebAPI.Controllers
         {
             DateTime storeWinningsTime = DateTime.Now;
             Report report = new Report(betAmount, payout, storeWinningsTime);
-            using (CasinoContext casinoContext = new CasinoContext())
+            using (CasinoContext casinoContext = new CasinoContext(_connectionString))
             {
                 casinoContext.Reports.Add(report);
                 casinoContext.SaveChanges();

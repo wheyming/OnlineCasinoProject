@@ -12,6 +12,15 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class ConfigurationController : ApiController, IConfigurationManager
     {
+        private string _connectionString;
+        public ConfigurationController()
+        {
+#if DEBUG
+            _connectionString = "DebugCasinoDBConnectionString";
+#else
+                _connectionString = "ReleaseCasinoDBConnectionString";
+#endif
+        }
         [HttpGet]
         [Route("setprizemodule")]
         /// <summary>
@@ -22,7 +31,7 @@ namespace Casino.WebAPI.Controllers
         {
             if (inputPrizeSetting == 1)
             {
-                using (CasinoContext casinoContext = new CasinoContext())
+                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
                     PrizeModule prizeModule = casinoContext.PrizeModule.Where(x => x.Identifier == 1).FirstOrDefault();
                     casinoContext.PrizeModule.Remove(prizeModule);
@@ -36,7 +45,7 @@ namespace Casino.WebAPI.Controllers
             }
             else if (inputPrizeSetting == 2)
             {
-                using (CasinoContext casinoContext = new CasinoContext())
+                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
                     PrizeModule prizeModule = casinoContext.PrizeModule.Where(x => x.Identifier == 1).FirstOrDefault();
                     casinoContext.PrizeModule.Remove(prizeModule);

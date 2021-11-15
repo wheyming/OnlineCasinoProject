@@ -14,12 +14,14 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class ReportController : ApiController, IReportManager
     {
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal ReportController()
+        private string _connectionString;
+        public ReportController()
         {
+#if DEBUG
+            _connectionString = "DebugCasinoDBConnectionString";
+#else
+                _connectionString = "ReleaseCasinoDBConnectionString";
+#endif
         }
 
         [HttpGet]
@@ -32,7 +34,7 @@ namespace Casino.WebAPI.Controllers
         public List<double> GenerateFinancialReportMonth(DateTime monthYear)
         {
             List<double> monthlyFinancialReport = new List<double>(new double[32]);
-            using (CasinoContext casinoContext = new CasinoContext())
+            using (CasinoContext casinoContext = new CasinoContext(_connectionString))
             {
                 List<Report> filteredReports = casinoContext.Reports.Where(x => x.Date.Year == monthYear.Year && x.Date.Month == monthYear.Month).ToList();
                 foreach (Report report in filteredReports)
@@ -54,7 +56,7 @@ namespace Casino.WebAPI.Controllers
         public List<double> GenerateFinancialReportYear(DateTime year)
         {
             List<double> yearlyFinancialReport = new List<double>(new double[13]);
-            using (CasinoContext casinoContext = new CasinoContext())
+            using (CasinoContext casinoContext = new CasinoContext(_connectionString))
             {
                 List<Report> filteredReports = casinoContext.Reports.Where(x => x.Date.Year == year.Year).ToList();
                 foreach (Report report in filteredReports)
@@ -76,7 +78,7 @@ namespace Casino.WebAPI.Controllers
         public double GenerateFinancialReportDay(DateTime date)
         {
             double dailyFinancialReport = new double();
-            using (CasinoContext casinoContext = new CasinoContext())
+            using (CasinoContext casinoContext = new CasinoContext(_connectionString))
             {
                 List<Report> filteredReports = casinoContext.Reports.Where(x => x.Date.Year == date.Year && x.Date.Month == date.Month && x.Date.Day == date.Day).ToList();
                 foreach (Report report in filteredReports)
