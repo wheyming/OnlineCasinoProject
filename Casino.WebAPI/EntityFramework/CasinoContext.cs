@@ -5,9 +5,15 @@ namespace Casino.WebAPI.EntityFramework
 {
     public class CasinoContext : DbContext
     {
-        public CasinoContext() : base("Name = CasinoDBConnectionString")
+        public CasinoContext() : base(
+#if DEBUG
+            "Name = DebugCasinoDBConnectionString"
+#else
+            "Name = ReleaseCasinoDBConnectionString"
+#endif
+            )
         {
-            //Database.SetInitializer(new CasinoDBInitializer());
+            Database.SetInitializer(new CasinoDBInitializer());
         }
 
         public DbSet<User> Users { get; set; }
