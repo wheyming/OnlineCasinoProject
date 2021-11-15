@@ -5,9 +5,9 @@ namespace Casino.WebAPI.EntityFramework
 {
     public class CasinoContext : DbContext
     {
-        public CasinoContext(string connectionString= "ReleaseCasinoDBConnectionString") : base(connectionString)
+        public CasinoContext(string connectionString) : base(connectionString)
         {
-            Database.SetInitializer(new CasinoDBInitializer());
+            //Database.SetInitializer(new CasinoDBInitializer());
         }
 
         public DbSet<User> Users { get; set; }
