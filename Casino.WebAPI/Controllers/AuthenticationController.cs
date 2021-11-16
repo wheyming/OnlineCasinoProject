@@ -4,7 +4,6 @@ using Casino.WebAPI.Interfaces;
 using Casino.WebAPI.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Web.Http;
@@ -21,12 +20,11 @@ namespace Casino.WebAPI.Controllers
         public AuthenticationController()
         {
 #if DEBUG
-                _connectionString = "DebugCasinoDBConnectionString";
+            _connectionString = "DebugCasinoDBConnectionString";
 #else
-                _connectionString = "ReleaseCasinoDBConnectionString";
+            _connectionString = "ReleaseCasinoDBConnectionString";
 #endif
         }
-        List<User> userList;
 
         /// <summary>
         /// 
@@ -275,23 +273,14 @@ namespace Casino.WebAPI.Controllers
             {
                 using (CasinoContext casinoContext = new CasinoContext(_connectionString))
                 {
-                    var getUserList = casinoContext.Users.ToListAsync();
-                    getUserList.Wait();
-                    userList = getUserList.Result;
+                    CurrentUser = casinoContext.Users.Where(x => Equals(x.UserName, username) && Equals(x.Password, password)).FirstOrDefault();
                 }
-                if (userList != null)
-                {
-                    foreach (User user in userList)
-                        if (Equals(user.UserName, username))
-                            if (Equals(user.Password, password))
-                            {
-                                CurrentUser = user;
-                                loginSuccess = true;
-                                break;
-                            }
-                }
+
                 if (CurrentUser != null)
+                {
+                    loginSuccess = true;
                     isOwner = CurrentUser.IsOwner;
+                }
                 else
                     isOwner = null;
             }

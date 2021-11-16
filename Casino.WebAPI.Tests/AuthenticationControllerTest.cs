@@ -1,6 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Xunit;
-using Moq;
 
 namespace Casino.WebAPI.Tests
 {

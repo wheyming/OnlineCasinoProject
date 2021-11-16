@@ -92,12 +92,14 @@
   <ItemGroup>
     <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Controllers\GamblingController.cs" />
+    <Compile Include="Controllers\InitializeController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="EntityFramework\CasinoContext.cs" />
     <Compile Include="EntityFramework\CasinoDBInitializer.cs" />
     <Compile Include="Interfaces\IConfigurationManager.cs" />
     <Compile Include="Interfaces\ICustomRandom.cs" />
     <Compile Include="Interfaces\IGamblingManager.cs" />
+    <Compile Include="Interfaces\IInitializeManager.cs" />
     <Compile Include="Interfaces\IReportManager.cs" />
     <Compile Include="Models\PrizeModule.cs" />
     <Compile Include="Models\Report.cs" />
