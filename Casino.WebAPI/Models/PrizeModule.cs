@@ -16,6 +16,7 @@ namespace Casino.WebAPI.Models
 
         public PrizeModule(bool isPrizeEnabled)
         {
+            TimesChanged.GetType();
             Identifier = 1;
             IsPrizeEnabled = isPrizeEnabled;
         }

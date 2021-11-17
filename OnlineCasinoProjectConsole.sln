@@ -11,7 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Casino.Common", "Casino.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Casino.WebAPI", "Casino.WebAPI\Casino.WebAPI.csproj", "{7393124F-2FE2-4B0E-B41E-A50D49A46010}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Casino.WebAPI.Tests", "Casino.WebAPI.Tests\Casino.WebAPI.Tests.csproj", "{69EFE0D0-7334-46B4-830E-A42FB3D5A574}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Casino.WebAPI.UnitTest", "Casino.WebAPI.UnitTest\Casino.WebAPI.UnitTest.csproj", "{546EA200-27FB-4D5A-8E86-30A42DAF4576}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineCasinoProjectConsole.UnitTest", "OnlineCasinoProjectConsole.UnitTest\OnlineCasinoProjectConsole.UnitTest.csproj", "{2993D281-91BF-4410-A4FC-F2A4D7C4F38C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +37,14 @@ Global
 		{7393124F-2FE2-4B0E-B41E-A50D49A46010}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7393124F-2FE2-4B0E-B41E-A50D49A46010}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7393124F-2FE2-4B0E-B41E-A50D49A46010}.Release|Any CPU.Build.0 = Release|Any CPU
-		{69EFE0D0-7334-46B4-830E-A42FB3D5A574}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{69EFE0D0-7334-46B4-830E-A42FB3D5A574}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{69EFE0D0-7334-46B4-830E-A42FB3D5A574}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{69EFE0D0-7334-46B4-830E-A42FB3D5A574}.Release|Any CPU.Build.0 = Release|Any CPU
+		{546EA200-27FB-4D5A-8E86-30A42DAF4576}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{546EA200-27FB-4D5A-8E86-30A42DAF4576}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{546EA200-27FB-4D5A-8E86-30A42DAF4576}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{546EA200-27FB-4D5A-8E86-30A42DAF4576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2993D281-91BF-4410-A4FC-F2A4D7C4F38C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2993D281-91BF-4410-A4FC-F2A4D7C4F38C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2993D281-91BF-4410-A4FC-F2A4D7C4F38C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2993D281-91BF-4410-A4FC-F2A4D7C4F38C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -33,6 +33,7 @@ namespace Casino.WebAPI.Models
         /// <param name="date"></param>
         public Report(double betAmount, double payout, DateTime date)
         {
+            ReportID.GetType();
             BetAmount = betAmount;
             Payout = payout;
             Date = date;

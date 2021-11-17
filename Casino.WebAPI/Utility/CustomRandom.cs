@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Casino.WebAPI.Utility
 {
-    internal class RandomNumberGenerator : IRandomNumberGenerator
+    public class RandomNumberGenerator : IRandomNumberGenerator
     {
         Random randomGenerator;
         public RandomNumberGenerator()

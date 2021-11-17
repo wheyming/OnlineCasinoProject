@@ -96,8 +96,10 @@
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="EntityFramework\CasinoContext.cs" />
     <Compile Include="EntityFramework\CasinoDBInitializer.cs" />
+    <Compile Include="Interfaces\ICasinoContext.cs" />
     <Compile Include="Interfaces\IConfigurationManager.cs" />
     <Compile Include="Interfaces\ICustomRandom.cs" />
+    <Compile Include="Interfaces\IDateTimeGenerator.cs" />
     <Compile Include="Interfaces\IGamblingManager.cs" />
     <Compile Include="Interfaces\IInitializeManager.cs" />
     <Compile Include="Interfaces\IReportManager.cs" />
@@ -112,6 +114,7 @@
     <Compile Include="Interfaces\IAuthenticationManager.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\DateTimeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -256,13 +256,13 @@ namespace OnlineCasinoProjectConsole.ViewModel
         public (string, bool?) CheckLogin(string userName, string passWord)
         {
             string output = string.Empty;
-            (bool?, bool?) isLoginSuccess = (false, false);
+            (bool, bool?) isLoginSuccess = (false, null);
             var responseTask = _casinoClient.GetAsync("api/Authentication/login?username=" + userName + "&password=" + passWord);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<(bool?, bool?)>();
+                var readTask = result.Content.ReadAsAsync<(bool, bool?)>();
                 readTask.Wait();
                 isLoginSuccess = readTask.Result;
             }
@@ -423,23 +423,31 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <summary>
         /// 
         /// </summary>
-        public void LogOut()
+        public bool LogOut()
         {
+            bool value = true;
             var responseTask = _casinoClient.GetAsync("api/Authentication/logout");
             responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<bool>();
+                readTask.Wait();
+                value = readTask.Result;
+            }
+            return value;
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="betAmount"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public (IList<int>, string) PlaySlot(double betAmount, string userName)
+        public (IList<int>, string) PlaySlot(double betAmount)
         {
             (IList<int>, double, SlotsResultType, double, DateTime) playSlotTuple;
             (IList<int>, string) output;
-            var responseTask = _casinoClient.GetAsync("api/Gambling/playSlot?betamount=" + betAmount + "&username=" + userName);
+            var responseTask = _casinoClient.GetAsync("api/Gambling/playSlot?betamount=" + betAmount);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)

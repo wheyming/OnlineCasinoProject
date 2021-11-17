@@ -2,9 +2,6 @@
 using Casino.WebAPI.EntityFramework;
 using Casino.WebAPI.Interfaces;
 using Casino.WebAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Web.Http;
 
@@ -16,6 +13,7 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class AuthenticationController : ApiController, IAuthenticationManager
     {
+        private ICasinoContext _casinoContext;
         private string _connectionString;
         public AuthenticationController()
         {
@@ -24,6 +22,12 @@ namespace Casino.WebAPI.Controllers
 #else
             _connectionString = "ReleaseCasinoDBConnectionString";
 #endif
+            _casinoContext = new CasinoContext(_connectionString);
+        }
+
+        public AuthenticationController(ICasinoContext casinoContext)
+        {
+            _casinoContext = casinoContext;
         }
 
         /// <summary>
@@ -62,10 +66,7 @@ namespace Casino.WebAPI.Controllers
                     }
                 }
                 User user = null;
-                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
-                {
-                    user = casinoContext.Users.Where(x => x.UserName.ToLower() == username.ToLower()).FirstOrDefault();
-                }
+                user = _casinoContext.Users.Where(x => x.UserName.ToLower() == username.ToLower()).FirstOrDefault();
                 if (user != null)
                 {
                     type = UserNameResultType.DuplicateUser;
@@ -89,17 +90,14 @@ namespace Casino.WebAPI.Controllers
             {
                 type = IdResultType.IdNullError;
             }
-            else if (idNumber.Length != 9 || (!Equals(char.ToUpper(idNumber[0]), 'S') && !Equals(char.ToUpper(idNumber[0]), 'T')) || !char.IsLetter(idNumber[8]))
+            else if (idNumber.Length != 9 || !char.IsLetter(idNumber[8]) || (!Equals(char.ToUpper(idNumber[0]), 'S') && !Equals(char.ToUpper(idNumber[0]), 'T')))
             {
                 type = IdResultType.IdIncorrect;
             }
             else
             {
                 User user = null;
-                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
-                {
-                    user = casinoContext.Users.Where(x => x.IDNumber.ToLower() == idNumber.ToLower()).FirstOrDefault();
-                }
+                user = _casinoContext.Users.Where(x => x.IDNumber.ToLower() == idNumber.ToLower()).FirstOrDefault();
                 if (user != null)
                 {
                     type = IdResultType.DuplicateId;
@@ -139,10 +137,7 @@ namespace Casino.WebAPI.Controllers
                     }
                 }
                 User user = null;
-                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
-                {
-                    user = casinoContext.Users.Where(x => x.PhoneNumber.ToLower() == phoneNumber.ToLower()).FirstOrDefault();
-                }
+                user = _casinoContext.Users.Where(x => x.PhoneNumber.ToLower() == phoneNumber.ToLower()).FirstOrDefault();
                 if (user != null)
                 {
                     type = PhoneNumberResultType.DuplicatePhoneNumber;
@@ -217,7 +212,7 @@ namespace Casino.WebAPI.Controllers
                 }
                 if (q)
                 {
-                    type |= PasswordResultType.PasswordThreeRepeatedCharacters;
+                    type |= PasswordResultType.PasswordNoSpecialCharacter;
                 }
                 for (int i = 0; i < (password.Length - 2); i++)
                 {
@@ -241,20 +236,10 @@ namespace Casino.WebAPI.Controllers
         /// <returns></returns>
         public bool SignUp(string username, string idNumber, string phoneNumber, string password)
         {
-            try
-            {
-                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
-                {
-                    User gambler = new User(username, idNumber, phoneNumber, password);
-                    casinoContext.Users.Add(gambler);
-                    casinoContext.SaveChanges();
-                }
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            User gambler = new User(username, idNumber, phoneNumber, password);
+            _casinoContext.Users.Add(gambler);
+            _casinoContext.SaveChanges();
+            return true;
         }
 
         [HttpGet]
@@ -265,30 +250,18 @@ namespace Casino.WebAPI.Controllers
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public (bool?, bool?) Login(string username, string password)
+        public (bool, bool?) Login(string username, string password)
         {
-            bool? loginSuccess = false;
-            bool? isOwner;
-            try
-            {
-                using (CasinoContext casinoContext = new CasinoContext(_connectionString))
-                {
-                    CurrentUser = casinoContext.Users.Where(x => Equals(x.UserName, username) && Equals(x.Password, password)).FirstOrDefault();
-                }
+            bool loginSuccess = false;
+            bool? isOwner = false;
+            CurrentUser = _casinoContext.Users.Where(x => Equals(x.UserName, username) && Equals(x.Password, password)).FirstOrDefault();
 
-                if (CurrentUser != null)
-                {
-                    loginSuccess = true;
-                    isOwner = CurrentUser.IsOwner;
-                }
-                else
-                    isOwner = null;
-            }
-            catch (IOException)
+            if (CurrentUser != null)
             {
-                loginSuccess = null;
-                isOwner = null;
+                loginSuccess = true;
+                isOwner = CurrentUser.IsOwner;
             }
+
             return (loginSuccess, isOwner);
         }
         [HttpGet]
@@ -296,9 +269,10 @@ namespace Casino.WebAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public void Logout()
+        public bool Logout()
         {
             CurrentUser = null;
+            return false;
         }
     }
 }

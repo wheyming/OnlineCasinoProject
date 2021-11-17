@@ -5,7 +5,7 @@ namespace Casino.WebAPI.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    internal interface IRandomNumberGenerator
+    public interface IRandomNumberGenerator
     {
         /// <summary>
         /// 

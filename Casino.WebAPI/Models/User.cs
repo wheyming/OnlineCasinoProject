@@ -10,29 +10,31 @@ namespace Casino.WebAPI.Models
         /// <summary>
         /// 
         /// </summary>
-        //[JsonProperty]
         [Key]
         public string UserName { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        //[JsonProperty]
         public string IDNumber { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        //[JsonProperty]
         public string PhoneNumber { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        //[JsonProperty]
         public string Password { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        //[JsonProperty]
         public bool IsOwner { get; private set; }
+
+        /// <summary>
+        /// Default constructor required to prevent error.
+        /// </summary>
+        public User()
+        { }
+
         /// <summary>
         /// 
         /// </summary>
@@ -57,9 +59,5 @@ namespace Casino.WebAPI.Models
             Password = password;
             IsOwner = isOwner;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        public User() { }
     }
 }

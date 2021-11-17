@@ -16,16 +16,27 @@ namespace Casino.WebAPI.Controllers
     /// </summary>
     public class GamblingController : ApiController, IGamblingManager
     {
+        private ICasinoContext _casinoContext;
         private string _connectionString;
         private readonly IRandomNumberGenerator _customRandom;
+        private readonly IDateTimeGenerator _dateTimeGenerator;
         public GamblingController()
         {
             _customRandom = new RandomNumberGenerator();
 #if DEBUG
             _connectionString = "DebugCasinoDBConnectionString";
 #else
-                _connectionString = "ReleaseCasinoDBConnectionString";
+            _connectionString = "ReleaseCasinoDBConnectionString";
 #endif
+            _casinoContext = new CasinoContext(_connectionString);
+            _dateTimeGenerator = new DateTimeGenerator();
+        }
+
+        public GamblingController(ICasinoContext casinoContext, IRandomNumberGenerator customRandom, IDateTimeGenerator dateTimeGenerator)
+        {
+            _casinoContext = casinoContext;
+            _customRandom = customRandom;
+            _dateTimeGenerator = dateTimeGenerator;
         }
 
         [HttpGet]
@@ -36,14 +47,11 @@ namespace Casino.WebAPI.Controllers
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        public (IList<int>, double, SlotsResultType, double, DateTime) PlaySlot(double betAmount, string username)
+        public (IList<int>, double, SlotsResultType, double, DateTime) PlaySlot(double betAmount)
         {
             IList<int> rolledNumber = new List<int>();
             PrizeModule prizeModule;
-            using (CasinoContext casinoContext = new CasinoContext(_connectionString))
-            {
-                prizeModule = casinoContext.PrizeModule.Where(x => x.Identifier == 1).FirstOrDefault();
-            }
+            prizeModule = _casinoContext.PrizeModule.Where(x => x.Identifier == 1).FirstOrDefault();
             if (prizeModule.IsPrizeEnabled == false)
             {
                 rolledNumber = _customRandom.RollRandomNumberPrizeNotActivated();
@@ -53,7 +61,7 @@ namespace Casino.WebAPI.Controllers
                 rolledNumber = _customRandom.RollRandomNumberPrizeActivated();
             }
             (double, SlotsResultType) winningsAndResultType = CalculateWinningsSlot(rolledNumber, betAmount);
-            DateTime resultTime = StoreWinningsInfo(winningsAndResultType.Item1, betAmount, username);
+            DateTime resultTime = StoreWinningsInfo(winningsAndResultType.Item1, betAmount);
             return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2, betAmount, resultTime);
         }
         /// <summary>
@@ -66,7 +74,7 @@ namespace Casino.WebAPI.Controllers
         {
             double winnings;
             SlotsResultType resultType;
-            if ((number[0] == '7') && (number[1] == '7') && (number[2] == '7'))
+            if ((number[0] == 7) && (number[1] == 7) && (number[2] == 7))
             {
                 winnings = betAmount * 7;
                 resultType = SlotsResultType.JackPot;
@@ -94,15 +102,12 @@ namespace Casino.WebAPI.Controllers
         /// <param name="payout"></param>
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
-        private DateTime StoreWinningsInfo(double payout, double betAmount, string username)
+        private DateTime StoreWinningsInfo(double payout, double betAmount)
         {
-            DateTime storeWinningsTime = DateTime.Now;
+            DateTime storeWinningsTime = _dateTimeGenerator.Now();
             Report report = new Report(betAmount, payout, storeWinningsTime);
-            using (CasinoContext casinoContext = new CasinoContext(_connectionString))
-            {
-                casinoContext.Reports.Add(report);
-                casinoContext.SaveChanges();
-            }
+            _casinoContext.Reports.Add(report);
+            _casinoContext.SaveChanges();
             return storeWinningsTime;
         }
     }

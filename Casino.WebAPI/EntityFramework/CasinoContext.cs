@@ -1,9 +1,10 @@
-﻿using Casino.WebAPI.Models;
+﻿using Casino.WebAPI.Interfaces;
+using Casino.WebAPI.Models;
 using System.Data.Entity;
 
 namespace Casino.WebAPI.EntityFramework
 {
-    public class CasinoContext : DbContext
+    public class CasinoContext : DbContext, ICasinoContext
     {
         public CasinoContext(string connectionString) : base(connectionString)
         {

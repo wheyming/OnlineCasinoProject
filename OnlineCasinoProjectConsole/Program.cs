@@ -164,8 +164,13 @@ namespace OnlineCasinoProjectConsole
                                                         }
                                                     case 5:
                                                         {
-                                                            mv.LogOut();
-                                                            loginBool = false;
+                                                            loginBool = mv.LogOut();
+                                                            if (loginBool)
+                                                            {
+                                                                Console.WriteLine("Logout Error.");
+                                                            }
+                                                            else
+                                                                Console.WriteLine("Good bye.");
                                                             break;
                                                         }
                                                     default:
@@ -213,9 +218,13 @@ namespace OnlineCasinoProjectConsole
                                                         }
                                                     case 2:
                                                         {
-                                                            mv.LogOut();
-                                                            loginBool = false;
-                                                            Console.WriteLine("Good bye.");
+                                                            loginBool = mv.LogOut();
+                                                            if (loginBool)
+                                                            {
+                                                                Console.WriteLine("Logout Error.");
+                                                            }
+                                                            else
+                                                                Console.WriteLine("Good bye.");
                                                             break;
                                                         }
                                                     default:
@@ -228,6 +237,8 @@ namespace OnlineCasinoProjectConsole
                                         }
                                     } while (loginBool);
                                 }
+                                else if (string.IsNullOrWhiteSpace(checkLoginOutput.Item1) && (checkLoginOutput.Item2 == null))
+                                    Console.WriteLine("Login error has occured.");
                                 else
                                     Console.WriteLine("Incorrect username or password.");
                                 break;

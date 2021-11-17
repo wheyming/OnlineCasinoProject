@@ -76,14 +76,14 @@ namespace OnlineCasinoProjectConsole.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        void LogOut();
+        bool LogOut();
         /// <summary>
         /// 
         /// </summary>
         /// <param name="betAmount"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        (IList<int>, string) PlaySlot(double betAmount, string userName);
+        (IList<int>, string) PlaySlot(double betAmount);
         /// <summary>
         /// 
         /// </summary>
