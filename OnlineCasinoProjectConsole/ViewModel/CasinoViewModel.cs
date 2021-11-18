@@ -14,11 +14,13 @@ namespace OnlineCasinoProjectConsole.ViewModel
     public class CasinoViewModel : ICasinoViewModel
     {
         private readonly HttpClient _casinoClient;
+        private readonly IDateConverter _dateConverter;
         /// <summary>
         /// 
         /// </summary>
-        public CasinoViewModel(HttpClient httpClient)
+        public CasinoViewModel(HttpClient httpClient, IDateConverter dateConverter)
         {
+            _dateConverter = dateConverter;
             _casinoClient = httpClient;
 #if DEBUG
             _casinoClient.BaseAddress = new Uri("https://localhost:44353/");
@@ -270,20 +272,20 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 if (isLoginSuccess.Item2 == true)
                 {
-                    output = ("\nWelcome Owner." +
+                    output = "\nWelcome Owner." +
                         "\nWould you like to" +
                         "\n1.) Set prize module?" +
                         "\n2.) View financial report for a certain day?" +
                         "\n3.) View financial report for a certain month?" +
                         "\n4.) View financial report for a certain year?" +
-                        "\n5.) Log out.");
+                        "\n5.) Log out.";
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    output = ($"Welcome {userName}." +
+                    output = $"Welcome {userName}." +
                         "\nWould you like to" +
                         "\n1.) Play Slots?" +
-                        "\n2.) Logout?");
+                        "\n2.) Logout?";
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -315,7 +317,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public string SeeDayFinancialReport(string inputDay)
         {
-            DateTime inputDateTime = DateConverter.InputDayConvert(inputDay);
+            DateTime inputDateTime = _dateConverter.InputDayConvert(inputDay);
             double financialReportDay;
             var responseTask = _casinoClient.GetAsync("api/FinancialReport/day?date=" + inputDateTime);
             responseTask.Wait();
@@ -331,7 +333,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             }
             else
             {
-                output = "Expected Error.";
+                output = "Unexpected Error Occured.";
             }
             return output;
         }
@@ -343,7 +345,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public IList<string> SeeMonthFinancialReport(string inputMonth)
         {
-            DateTime inputDateTime = DateConverter.InputMonthConvert(inputMonth);
+            DateTime inputDateTime = _dateConverter.InputMonthConvert(inputMonth);
             IList<string> monthFinancialReport = new List<string>();
             IList<double> monthValueList = new List<double>();
             if (inputDateTime != DateTime.MinValue)
@@ -385,7 +387,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public IList<string> SeeYearFinancialReport(string inputYear)
         {
-            DateTime inputDateTime = DateConverter.InputYearConvert(inputYear);
+            DateTime inputDateTime = _dateConverter.InputYearConvert(inputYear);
             IList<string> yearFinancialReport = new List<string>();
             IList<double> yearValueList = new List<double>();
             if (inputDateTime != DateTime.MinValue)

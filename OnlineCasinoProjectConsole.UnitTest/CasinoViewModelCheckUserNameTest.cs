@@ -2,6 +2,7 @@ using Casino.Common;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
+using OnlineCasinoProjectConsole.Utility;
 using OnlineCasinoProjectConsole.ViewModel;
 using System;
 using System.Net;
@@ -15,18 +16,12 @@ namespace OnlineCasinoProjectConsole.UnitTest
 {
     public class CasinoViewModelCheckUserNameTest
     {
-        private string _uriName;
         public CasinoViewModelCheckUserNameTest()
-        {
-#if DEBUG
-            _uriName = "https://localhost:44353/";
-#else
-            _uriName = "http://mycasino.me";
-#endif
-        }
+        { }
 
-        [Fact]
-        public void CheckUsernameTestNone()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckUsernameTestNone(string userName)
         {
             var expectedResult = UserNameResultType.None;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -42,15 +37,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckUserName(_uriName);
+            var result = underTest.CheckUserName(userName);
 
             Assert.Equal(string.Empty, result);
         }
 
-        [Fact]
-        public void CheckUsernameTestDuplicate()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckUsernameTestDuplicate(string userName)
         {
             var expectedResult = UserNameResultType.DuplicateUser;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -66,15 +62,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckUserName(_uriName);
+            var result = underTest.CheckUserName(userName);
 
             Assert.Equal("Duplicate Username.", result);
         }
 
-        [Fact]
-        public void CheckUsernameTestDuplicateUnhandled()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckUsernameTestDuplicateUnhandled(string userName)
         {
             var expectedResult = UserNameResultType.UnhandledUserError;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -90,15 +87,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.BadRequest,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckUserName(_uriName);
+            var result = underTest.CheckUserName(userName);
 
             Assert.Equal("Unexpected Error.", result);
         }
 
-        [Fact]
-        public void CheckUsernameTestContainsSpace()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckUsernameTestContainsSpace(string userName)
         {
             var expectedResult = UserNameResultType.UserNameContainsSpace;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -114,15 +112,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckUserName(_uriName);
+            var result = underTest.CheckUserName(userName);
 
             Assert.Equal("Please create a Username without Space.", result);
         }
 
-        [Fact]
-        public void CheckUsernameTestNull()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckUsernameTestNull(string userName)
         {
             var expectedResult = UserNameResultType.UserNameNullError;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -138,15 +137,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckUserName(_uriName);
+            var result = underTest.CheckUserName(userName);
 
             Assert.Equal("Input cannot be Null.", result);
         }
 
-        [Fact]
-        public void CheckUsernameTestLengthIncorrect()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckUsernameTestLengthIncorrect(string userName)
         {
             var expectedResult = UserNameResultType.UserNameLengthIncorrect;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -162,9 +162,9 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckUserName(_uriName);
+            var result = underTest.CheckUserName(userName);
 
             Assert.Equal("Please create a username between 6 to 24 characters.", result);
         }

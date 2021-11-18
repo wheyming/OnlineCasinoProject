@@ -14,67 +14,17 @@ using Xunit;
 
 namespace OnlineCasinoProjectConsole.UnitTest
 {
-    public class CasinoViewModelCheckIDTest
+    public class CasinoViewModelSignUpLoginLogoutTest
     {
-        public CasinoViewModelCheckIDTest()
+        public CasinoViewModelSignUpLoginLogoutTest()
         {
         }
 
         [Theory]
-        [InlineData("Happy")]
-        public void CheckIDTestNone(string idNumber)
+        [InlineData("Happy", "Happy", "Happy", "Happy")]
+        public void SignUpTestFailed(string userName, string idNumber, string phoneNumber, string passWord)
         {
-            var expectedResult = IdResultType.None;
-            var json = JsonConvert.SerializeObject(expectedResult);
-
-            var mockMessageHandler = new Mock<HttpMessageHandler>();
-
-            mockMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync",
-                ItExpr.IsAny<HttpRequestMessage>(),
-                ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(json, Encoding.UTF8, "application/json")
-                });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
-
-            var result = underTest.CheckIdNumber(idNumber);
-
-            Assert.Equal(string.Empty, result);
-        }
-
-        [Theory]
-        [InlineData("Happy")]
-        public void CheckIDTestDuplicate(string idNumber)
-        {
-            var expectedResult = IdResultType.DuplicateId;
-            var json = JsonConvert.SerializeObject(expectedResult);
-
-            var mockMessageHandler = new Mock<HttpMessageHandler>();
-
-            mockMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync",
-                ItExpr.IsAny<HttpRequestMessage>(),
-                ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(json, Encoding.UTF8, "application/json")
-                });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
-
-            var result = underTest.CheckIdNumber(idNumber);
-
-            Assert.Equal("Duplicate idNumber.", result);
-        }
-
-        [Theory]
-        [InlineData("Happy")]
-        public void CheckIDTestUnhandled(string idNumber)
-        {
-            var expectedResult = IdResultType.UnhandledIdError;
+            var expectedResult = true;
             var json = JsonConvert.SerializeObject(expectedResult);
 
             var mockMessageHandler = new Mock<HttpMessageHandler>();
@@ -90,16 +40,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                 });
             var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckIdNumber(idNumber);
+            var result = underTest.SignUp(userName, idNumber, phoneNumber, passWord);
 
-            Assert.Equal("Unexpected Error.", result);
+            Assert.Equal("Error has occured.", result);
         }
 
         [Theory]
-        [InlineData("Happy")]
-        public void CheckIDTestNull(string idNumber)
+        [InlineData("Happy", "Happy", "Happy", "Happy")]
+        public void SignUpTestSuccess(string userName, string idNumber, string phoneNumber, string passWord)
         {
-            var expectedResult = IdResultType.IdNullError;
+            var expectedResult = true;
             var json = JsonConvert.SerializeObject(expectedResult);
 
             var mockMessageHandler = new Mock<HttpMessageHandler>();
@@ -115,16 +65,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                 });
             var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckIdNumber(idNumber);
+            var result = underTest.SignUp(userName, idNumber, phoneNumber, passWord);
 
-            Assert.Equal("Input cannot be Null.", result);
+            Assert.Equal("New account has been registered.", result);
         }
 
         [Theory]
-        [InlineData("Happy")]
-        public void CheckIDTestIncorrect(string idNumber)
+        [InlineData("Happy", "Happy")]
+        public void LoginTestSuccessOwner(string userName, string passWord)
         {
-            var expectedResult = IdResultType.IdIncorrect;
+            var expectedResult = (true, true);
             var json = JsonConvert.SerializeObject(expectedResult);
 
             var mockMessageHandler = new Mock<HttpMessageHandler>();
@@ -140,10 +90,67 @@ namespace OnlineCasinoProjectConsole.UnitTest
                 });
             var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckIdNumber(idNumber);
+            var result = underTest.CheckLogin(userName, passWord);
 
-            Assert.Equal("Invalid ID Number", result);
+            Assert.Equal(("\nWelcome Owner." +
+                        "\nWould you like to" +
+                        "\n1.) Set prize module?" +
+                        "\n2.) View financial report for a certain day?" +
+                        "\n3.) View financial report for a certain month?" +
+                        "\n4.) View financial report for a certain year?" +
+                        "\n5.) Log out.", true), result);
         }
 
+        [Theory]
+        [InlineData("Happy", "Happy")]
+        public void LoginTestSuccessUser(string userName, string passWord)
+        {
+            var expectedResult = (true, false);
+            var json = JsonConvert.SerializeObject(expectedResult);
+
+            var mockMessageHandler = new Mock<HttpMessageHandler>();
+
+            mockMessageHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                });
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
+
+            var result = underTest.CheckLogin(userName, passWord);
+
+            Assert.Equal(($"Welcome Happy." +
+                        "\nWould you like to" +
+                        "\n1.) Play Slots?" +
+                        "\n2.) Logout?", false), result);
+        }
+
+        [Fact]
+        public void LogoutTest()
+        {
+            var expectedResult = false;
+            var json = JsonConvert.SerializeObject(expectedResult);
+
+            var mockMessageHandler = new Mock<HttpMessageHandler>();
+
+            mockMessageHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                });
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
+
+            var result = underTest.LogOut();
+
+            Assert.False(result);
+        }
     }
 }

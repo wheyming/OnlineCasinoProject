@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IDateConverter.cs" />
     <Compile Include="ViewModel\CasinoViewModel.cs" />
     <Compile Include="Interfaces\ICasinoViewModel.cs" />
     <Compile Include="Utility\DateConverter.cs" />

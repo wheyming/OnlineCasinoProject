@@ -2,6 +2,7 @@
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
+using OnlineCasinoProjectConsole.Utility;
 using OnlineCasinoProjectConsole.ViewModel;
 using System;
 using System.Net;
@@ -15,18 +16,13 @@ namespace OnlineCasinoProjectConsole.UnitTest
 {
     public class CasinoViewModelCheckPhoneNumberTest
     {
-        private string _uriName;
         public CasinoViewModelCheckPhoneNumberTest()
         {
-#if DEBUG
-            _uriName = "https://localhost:44353/";
-#else
-            _uriName = "http://mycasino.me";
-#endif
         }
 
-        [Fact]
-        public void CheckPhoneNumberTestNone()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPhoneNumberTestNone(string phoneNumber)
         {
             var expectedResult = PhoneNumberResultType.None;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -42,15 +38,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPhoneNumber(_uriName);
+            var result = underTest.CheckPhoneNumber(phoneNumber);
 
             Assert.Equal(string.Empty, result);
         }
 
-        [Fact]
-        public void CheckPhoneNumberTestDuplicate()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPhoneNumberTestDuplicate(string phoneNumber)
         {
             var expectedResult = PhoneNumberResultType.DuplicatePhoneNumber;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -66,15 +63,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPhoneNumber(_uriName);
+            var result = underTest.CheckPhoneNumber(phoneNumber);
 
             Assert.Equal("Duplicate Phone Number.", result);
         }
 
-        [Fact]
-        public void CheckPhoneNumberTestUnhandled()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPhoneNumberTestUnhandled(string phoneNumber)
         {
             var expectedResult = PhoneNumberResultType.UnhandledPhoneNumberError;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -90,15 +88,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.BadRequest,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPhoneNumber(_uriName);
+            var result = underTest.CheckPhoneNumber(phoneNumber);
 
             Assert.Equal("Unexpected Error.", result);
         }
 
-        [Fact]
-        public void CheckPhoneNumberTestNull()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPhoneNumberTestNull(string phoneNumber)
         {
             var expectedResult = PhoneNumberResultType.PhoneNumberNullError;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -114,15 +113,16 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPhoneNumber(_uriName);
+            var result = underTest.CheckPhoneNumber(phoneNumber);
 
             Assert.Equal("Input cannot be Null.", result);
         }
 
-        [Fact]
-        public void CheckPhoneNumberTestIncorrect()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPhoneNumberTestIncorrect(string phoneNumber)
         {
             var expectedResult = PhoneNumberResultType.PhoneNumberIncorrect;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -138,9 +138,9 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPhoneNumber(_uriName);
+            var result = underTest.CheckPhoneNumber(phoneNumber);
 
             Assert.Equal("Invalid Phone Number", result);
         }

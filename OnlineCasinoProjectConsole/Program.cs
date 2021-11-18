@@ -1,4 +1,5 @@
 ﻿using OnlineCasinoProjectConsole.Interfaces;
+using OnlineCasinoProjectConsole.Utility;
 using OnlineCasinoProjectConsole.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace OnlineCasinoProjectConsole
         public static void Main(string[] args)
         {
             bool startupBool = true;
-            ICasinoViewModel mv = new CasinoViewModel(new HttpClient());
+            ICasinoViewModel mv = new CasinoViewModel(new HttpClient(), new DateConverter());
             do
             {
                 Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));

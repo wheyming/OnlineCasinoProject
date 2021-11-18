@@ -2,6 +2,7 @@
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
+using OnlineCasinoProjectConsole.Utility;
 using OnlineCasinoProjectConsole.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -16,18 +17,13 @@ namespace OnlineCasinoProjectConsole.UnitTest
 {
     public class CasinoViewModelCheckPasswordTest
     {
-        private string _uriName;
         public CasinoViewModelCheckPasswordTest()
         {
-#if DEBUG
-            _uriName = "https://localhost:44353/";
-#else
-            _uriName = "http://mycasino.me";
-#endif
         }
 
-        [Fact]
-        public void CheckPasswordTestNone()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPasswordTestNone(string passWord)
         {
             var expectedResult = PasswordResultType.None;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -43,16 +39,17 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPassword(_uriName);
+            var result = underTest.CheckPassword(passWord);
             IList<string> outputList = new List<string>();
 
             Assert.Equal(outputList, result);
         }
 
-        [Fact]
-        public void CheckPasswordTest()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPasswordTest(string passWord)
         {
             var expectedResult = PasswordResultType.PasswordNoDigits |
                 PasswordResultType.PasswordNoUpperCaseLetter |
@@ -73,9 +70,9 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPassword(_uriName);
+            var result = underTest.CheckPassword(passWord);
             IList<string> outputList = new List<string>()
             {
                 "Please choose a password with at least one uppercase letter.",
@@ -89,8 +86,9 @@ namespace OnlineCasinoProjectConsole.UnitTest
             Assert.Equal(outputList, result);
         }
 
-        [Fact]
-        public void CheckPhoneNumberTestUnhandled()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPhoneNumberTestUnhandled(string passWord)
         {
             var expectedResult = PasswordResultType.UnhandledPasswordError;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -106,9 +104,9 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.BadRequest,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPassword(_uriName);
+            var result = underTest.CheckPassword(passWord);
             IList<string> outputList = new List<string>()
             {
                 "Please contact administrator."
@@ -117,8 +115,9 @@ namespace OnlineCasinoProjectConsole.UnitTest
             Assert.Equal(outputList, result);
         }
 
-        [Fact]
-        public void CheckPasswordTestNull()
+        [Theory]
+        [InlineData("Happy")]
+        public void CheckPasswordTestNull(string passWord)
         {
             var expectedResult = PasswordResultType.PasswordNullError;
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -134,9 +133,9 @@ namespace OnlineCasinoProjectConsole.UnitTest
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
-            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object));
+            var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
 
-            var result = underTest.CheckPassword(_uriName);
+            var result = underTest.CheckPassword(passWord);
             IList<string> outputList = new List<string>()
             {
                 "Please do not leave password blank."
