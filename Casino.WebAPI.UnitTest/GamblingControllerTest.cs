@@ -44,7 +44,6 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Setup(t => t.Reports).Returns(mockReportDbSet.Object);
 
             IList<int> rolledNumber = new List<int> { 1, 2, 3 };
-            DateTime dateTime = new DateTime(2021, 1, 1);
 
             _mockCustomRandom.Setup(t => t.RollRandomNumberPrizeActivated()).Returns(new List<int> { 1, 2, 3 });
             _mockDateTimeGenerator.Setup(t => t.Now()).Returns(new DateTime(2021, 1, 1));
@@ -58,7 +57,7 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Verify(t => t.SaveChanges(), Times.Once());
 
             Assert.Equal(rolledNumber, playSlotResult.Item1);
-            Assert.Equal((0, SlotsResultType.None, 2.0, dateTime), (playSlotResult.Item2, playSlotResult.Item3, playSlotResult.Item4, playSlotResult.Item5));
+            Assert.Equal((0, SlotsResultType.None), (playSlotResult.Item2, playSlotResult.Item3));
         }
 
         [Theory]
@@ -82,7 +81,6 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Setup(t => t.Reports).Returns(mockReportDbSet.Object);
 
             IList<int> rolledNumber = new List<int> { 1, 1, 3 };
-            DateTime dateTime = new DateTime(2021, 1, 1);
 
             _mockCustomRandom.Setup(t => t.RollRandomNumberPrizeActivated()).Returns(new List<int> { 1, 1, 3 });
             _mockDateTimeGenerator.Setup(t => t.Now()).Returns(new DateTime(2021, 1, 1));
@@ -94,7 +92,7 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Verify(t => t.SaveChanges(), Times.Once());
 
             Assert.Equal(rolledNumber, playSlotResult.Item1);
-            Assert.Equal((4.0, SlotsResultType.Double, 2.0, dateTime), (playSlotResult.Item2, playSlotResult.Item3, playSlotResult.Item4, playSlotResult.Item5));
+            Assert.Equal((4.0, SlotsResultType.Double), (playSlotResult.Item2, playSlotResult.Item3));
         }
 
         [Theory]
@@ -118,7 +116,6 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Setup(t => t.Reports).Returns(mockReportDbSet.Object);
 
             IList<int> rolledNumber = new List<int> { 1, 1, 1 };
-            DateTime dateTime = new DateTime(2021, 1, 1);
 
             _mockCustomRandom.Setup(t => t.RollRandomNumberPrizeNotActivated()).Returns(new List<int> { 1, 1, 1 });
             _mockDateTimeGenerator.Setup(t => t.Now()).Returns(new DateTime(2021, 1, 1));
@@ -130,7 +127,7 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Verify(t => t.SaveChanges(), Times.Once());
 
             Assert.Equal(rolledNumber, playSlotResult.Item1);
-            Assert.Equal((6.0, SlotsResultType.Triple, 2.0, dateTime), (playSlotResult.Item2, playSlotResult.Item3, playSlotResult.Item4, playSlotResult.Item5));
+            Assert.Equal((6.0, SlotsResultType.Triple), (playSlotResult.Item2, playSlotResult.Item3));
         }
 
         [Theory]
@@ -154,7 +151,6 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Setup(t => t.Reports).Returns(mockReportDbSet.Object);
 
             IList<int> rolledNumber = new List<int> { 7, 7, 7 };
-            DateTime dateTime = new DateTime(2021, 1, 1);
 
             _mockCustomRandom.Setup(t => t.RollRandomNumberPrizeActivated()).Returns(new List<int> { 7, 7, 7 });
             _mockDateTimeGenerator.Setup(t => t.Now()).Returns(new DateTime(2021, 1, 1));
@@ -166,7 +162,7 @@ namespace Casino.WebAPI.UnitTest
             _mockCasinoContext.Verify(t => t.SaveChanges(), Times.Once());
 
             Assert.Equal(rolledNumber, playSlotResult.Item1);
-            Assert.Equal((14.0, SlotsResultType.JackPot, 2.0, dateTime), (playSlotResult.Item2, playSlotResult.Item3, playSlotResult.Item4, playSlotResult.Item5));
+            Assert.Equal((14.0, SlotsResultType.JackPot), (playSlotResult.Item2, playSlotResult.Item3));
         }
     }
 }

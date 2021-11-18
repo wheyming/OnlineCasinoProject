@@ -447,23 +447,18 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public (IList<int>, string) PlaySlot(double betAmount)
         {
-            (IList<int>, double, SlotsResultType, double, DateTime) playSlotTuple;
+            (IList<int>, double, SlotsResultType) playSlotTuple;
             (IList<int>, string) output;
             var responseTask = _casinoClient.GetAsync("api/Gambling/playSlot?betamount=" + betAmount);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<(IList<int>, double, SlotsResultType, double, DateTime)>();
+                var readTask = result.Content.ReadAsAsync<(IList<int>, double, SlotsResultType)>();
                 readTask.Wait();
                 playSlotTuple = readTask.Result;
                 output.Item1 = playSlotTuple.Item1;
                 output.Item2 = string.Empty;
-
-                //responseTask = _casinoClient.GetAsync("api/FinancialReport/updatereport?betAmount=" + playSlotTuple.Item4 +
-                //    "&winnings=" + playSlotTuple.Item2 +
-                //    "&dateTime=" + playSlotTuple.Item5);
-                //responseTask.Wait();
 
                 switch (playSlotTuple.Item3)
                 {
@@ -474,17 +469,17 @@ namespace OnlineCasinoProjectConsole.ViewModel
                         }
                     case SlotsResultType.Double:
                         {
-                            output.Item2 = $"\nDOUBLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}";
+                            output.Item2 = $"\nDOUBLE!! Congratulations. Your winnings are: ${playSlotTuple.Item2}";
                             break;
                         }
                     case SlotsResultType.Triple:
                         {
-                            output.Item2 = $"\nTRIPLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}";
+                            output.Item2 = $"\nTRIPLE!! Congratulations. Your winnings are: ${playSlotTuple.Item2}";
                             break;
                         }
                     case SlotsResultType.JackPot:
                         {
-                            output.Item2 = $"\nJACKPOT!! Congratulations. Your winnings are: {playSlotTuple.Item2}";
+                            output.Item2 = $"\nJACKPOT!! Congratulations. Your winnings are: ${playSlotTuple.Item2}";
                             break;
                         }
                 }
@@ -511,7 +506,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 value = null;
             }
-            catch (ArgumentOutOfRangeException)
+            catch (OverflowException)
             {
                 value = null;
             }
@@ -532,7 +527,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 value = 0;
             }
-            catch (ArgumentOutOfRangeException)
+            catch (OverflowException)
             {
                 value = 0;
             }

@@ -15,6 +15,6 @@ namespace Casino.WebAPI.Interfaces
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        (IList<int>, double, SlotsResultType, double, DateTime) PlaySlot(double betAmount);
+        (IList<int>, double, SlotsResultType) PlaySlot(double betAmount);
     }
 }

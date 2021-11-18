@@ -47,7 +47,7 @@ namespace Casino.WebAPI.Controllers
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        public (IList<int>, double, SlotsResultType, double, DateTime) PlaySlot(double betAmount)
+        public (IList<int>, double, SlotsResultType) PlaySlot(double betAmount)
         {
             IList<int> rolledNumber = new List<int>();
             PrizeModule prizeModule;
@@ -61,8 +61,8 @@ namespace Casino.WebAPI.Controllers
                 rolledNumber = _customRandom.RollRandomNumberPrizeActivated();
             }
             (double, SlotsResultType) winningsAndResultType = CalculateWinningsSlot(rolledNumber, betAmount);
-            DateTime resultTime = StoreWinningsInfo(winningsAndResultType.Item1, betAmount);
-            return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2, betAmount, resultTime);
+           StoreWinningsInfo(winningsAndResultType.Item1, betAmount);
+            return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2);
         }
         /// <summary>
         /// 
@@ -102,13 +102,12 @@ namespace Casino.WebAPI.Controllers
         /// <param name="payout"></param>
         /// <param name="betAmount"></param>
         /// <param name="username"></param>
-        private DateTime StoreWinningsInfo(double payout, double betAmount)
+        private void StoreWinningsInfo(double payout, double betAmount)
         {
             DateTime storeWinningsTime = _dateTimeGenerator.Now();
             Report report = new Report(betAmount, payout, storeWinningsTime);
             _casinoContext.Reports.Add(report);
             _casinoContext.SaveChanges();
-            return storeWinningsTime;
         }
     }
 }

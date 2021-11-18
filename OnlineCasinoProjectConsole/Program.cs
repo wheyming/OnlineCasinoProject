@@ -201,16 +201,23 @@ namespace OnlineCasinoProjectConsole
                                                             if (value != 0)
                                                             {
                                                                 (IList<int>, string) playSlotTuple = mv.PlaySlot(value);
-                                                                Console.Write(playSlotTuple.Item1[0]);
-                                                                Thread.Sleep(500);
-                                                                Console.Write('.');
-                                                                Thread.Sleep(500);
-                                                                Console.Write(playSlotTuple.Item1[1]);
-                                                                Thread.Sleep(500);
-                                                                Console.Write('.');
-                                                                Thread.Sleep(500);
-                                                                Console.Write(playSlotTuple.Item1[2]);
-                                                                Console.WriteLine(playSlotTuple.Item2);
+                                                                if (playSlotTuple.Item1 != null)
+                                                                {
+                                                                    Console.Write(playSlotTuple.Item1[0]);
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write('.');
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write(playSlotTuple.Item1[1]);
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write('.');
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write(playSlotTuple.Item1[2]);
+                                                                    Console.WriteLine(playSlotTuple.Item2);
+                                                                }
+                                                                else
+                                                                {
+                                                                    Console.WriteLine(playSlotTuple.Item2);
+                                                                }
                                                             }
                                                             else
                                                             {
