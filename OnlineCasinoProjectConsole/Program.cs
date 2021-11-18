@@ -3,6 +3,7 @@ using OnlineCasinoProjectConsole.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using System.Threading;
 
 namespace OnlineCasinoProjectConsole
@@ -19,7 +20,7 @@ namespace OnlineCasinoProjectConsole
         public static void Main(string[] args)
         {
             bool startupBool = true;
-            ICasinoViewModel mv = new CasinoViewModel();
+            ICasinoViewModel mv = new CasinoViewModel(new HttpClient());
             do
             {
                 Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));
@@ -198,7 +199,7 @@ namespace OnlineCasinoProjectConsole
                                                             mv.ParseInputStringDouble(input24, out var value);
                                                             if (value != 0)
                                                             {
-                                                                (IList<int>, string) playSlotTuple = mv.PlaySlot(value, input21);
+                                                                (IList<int>, string) playSlotTuple = mv.PlaySlot(value);
                                                                 Console.Write(playSlotTuple.Item1[0]);
                                                                 Thread.Sleep(500);
                                                                 Console.Write('.');

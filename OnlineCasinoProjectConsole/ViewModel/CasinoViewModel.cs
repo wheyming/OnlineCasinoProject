@@ -11,15 +11,15 @@ namespace OnlineCasinoProjectConsole.ViewModel
     /// <summary>
     /// 
     /// </summary>
-    internal class CasinoViewModel : ICasinoViewModel
+    public class CasinoViewModel : ICasinoViewModel
     {
         private readonly HttpClient _casinoClient;
         /// <summary>
         /// 
         /// </summary>
-        internal CasinoViewModel()
+        public CasinoViewModel(HttpClient httpClient)
         {
-            _casinoClient = new HttpClient();
+            _casinoClient = httpClient;
 #if DEBUG
             _casinoClient.BaseAddress = new Uri("https://localhost:44353/");
 #else
@@ -458,10 +458,10 @@ namespace OnlineCasinoProjectConsole.ViewModel
                 output.Item1 = playSlotTuple.Item1;
                 output.Item2 = string.Empty;
 
-                responseTask = _casinoClient.GetAsync("api/FinancialReport/updatereport?betAmount=" + playSlotTuple.Item4 +
-                    "&winnings=" + playSlotTuple.Item2 +
-                    "&dateTime=" + playSlotTuple.Item5);
-                responseTask.Wait();
+                //responseTask = _casinoClient.GetAsync("api/FinancialReport/updatereport?betAmount=" + playSlotTuple.Item4 +
+                //    "&winnings=" + playSlotTuple.Item2 +
+                //    "&dateTime=" + playSlotTuple.Item5);
+                //responseTask.Wait();
 
                 switch (playSlotTuple.Item3)
                 {
