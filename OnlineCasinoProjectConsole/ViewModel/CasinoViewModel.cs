@@ -1,6 +1,5 @@
 ﻿using Casino.Common;
 using OnlineCasinoProjectConsole.Interfaces;
-using OnlineCasinoProjectConsole.Utility;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -32,10 +31,11 @@ namespace OnlineCasinoProjectConsole.ViewModel
         }
 
         /// <summary>
-        /// 
+        /// Takes a string input and passes the username to the check username api,
+        /// which will return the username result type.
         /// </summary>
         /// <param name="userName"></param>
-        /// <returns></returns>
+        /// <returns>Return outcome string to UI layer to output string based on username result type.</returns>
         public string CheckUserName(string userName)
         {
             string output = string.Empty;

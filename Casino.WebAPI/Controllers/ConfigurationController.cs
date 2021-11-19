@@ -6,14 +6,14 @@ using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
 {
-    [RoutePrefix("api/Configuration")]
     /// <summary>
-    /// 
+    /// Configuration Controller to set up the configurations of the casino.
     /// </summary>
+    [RoutePrefix("api/Configuration")]
     public class ConfigurationController : ApiController, IConfigurationManager
     {
-        private ICasinoContext _casinoContext;
-        private string _connectionString;
+        private readonly ICasinoContext _casinoContext;
+        private readonly string _connectionString;
         public ConfigurationController()
         {
 #if DEBUG

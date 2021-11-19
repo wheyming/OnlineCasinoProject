@@ -1,10 +1,8 @@
-﻿using Casino.Common;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using OnlineCasinoProjectConsole.Utility;
 using OnlineCasinoProjectConsole.ViewModel;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;

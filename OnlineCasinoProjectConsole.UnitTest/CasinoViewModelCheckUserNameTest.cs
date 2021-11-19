@@ -4,7 +4,6 @@ using Moq.Protected;
 using Newtonsoft.Json;
 using OnlineCasinoProjectConsole.Utility;
 using OnlineCasinoProjectConsole.ViewModel;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -29,8 +28,8 @@ namespace OnlineCasinoProjectConsole.UnitTest
             var mockMessageHandler = new Mock<HttpMessageHandler>();
 
             mockMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                ItExpr.IsAny<HttpRequestMessage>(), 
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(new HttpResponseMessage
                 {

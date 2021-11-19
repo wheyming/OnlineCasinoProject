@@ -10,14 +10,14 @@ using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
 {
-    [RoutePrefix("api/Gambling")]
     /// <summary>
     /// 
     /// </summary>
+    [RoutePrefix("api/Gambling")]
     public class GamblingController : ApiController, IGamblingManager
     {
-        private ICasinoContext _casinoContext;
-        private string _connectionString;
+        private readonly ICasinoContext _casinoContext;
+        private readonly string _connectionString;
         private readonly IRandomNumberGenerator _customRandom;
         private readonly IDateTimeGenerator _dateTimeGenerator;
         public GamblingController()
@@ -61,7 +61,7 @@ namespace Casino.WebAPI.Controllers
                 rolledNumber = _customRandom.RollRandomNumberPrizeActivated();
             }
             (double, SlotsResultType) winningsAndResultType = CalculateWinningsSlot(rolledNumber, betAmount);
-           StoreWinningsInfo(winningsAndResultType.Item1, betAmount);
+            StoreWinningsInfo(winningsAndResultType.Item1, betAmount);
             return (rolledNumber, winningsAndResultType.Item1, winningsAndResultType.Item2);
         }
         /// <summary>

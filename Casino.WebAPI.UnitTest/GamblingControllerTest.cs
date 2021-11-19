@@ -12,9 +12,9 @@ namespace Casino.WebAPI.UnitTest
 {
     public class GamblingControllerTest
     {
-        private Mock<ICasinoContext> _mockCasinoContext;
-        private Mock<IRandomNumberGenerator> _mockCustomRandom;
-        private Mock<IDateTimeGenerator> _mockDateTimeGenerator;
+        private readonly Mock<ICasinoContext> _mockCasinoContext;
+        private readonly Mock<IRandomNumberGenerator> _mockCustomRandom;
+        private readonly Mock<IDateTimeGenerator> _mockDateTimeGenerator;
 
         public GamblingControllerTest()
         {

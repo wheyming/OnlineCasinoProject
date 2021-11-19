@@ -1,10 +1,6 @@
-﻿using Xunit;
+﻿using OnlineCasinoProjectConsole.Utility;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OnlineCasinoProjectConsole.Utility;
+using Xunit;
 
 namespace OnlineCasinoProjectConsole.UnitTest
 {

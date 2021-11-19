@@ -1,19 +1,15 @@
-﻿using Casino.WebAPI.Controllers;
-using Casino.WebAPI.Interfaces;
+﻿using Casino.WebAPI.Interfaces;
 using Casino.WebAPI.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Casino.WebAPI.UnitTest
 {
     public class UtilityClassesTest
     {
-        private IRandomNumberGenerator _randomNumberGenerator;
-        private IDateTimeGenerator _datetimeGenerator;
+        private readonly IRandomNumberGenerator _randomNumberGenerator;
+        private readonly IDateTimeGenerator _datetimeGenerator;
         public UtilityClassesTest()
         {
             _randomNumberGenerator = new RandomNumberGenerator();

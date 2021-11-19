@@ -7,14 +7,16 @@ using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
 {
-    [RoutePrefix("api/authentication")]
+
     /// <summary>
-    /// 
+    /// Specific controller class that contains the methods with regards to 
+    /// verifying the data of the Users and Owners.
     /// </summary>
+    [RoutePrefix("api/authentication")]
     public class AuthenticationController : ApiController, IAuthenticationManager
     {
-        private ICasinoContext _casinoContext;
-        private string _connectionString;
+        private readonly ICasinoContext _casinoContext;
+        private readonly string _connectionString;
         public AuthenticationController()
         {
 #if DEBUG
@@ -25,6 +27,10 @@ namespace Casino.WebAPI.Controllers
             _casinoContext = new CasinoContext(_connectionString);
         }
 
+        /// <summary>
+        /// Dependency Injection through Constructor Injection.
+        /// </summary>
+        /// <param name="casinoContext"></param>
         public AuthenticationController(ICasinoContext casinoContext)
         {
             _casinoContext = casinoContext;
@@ -35,15 +41,16 @@ namespace Casino.WebAPI.Controllers
         /// </summary>
         public User CurrentUser { get; private set; }
 
-        [HttpGet]
-        [Route("checkusername")]
+
         /// <summary>
         /// Criteria to check:
         /// Between 6 - 24
         /// No spaces
         /// </summary>
         /// <param name="username"></param>
-        /// <returns> UserNameResultType: Returns CheckUserName Return Type. </returns>
+        /// <returns> UserNameResultType: Returns CheckUserName Return Type. </returns>        
+        [HttpGet]
+        [Route("checkusername")]
         public UserNameResultType CheckUserName(string username)
         {
             UserNameResultType type = UserNameResultType.None;

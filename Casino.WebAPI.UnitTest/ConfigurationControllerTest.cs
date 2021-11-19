@@ -10,7 +10,7 @@ namespace Casino.WebAPI.UnitTest
 {
     public class ConfigurationControllerTest
     {
-        private Mock<ICasinoContext> _mockCasinoContext;
+        private readonly Mock<ICasinoContext> _mockCasinoContext;
 
         public ConfigurationControllerTest()
         {

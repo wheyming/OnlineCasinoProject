@@ -7,7 +7,7 @@ namespace Casino.WebAPI.Controllers
     [RoutePrefix("api")]
     public class InitializeController : ApiController, IInitializeManager
     {
-        private string _connectionString;
+        private readonly string _connectionString;
         public InitializeController()
         {
 #if DEBUG

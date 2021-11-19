@@ -8,14 +8,14 @@ using System.Web.Http;
 
 namespace Casino.WebAPI.Controllers
 {
-    [RoutePrefix("api/FinancialReport")]
     /// <summary>
-    /// 
+    /// Controller to generate Reports for Owner.
     /// </summary>
+    [RoutePrefix("api/FinancialReport")]
     public class ReportController : ApiController, IReportManager
     {
-        private ICasinoContext _casinoContext;
-        private string _connectionString;
+        private readonly ICasinoContext _casinoContext;
+        private readonly string _connectionString;
         public ReportController()
         {
 #if DEBUG
@@ -31,13 +31,13 @@ namespace Casino.WebAPI.Controllers
             _casinoContext = casinoContext;
         }
 
-        [HttpGet]
-        [Route("month")]
         /// <summary>
         /// 
         /// </summary>
         /// <param name="monthYear"></param>
         /// <returns></returns>
+        [HttpGet]
+        [Route("month")]
         public List<double> GenerateFinancialReportMonth(DateTime monthYear)
         {
             List<double> monthlyFinancialReport = new List<double>(new double[32]);

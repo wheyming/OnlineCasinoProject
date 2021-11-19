@@ -1,19 +1,17 @@
-﻿using Casino.WebAPI.Interfaces;
+﻿using Casino.WebAPI.Controllers;
+using Casino.WebAPI.Interfaces;
 using Moq;
-using Xunit;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.Entity;
-using Casino.WebAPI.Controllers;
+using System.Linq;
+using Xunit;
 
 namespace Casino.WebAPI.UnitTest
 {
     public class ReportControllerTest
     {
-        private Mock<ICasinoContext> _mockCasinoContext;
+        private readonly Mock<ICasinoContext> _mockCasinoContext;
 
         public ReportControllerTest()
         {

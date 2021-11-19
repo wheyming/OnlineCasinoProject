@@ -234,7 +234,7 @@ namespace OnlineCasinoProjectConsole.UnitTest
             var underTest = new CasinoViewModel(new HttpClient(mockMessageHandler.Object), new DateConverter());
             underTest.ParseInputStringDouble(input, out var output);
             Assert.Equal(Convert.ToDouble(input), output);
-        }      
+        }
 
         [Theory]
         [InlineData("aa")]
@@ -257,7 +257,7 @@ namespace OnlineCasinoProjectConsole.UnitTest
             underTest.ParseInputStringDouble(input, out var output);
             Assert.Equal(0, output);
         }
-        
+
         [Theory]
         [InlineData("99999999999999999999999999999999999999999" +
             "9999999999999999999999999999999999999999999999999" +

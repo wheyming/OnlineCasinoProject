@@ -8,7 +8,7 @@ namespace Casino.WebAPI.EntityFramework
     {
         public CasinoContext(string connectionString) : base(connectionString)
         {
-            //Database.SetInitializer(new CasinoDBInitializer());
+            Database.SetInitializer(new CasinoDBInitializer());
         }
 
         public DbSet<User> Users { get; set; }

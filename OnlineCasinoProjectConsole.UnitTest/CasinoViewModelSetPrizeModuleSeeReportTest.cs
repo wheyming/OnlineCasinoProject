@@ -1,5 +1,4 @@
-﻿using Casino.Common;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using OnlineCasinoProjectConsole.Interfaces;

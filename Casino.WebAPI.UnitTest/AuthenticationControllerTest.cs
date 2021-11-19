@@ -11,7 +11,7 @@ namespace Casino.WebAPI.UnitTest
 {
     public class AuthenticationControllerTest
     {
-        private Mock<ICasinoContext> _mockCasinoContext;
+        private readonly Mock<ICasinoContext> _mockCasinoContext;
 
         public AuthenticationControllerTest()
         {
