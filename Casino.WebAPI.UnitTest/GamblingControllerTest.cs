@@ -25,7 +25,7 @@ namespace Casino.WebAPI.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestNone(double betAmount)
+        public void PlaySlotTestNone(double betAmount)
         {
             var prizeModuleList = new List<Models.PrizeModule>
             {
@@ -62,7 +62,7 @@ namespace Casino.WebAPI.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestDouble(double betAmount)
+        public void PlaySlotTestDouble(double betAmount)
         {
             var prizeModuleList = new List<Models.PrizeModule>
             {
@@ -97,7 +97,7 @@ namespace Casino.WebAPI.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestTriple(double betAmount)
+        public void PlaySlotTestTriple(double betAmount)
         {
             var prizeModuleList = new List<Models.PrizeModule>
             {
@@ -132,7 +132,7 @@ namespace Casino.WebAPI.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestJackPot(double betAmount)
+        public void PlaySlotTestJackPot(double betAmount)
         {
             var prizeModuleList = new List<Models.PrizeModule>
             {

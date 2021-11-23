@@ -20,7 +20,7 @@ namespace Casino.WebAPI.UnitTest
 
         [Theory]
         [InlineData("01 November 2021")]
-        public void getFinancialReportMonthTest(DateTime monthYear)
+        public void GetFinancialReportMonthTest(DateTime monthYear)
         {
             var userList = new List<Models.Report>
             {
@@ -50,7 +50,7 @@ namespace Casino.WebAPI.UnitTest
 
         [Theory]
         [InlineData("01 November 2021")]
-        public void getFinancialReportYearTest(DateTime Year)
+        public void GetFinancialReportYearTest(DateTime Year)
         {
             var reportList = new List<Models.Report>
             {
@@ -80,7 +80,7 @@ namespace Casino.WebAPI.UnitTest
 
         [Theory]
         [InlineData("01 November 2021")]
-        public void getFinancialReportDayTest(DateTime date)
+        public void GetFinancialReportDayTest(DateTime date)
         {
             var reportList = new List<Models.Report>
             {
