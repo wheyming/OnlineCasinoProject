@@ -1,11 +1,12 @@
-﻿using System;
+﻿using OnlineCasinoProjectConsole.Interfaces;
+using System;
 using System.Globalization;
 
 namespace OnlineCasinoProjectConsole.Utility
 {
-    public static class DateConverter
+    public class DateConverter : IDateConverter
     {
-        public static DateTime InputDayConvert(string input3_5)
+        public DateTime InputDayConvert(string input3_5)
         {
             if (DateTime.TryParse(input3_5, out DateTime input3_5a))
             {
@@ -25,7 +26,7 @@ namespace OnlineCasinoProjectConsole.Utility
             }
         }
 
-        public static DateTime InputMonthConvert(string input3_6)
+        public DateTime InputMonthConvert(string input3_6)
         {
             if (DateTime.TryParse(input3_6, out DateTime input3_6a))
             {
@@ -49,7 +50,7 @@ namespace OnlineCasinoProjectConsole.Utility
             }
         }
 
-        public static DateTime InputYearConvert(string input3_7)
+        public DateTime InputYearConvert(string input3_7)
         {
             if (DateTime.TryParse(input3_7, out DateTime input3_7a))
             {

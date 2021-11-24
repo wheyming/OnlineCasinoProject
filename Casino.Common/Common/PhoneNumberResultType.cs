@@ -16,7 +16,7 @@
         /// <summary>
         /// 
         /// </summary>
-        PhoneNumberDataAccessError,
+        PhoneNumberNullError,
         /// <summary>
         /// 
         /// </summary>

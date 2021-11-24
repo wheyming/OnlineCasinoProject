@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Casino.WebAPI.Models
 {
@@ -10,28 +10,31 @@ namespace Casino.WebAPI.Models
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
+        [Key]
         public string UserName { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
         public string IDNumber { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
         public string PhoneNumber { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
         public string Password { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty]
         public bool IsOwner { get; private set; }
+
+        /// <summary>
+        /// Default constructor required to prevent error.
+        /// </summary>
+        public User()
+        { }
+
         /// <summary>
         /// 
         /// </summary>
@@ -47,9 +50,14 @@ namespace Casino.WebAPI.Models
             Password = password;
             IsOwner = false;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        public User() { }
+
+        public User(string username, string idNumber, string phoneNumber, string password, bool isOwner)
+        {
+            UserName = username;
+            IDNumber = idNumber;
+            PhoneNumber = phoneNumber;
+            Password = password;
+            IsOwner = isOwner;
+        }
     }
 }

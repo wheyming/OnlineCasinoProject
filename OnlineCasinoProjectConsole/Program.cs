@@ -1,9 +1,11 @@
-﻿using System;
+﻿using OnlineCasinoProjectConsole.Interfaces;
+using OnlineCasinoProjectConsole.Utility;
+using OnlineCasinoProjectConsole.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using System.Threading;
-using OnlineCasinoProjectConsole.Interfaces;
-using OnlineCasinoProjectConsole.ViewModel;
 
 namespace OnlineCasinoProjectConsole
 {
@@ -19,12 +21,12 @@ namespace OnlineCasinoProjectConsole
         public static void Main(string[] args)
         {
             bool startupBool = true;
-            ICasinoViewModel mv = new CasinoViewModel();
+            ICasinoViewModel mv = new CasinoViewModel(new HttpClient(), new DateConverter());
             do
             {
                 Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));
                 Console.WriteLine("Welcome, would you like to\n" +
-                                  "1) Sign up\n" +
+                                  "1) Sign up?\n" +
                                   "2) Login?\n" +
                                   "3) End Program?");
                 string inputStr = Console.ReadLine();
@@ -121,9 +123,17 @@ namespace OnlineCasinoProjectConsole
                                                             Console.WriteLine("Would you like to" +
                                                                               "\n1.) Activate prize giving module?" +
                                                                               "\n2.) Deactivate prize giving module?");
-                                                            int input34 = Convert.ToInt32(Console.ReadLine());
-                                                            string prizeOutput = mv.SetPrizeModuleStatus(input34);
-                                                            Console.WriteLine(prizeOutput);
+                                                            string input34 = Console.ReadLine();
+                                                            mv.ParseInputStringInt(input34, out var outputConvertInt);
+                                                            if (outputConvertInt == null)
+                                                            {
+                                                                Console.WriteLine("Invalid input." + Environment.NewLine);
+                                                            }
+                                                            else
+                                                            {
+                                                                string prizeOutput = mv.SetPrizeModuleStatus((int)outputConvertInt);
+                                                                Console.WriteLine(prizeOutput);
+                                                            }
                                                             break;
                                                         }
                                                     case 2:
@@ -156,8 +166,13 @@ namespace OnlineCasinoProjectConsole
                                                         }
                                                     case 5:
                                                         {
-                                                            mv.LogOut();
-                                                            loginBool = false;
+                                                            loginBool = mv.LogOut();
+                                                            if (loginBool)
+                                                            {
+                                                                Console.WriteLine("Logout Error.");
+                                                            }
+                                                            else
+                                                                Console.WriteLine("Good bye.");
                                                             break;
                                                         }
                                                     default:
@@ -185,17 +200,24 @@ namespace OnlineCasinoProjectConsole
                                                             mv.ParseInputStringDouble(input24, out var value);
                                                             if (value != 0)
                                                             {
-                                                                (IList<int>, string) playSlotTuple = mv.PlaySlot(value, input21);
-                                                                Console.Write(playSlotTuple.Item1[0]);
-                                                                Thread.Sleep(500);
-                                                                Console.Write('.');
-                                                                Thread.Sleep(500);
-                                                                Console.Write(playSlotTuple.Item1[1]);
-                                                                Thread.Sleep(500);
-                                                                Console.Write('.');
-                                                                Thread.Sleep(500);
-                                                                Console.Write(playSlotTuple.Item1[2]);
-                                                                Console.WriteLine(playSlotTuple.Item2);
+                                                                (IList<int>, string) playSlotTuple = mv.PlaySlot(value);
+                                                                if (playSlotTuple.Item1 != null)
+                                                                {
+                                                                    Console.Write(playSlotTuple.Item1[0]);
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write('.');
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write(playSlotTuple.Item1[1]);
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write('.');
+                                                                    Thread.Sleep(500);
+                                                                    Console.Write(playSlotTuple.Item1[2]);
+                                                                    Console.WriteLine(playSlotTuple.Item2);
+                                                                }
+                                                                else
+                                                                {
+                                                                    Console.WriteLine(playSlotTuple.Item2);
+                                                                }
                                                             }
                                                             else
                                                             {
@@ -205,9 +227,13 @@ namespace OnlineCasinoProjectConsole
                                                         }
                                                     case 2:
                                                         {
-                                                            mv.LogOut();
-                                                            loginBool = false;
-                                                            Console.WriteLine("Good bye.");
+                                                            loginBool = mv.LogOut();
+                                                            if (loginBool)
+                                                            {
+                                                                Console.WriteLine("Logout Error.");
+                                                            }
+                                                            else
+                                                                Console.WriteLine("Good bye.");
                                                             break;
                                                         }
                                                     default:
@@ -220,6 +246,8 @@ namespace OnlineCasinoProjectConsole
                                         }
                                     } while (loginBool);
                                 }
+                                else if (string.IsNullOrWhiteSpace(checkLoginOutput.Item1) && (checkLoginOutput.Item2 == null))
+                                    Console.WriteLine("Login error has occured.");
                                 else
                                     Console.WriteLine("Incorrect username or password.");
                                 break;

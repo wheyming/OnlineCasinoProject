@@ -1,44 +1,41 @@
-﻿using System;
+﻿using Casino.Common;
+using OnlineCasinoProjectConsole.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Net.Http;
-using Casino.Common;
-using OnlineCasinoProjectConsole.Interfaces;
-using OnlineCasinoProjectConsole.Utility;
 
 namespace OnlineCasinoProjectConsole.ViewModel
 {
     /// <summary>
     /// 
     /// </summary>
-    internal class CasinoViewModel : ICasinoViewModel
+    public class CasinoViewModel : ICasinoViewModel
     {
         private readonly HttpClient _casinoClient;
+        private readonly IDateConverter _dateConverter;
         /// <summary>
         /// 
         /// </summary>
-        internal CasinoViewModel()
+        public CasinoViewModel(HttpClient httpClient, IDateConverter dateConverter)
         {
-            _casinoClient = new HttpClient();
+            _dateConverter = dateConverter;
+            _casinoClient = httpClient;
 #if DEBUG
             _casinoClient.BaseAddress = new Uri("https://localhost:44353/");
 #else
             _casinoClient.BaseAddress = new Uri("http://mycasino.me");
 #endif
-            var responseTask = _casinoClient.GetAsync("api/financialreport/initialize");
+            var responseTask = _casinoClient.GetAsync("api");
             responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
-            {
-            }
         }
 
         /// <summary>
-        /// 
+        /// Takes a string input and passes the username to the check username api,
+        /// which will return the username result type.
         /// </summary>
         /// <param name="userName"></param>
-        /// <returns></returns>
+        /// <returns>Return outcome string to UI layer to output string based on username result type.</returns>
         public string CheckUserName(string userName)
         {
             string output = string.Empty;
@@ -63,10 +60,10 @@ namespace OnlineCasinoProjectConsole.ViewModel
                     output = "Unexpected Error.";
                     break;
                 case UserNameResultType.UserNameContainsSpace:
-                    output = "Please Create A Username Without Space.";
+                    output = "Please create a Username without Space.";
                     break;
-                case UserNameResultType.UserNameDataAccessError:
-                    output = "Unable to find file.";
+                case UserNameResultType.UserNameNullError:
+                    output = "Input cannot be Null.";
                     break;
                 case UserNameResultType.UserNameLengthIncorrect:
                     output = "Please create a username between 6 to 24 characters.";
@@ -103,8 +100,8 @@ namespace OnlineCasinoProjectConsole.ViewModel
                 case IdResultType.IdIncorrect:
                     output = "Invalid ID Number";
                     break;
-                case IdResultType.IdDataAccessError:
-                    output = "Unable to find file.";
+                case IdResultType.IdNullError:
+                    output = "Input cannot be Null.";
                     break;
                 case IdResultType.UnhandledIdError:
                     output = "Unexpected Error.";
@@ -147,9 +144,9 @@ namespace OnlineCasinoProjectConsole.ViewModel
                         output = "Invalid Phone Number";
                         break;
                     }
-                case PhoneNumberResultType.PhoneNumberDataAccessError:
+                case PhoneNumberResultType.PhoneNumberNullError:
                     {
-                        output = "Unable to find file.";
+                        output = "Input cannot be Null.";
                         break;
                     }
                 case PhoneNumberResultType.UnhandledPhoneNumberError:
@@ -178,6 +175,10 @@ namespace OnlineCasinoProjectConsole.ViewModel
                 var readTask = result.Content.ReadAsAsync<PasswordResultType>();
                 readTask.Wait();
                 checkPasswordResult = readTask.Result;
+            }
+            if (Equals(checkPasswordResult & PasswordResultType.PasswordNullError, PasswordResultType.PasswordNullError))
+            {
+                outputList.Add("Please do not leave password blank.");
             }
             if (Equals(checkPasswordResult & PasswordResultType.PasswordNoUpperCaseLetter, PasswordResultType.PasswordNoUpperCaseLetter))
             {
@@ -257,13 +258,13 @@ namespace OnlineCasinoProjectConsole.ViewModel
         public (string, bool?) CheckLogin(string userName, string passWord)
         {
             string output = string.Empty;
-            (bool?,bool?) isLoginSuccess = (false, false);
+            (bool, bool?) isLoginSuccess = (false, null);
             var responseTask = _casinoClient.GetAsync("api/Authentication/login?username=" + userName + "&password=" + passWord);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<(bool?,bool?)>();
+                var readTask = result.Content.ReadAsAsync<(bool, bool?)>();
                 readTask.Wait();
                 isLoginSuccess = readTask.Result;
             }
@@ -271,20 +272,20 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 if (isLoginSuccess.Item2 == true)
                 {
-                    output = ("\nWelcome Owner." +
+                    output = "\nWelcome Owner." +
                         "\nWould you like to" +
                         "\n1.) Set prize module?" +
                         "\n2.) View financial report for a certain day?" +
                         "\n3.) View financial report for a certain month?" +
                         "\n4.) View financial report for a certain year?" +
-                        "\n5.) Log out.");
+                        "\n5.) Log out.";
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    output = ($"Welcome {userName}." +
+                    output = $"Welcome {userName}." +
                         "\nWould you like to" +
                         "\n1.) Play Slots?" +
-                        "\n2.) Logout?");
+                        "\n2.) Logout?";
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -304,7 +305,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<string>();
                 readTask.Wait();
-                output = readTask.Result;    
+                output = readTask.Result;
             }
             return output;
         }
@@ -316,7 +317,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public string SeeDayFinancialReport(string inputDay)
         {
-            DateTime inputDateTime = DateConverter.InputDayConvert(inputDay);
+            DateTime inputDateTime = _dateConverter.InputDayConvert(inputDay);
             double financialReportDay;
             var responseTask = _casinoClient.GetAsync("api/FinancialReport/day?date=" + inputDateTime);
             responseTask.Wait();
@@ -332,7 +333,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             }
             else
             {
-                output = "Expected Error.";
+                output = "Unexpected Error Occured.";
             }
             return output;
         }
@@ -344,7 +345,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public IList<string> SeeMonthFinancialReport(string inputMonth)
         {
-            DateTime inputDateTime = DateConverter.InputMonthConvert(inputMonth);
+            DateTime inputDateTime = _dateConverter.InputMonthConvert(inputMonth);
             IList<string> monthFinancialReport = new List<string>();
             IList<double> monthValueList = new List<double>();
             if (inputDateTime != DateTime.MinValue)
@@ -386,7 +387,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <returns></returns>
         public IList<string> SeeYearFinancialReport(string inputYear)
         {
-            DateTime inputDateTime = DateConverter.InputYearConvert(inputYear);
+            DateTime inputDateTime = _dateConverter.InputYearConvert(inputYear);
             IList<string> yearFinancialReport = new List<string>();
             IList<double> yearValueList = new List<double>();
             if (inputDateTime != DateTime.MinValue)
@@ -424,37 +425,40 @@ namespace OnlineCasinoProjectConsole.ViewModel
         /// <summary>
         /// 
         /// </summary>
-        public void LogOut()
+        public bool LogOut()
         {
+            bool value = true;
             var responseTask = _casinoClient.GetAsync("api/Authentication/logout");
             responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<bool>();
+                readTask.Wait();
+                value = readTask.Result;
+            }
+            return value;
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="betAmount"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public (IList<int>, string) PlaySlot(double betAmount, string userName)
+        public (IList<int>, string) PlaySlot(double betAmount)
         {
-            (IList<int>, double, SlotsResultType, double, DateTime) playSlotTuple;
+            (IList<int>, double, SlotsResultType) playSlotTuple;
             (IList<int>, string) output;
-            var responseTask = _casinoClient.GetAsync("api/Gambling/playSlot?betamount=" + betAmount + "&username=" + userName);
+            var responseTask = _casinoClient.GetAsync("api/Gambling/playSlot?betamount=" + betAmount);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<(IList<int>, double, SlotsResultType, double, DateTime)>();
+                var readTask = result.Content.ReadAsAsync<(IList<int>, double, SlotsResultType)>();
                 readTask.Wait();
                 playSlotTuple = readTask.Result;
                 output.Item1 = playSlotTuple.Item1;
                 output.Item2 = string.Empty;
-
-                responseTask = _casinoClient.GetAsync("api/FinancialReport/updatereport?betAmount=" + playSlotTuple.Item4 +
-                    "&winnings=" + playSlotTuple.Item2 +
-                    "&dateTime=" + playSlotTuple.Item5);
-                responseTask.Wait();
 
                 switch (playSlotTuple.Item3)
                 {
@@ -465,17 +469,17 @@ namespace OnlineCasinoProjectConsole.ViewModel
                         }
                     case SlotsResultType.Double:
                         {
-                            output.Item2 = $"\nDOUBLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}";
+                            output.Item2 = $"\nDOUBLE!! Congratulations. Your winnings are: ${playSlotTuple.Item2}";
                             break;
                         }
                     case SlotsResultType.Triple:
                         {
-                            output.Item2 = $"\nTRIPLE!! Congratulations. Your winnings are: {playSlotTuple.Item2}";
+                            output.Item2 = $"\nTRIPLE!! Congratulations. Your winnings are: ${playSlotTuple.Item2}";
                             break;
                         }
                     case SlotsResultType.JackPot:
                         {
-                            output.Item2 = $"\nJACKPOT!! Congratulations. Your winnings are: {playSlotTuple.Item2}";
+                            output.Item2 = $"\nJACKPOT!! Congratulations. Your winnings are: ${playSlotTuple.Item2}";
                             break;
                         }
                 }
@@ -502,7 +506,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 value = null;
             }
-            catch (ArgumentOutOfRangeException)
+            catch (OverflowException)
             {
                 value = null;
             }
@@ -523,7 +527,7 @@ namespace OnlineCasinoProjectConsole.ViewModel
             {
                 value = 0;
             }
-            catch (ArgumentOutOfRangeException)
+            catch (OverflowException)
             {
                 value = 0;
             }

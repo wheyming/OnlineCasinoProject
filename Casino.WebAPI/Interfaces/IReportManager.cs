@@ -1,5 +1,4 @@
-﻿using Casino.WebAPI.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Casino.WebAPI.Interfaces
@@ -9,15 +8,6 @@ namespace Casino.WebAPI.Interfaces
     /// </summary>
     public interface IReportManager
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        void ReportListInitialize();
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="report"></param>
-        void UpdateReportList(double betAmount, double winnings, DateTime dateTime);
         /// <summary>
         /// 
         /// </summary>

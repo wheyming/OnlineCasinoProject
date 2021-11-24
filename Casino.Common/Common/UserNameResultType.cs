@@ -20,7 +20,7 @@
         /// <summary>
         /// 
         /// </summary>
-        UserNameDataAccessError,
+        UserNameNullError,
         /// <summary>
         /// 
         /// </summary>
