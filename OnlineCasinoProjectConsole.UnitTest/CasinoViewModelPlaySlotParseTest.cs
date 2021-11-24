@@ -23,7 +23,7 @@ namespace OnlineCasinoProjectConsole.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestNone(double betAmount)
+        public void PlaySlotTestNone(double betAmount)
         {
             var expectedResult = (new List<int>() { 1, 2, 3 }, 0, SlotsResultType.None);
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -49,7 +49,7 @@ namespace OnlineCasinoProjectConsole.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestDouble(double betAmount)
+        public void PlaySlotTestDouble(double betAmount)
         {
             var expectedResult = (new List<int>() { 1, 1, 3 }, 4.0, SlotsResultType.Double);
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -75,7 +75,7 @@ namespace OnlineCasinoProjectConsole.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestTriple(double betAmount)
+        public void PlaySlotTestTriple(double betAmount)
         {
             var expectedResult = (new List<int>() { 1, 1, 1 }, 6.0, SlotsResultType.Triple);
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -101,7 +101,7 @@ namespace OnlineCasinoProjectConsole.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestJackPot(double betAmount)
+        public void PlaySlotTestJackPot(double betAmount)
         {
             var expectedResult = (new List<int>() { 7, 7, 7 }, 14.0, SlotsResultType.JackPot);
             var json = JsonConvert.SerializeObject(expectedResult);
@@ -127,7 +127,7 @@ namespace OnlineCasinoProjectConsole.UnitTest
 
         [Theory]
         [InlineData(2.0)]
-        public void playSlotTestError(double betAmount)
+        public void PlaySlotTestError(double betAmount)
         {
             var expectedResult = (new List<int>() { 7, 7, 7 }, 14.0, SlotsResultType.JackPot);
             var json = JsonConvert.SerializeObject(expectedResult);
