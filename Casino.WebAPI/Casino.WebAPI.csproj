@@ -103,6 +103,7 @@
     <Compile Include="Interfaces\IGamblingManager.cs" />
     <Compile Include="Interfaces\IInitializeManager.cs" />
     <Compile Include="Interfaces\IReportManager.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\PrizeModule.cs" />
     <Compile Include="Models\Report.cs" />
     <Compile Include="Utility\CustomRandom.cs" />
